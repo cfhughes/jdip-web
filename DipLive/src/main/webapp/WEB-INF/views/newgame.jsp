@@ -1,0 +1,1 @@
+<p>Hurrah! A New Game ${id}</p>

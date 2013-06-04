@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<hibernate-configuration
+xmlns="http://www.hibernate.org/xsd/hibernate-configuration"
+>
+ 
+<session-factory>
+<!-- Database connection settings -->
+<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+<property name="hibernate.connection.url">jdbc:mysql://abqwtb.com/dip</property>
+<property name="hibernate.connection.username">chris</property>
+ 
+<property name="hibernate.connection.password">F@t#$</property>
+
+<property name="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+
+<property name="hibernate.hbm2ddl.auto">update</property>
+
+
+</session-factory>
+ 
+</hibernate-configuration>

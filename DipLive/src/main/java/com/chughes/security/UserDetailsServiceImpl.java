@@ -1,0 +1,27 @@
+package com.chughes.security;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+public class UserDetailsServiceImpl implements UserDetailsService {
+	
+	@Autowired
+    UserDAO us;
+
+	@Override
+	public UserDetails loadUserByUsername(String name)
+			throws UsernameNotFoundException {
+		System.out.println("Here_");
+		System.out.println(us.toString());
+		UserDetailsImpl user = us.getUserByName(name);
+		if (user == null){
+			throw new UsernameNotFoundException("Not Found");
+		}else{
+			return user;
+		}
+	}
+
+}
