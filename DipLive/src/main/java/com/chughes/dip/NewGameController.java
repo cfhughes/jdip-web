@@ -1,10 +1,8 @@
 package com.chughes.dip;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.hibernate.Session;
@@ -16,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.chughes.security.UserDAO;
@@ -24,8 +23,8 @@ import com.chughes.security.UserEntity;
 
 import dip.world.InvalidWorldException;
 import dip.world.World;
-import dip.world.WorldFactory;
 import dip.world.World.VariantInfo;
+import dip.world.WorldFactory;
 import dip.world.variant.NoVariantsException;
 import dip.world.variant.VariantManager;
 import dip.world.variant.data.Variant;
@@ -39,20 +38,22 @@ public class NewGameController {
 	@Autowired
     UserDAO us;
 	
+	@RequestMapping(value="/newgame")
+	public String newGame(Model model){
+		GameEntity ge = new GameEntity();
+		model.addAttribute("game", ge);
+		return "newgame";
+	}
+	
 	@Transactional
-	@RequestMapping(value = "/newgame")
-	public String newGame(Model model) throws ParserConfigurationException, NoVariantsException{
-		File vresource = new File("C:/variants");
-		//logger.info(vresource.getFile().getAbsolutePath());
-
-		VariantManager.init(new File[]{vresource}, false);
+	@RequestMapping(value = "/savegame")
+	public String saveGame(Model model,@ModelAttribute("game")GameEntity game) throws ParserConfigurationException, NoVariantsException{
 
 		Variant vs = VariantManager.getVariant("Standard", 1.0f);
 		World w = null;
 		try {
 			w = WorldFactory.getInstance().createWorld(vs);
 		} catch (InvalidWorldException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		VariantInfo vi1 =new VariantInfo();
@@ -66,28 +67,27 @@ public class NewGameController {
 		
 		UserEntity ue = us.getUserEntity(user.getId());
 		
-		GameEntity g = new GameEntity();
-		g.setName("A New Game");
-		g.setW(w);
+		game.setW(w);
 		HashSet<UserGameEntity> players = new HashSet<UserGameEntity>();
 		UserGameEntity uge = new UserGameEntity();
-		uge.setGame(g);
+		uge.setGame(game);
 		uge.setUser(ue);
 		uge.setPower(w.getMap().getPower("England").getName());
 		players.add(uge);
-		g.setPlayers(players);
+		game.setPlayers(players);
 	
 		ue.addGame(uge);
 	
 		Session session = sessionFactory.getCurrentSession();
 		
-		session.save(g);
+		session.save(game);
 		session.save(ue);
 		session.save(uge);
 		
-		model.addAttribute("id", g.getId());
+		model.addAttribute("id", game.getId());
 		
-		return "newgame";
+		return "savegame";
+
 	}
 	
 }

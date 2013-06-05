@@ -66,7 +66,14 @@ public class HomeController {
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
 	@RequestMapping(value = "/")
-	public String dash(){
+	public String dash(Model model){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.isAuthenticated()){
+		UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
+		UserEntity ue = us.getUserEntity(user.getId());
+		
+		model.addAttribute("games", ue.getGames());
+		}
 		return "dash";
 	}
 	
