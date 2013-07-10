@@ -1,40 +1,41 @@
 package com.chughes.dip;
 
-import java.util.List;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.chughes.security.UserDAO;
+import com.chughes.security.UserDetailsImpl;
+import com.chughes.security.UserEntity;
+import com.chughes.service.GameService;
 
 @Controller
 public class GameListController {
 
-	@Autowired
-	private SessionFactory sessionFactory;
-	
-	@Transactional
+	@Autowired private GameService gameService;
+	@Autowired private UserDAO userrepo;
+
 	@RequestMapping(value="/gamelist")
 	public String listGames(Model model){
-
-		Session hsession = sessionFactory.getCurrentSession();
-		Query query = hsession.createQuery("from GameEntity");
-		List<GameEntity> games = query.list();
 		
-		model.addAttribute("games", games);
+		model.addAttribute("games", gameService.searchGames());
 		
 		return "gamelist";
 	}
 	
 	@RequestMapping(value="/join/{gameID}")
 	public String join(Model model,@PathVariable(value="gameID") int id){
-		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.isAuthenticated()){
+			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
+			UserEntity ue = userrepo.getUserEntity(user.getId());
+			GameEntity ge = gameService.getGame(id);
+			gameService.addUserToGame(ge, ue);
+		}
 		return "redirect:game/"+id;
 	}
 }

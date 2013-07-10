@@ -41,7 +41,7 @@ public class NewGameController {
 	}
 	
 	@RequestMapping(value = "/savegame")
-	public String saveGame(Model model,@ModelAttribute("game")GameEntity game) throws ParserConfigurationException, NoVariantsException{
+	public String saveGame(Model model,@ModelAttribute("game")GameEntity game){
 
 		Variant vs = VariantManager.getVariant("Standard", 1.0f);
 		World w = null;

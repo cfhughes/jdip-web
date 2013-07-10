@@ -1,10 +1,5 @@
-<html>
-<head>
-<title>Board</title>
+<%@include file="head.jsp" %>
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-
-</head>
-<body>
 	${svg}
 	<div id="bottom-bar"></div>
 	<script>
@@ -38,5 +33,4 @@
 			}
 		});
 	</script>
-</body>
-</html>
+<%@include file="tail.jsp" %>

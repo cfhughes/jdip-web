@@ -1,17 +1,22 @@
 package com.chughes.dip;
 
+import java.util.List;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 import com.chughes.security.UserEntity;
 
 @Entity
 public class UserGameEntity {
 	
+	private List<Message> messages;
 	private UserEntity user;
 	private GameEntity game;
 	private String power;
@@ -45,6 +50,13 @@ public class UserGameEntity {
 	}
 	public void setPower(String power) {
 		this.power = power;
+	}
+	@OneToMany
+	public List<Message> getMessages() {
+		return messages;
+	}
+	public void setMessages(List<Message> messages) {
+		this.messages = messages;
 	}
 
 }

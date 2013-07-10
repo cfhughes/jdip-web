@@ -1,5 +1,6 @@
 package com.chughes.service;
 
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class GameService {
 	@Autowired private UserDAO userRepo;
 	
 	public void addUserToGame(GameEntity game, UserEntity user){
+		if (gameRepo.inGameUser(game.getId(), user.getId()) != null){
+			return;
+		}
 		UserGameEntity uge = new UserGameEntity();
 		uge.setGame(game);
 		uge.setUser(user);
@@ -30,10 +34,19 @@ public class GameService {
 		
 		gameRepo.updateGame(game);
 		userRepo.updateUser(user);
+		//Apparently, hibernate does this already
 		//gameRepo.saveInGameUser(uge);
 	}
 	
 	public void saveGame(GameEntity ge){
 		gameRepo.saveGame(ge);
+	}
+	
+	public List<GameEntity> searchGames(){
+		return gameRepo.queryGames();
+	}
+	
+	public GameEntity getGame(int id){
+		return gameRepo.findById(id);
 	}
 }

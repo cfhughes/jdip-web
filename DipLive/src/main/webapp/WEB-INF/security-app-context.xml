@@ -45,6 +45,8 @@
 				</beans:value>
 				<beans:value>com.chughes.dip.UserGameEntity
 				</beans:value>
+				<beans:value>com.chughes.dip.Message
+				</beans:value>
 			</beans:list>
 		</beans:property>
 

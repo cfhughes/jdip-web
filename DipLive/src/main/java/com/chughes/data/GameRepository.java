@@ -1,7 +1,10 @@
 package com.chughes.data;
 
+import java.util.List;
+
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -46,6 +49,13 @@ public class GameRepository {
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
 		sessionFactory.getCurrentSession().save(ge);
 		sessionFactory.getCurrentSession().flush();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Transactional
+	public List<GameEntity> queryGames(){
+		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity");
+		return query.list();
 	}
 	
 	
