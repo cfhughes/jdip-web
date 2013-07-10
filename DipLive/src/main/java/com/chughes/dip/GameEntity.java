@@ -4,6 +4,7 @@ package com.chughes.dip;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -22,7 +23,7 @@ public class GameEntity {
 	private int id;
 	private String name;
 	
-	@OneToMany(fetch = FetchType.LAZY)
+	@OneToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
 	public Set<UserGameEntity> getPlayers() {
 		return players;
 	}

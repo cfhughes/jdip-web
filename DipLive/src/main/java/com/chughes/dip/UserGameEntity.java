@@ -1,5 +1,6 @@
 package com.chughes.dip;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,14 +26,14 @@ public class UserGameEntity {
 		this.id = id;
 	}
 	
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	public UserEntity getUser() {
 		return user;
 	}
 	public void setUser(UserEntity user) {
 		this.user = user;
 	}
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.ALL)
 	public GameEntity getGame() {
 		return game;
 	}

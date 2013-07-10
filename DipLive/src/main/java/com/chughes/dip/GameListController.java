@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -29,5 +30,11 @@ public class GameListController {
 		model.addAttribute("games", games);
 		
 		return "gamelist";
+	}
+	
+	@RequestMapping(value="/join/{gameID}")
+	public String join(Model model,@PathVariable(value="gameID") int id){
+		
+		return "redirect:game/"+id;
 	}
 }

@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.w3c.dom.svg.SVGDocument;
 
+import com.chughes.data.GameRepository;
 import com.chughes.security.UserDAO;
 import com.chughes.security.UserDetailsImpl;
 import com.chughes.security.UserEntity;
@@ -61,7 +62,7 @@ public class HomeController {
     UserDAO us;
 	
 	@Autowired
-	private SessionFactory sessionFactory;
+	private GameRepository gameRepo;
 
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
@@ -77,7 +78,6 @@ public class HomeController {
 		return "dash";
 	}
 	
-	@Transactional
 	@RequestMapping(value = "/game/{gameID}")
 	public String home(Model model,@PathVariable(value="gameID") int id) throws Exception {
 		
@@ -91,12 +91,8 @@ public class HomeController {
 
 		//response.setContentType("application/xhtml+xml");
 
-		Session hsession = sessionFactory.getCurrentSession();
 		
-		//I put this here to keep hibernate from updating anything
-		hsession.setFlushMode(FlushMode.MANUAL);
-		
-		GameEntity game = (GameEntity) hsession.get(GameEntity.class, id);
+		GameEntity game = gameRepo.findById(id);
 		
 		
 		World w = game.getW();
@@ -146,10 +142,8 @@ public class HomeController {
 //		w.setTurnState(ts);
 //		mr.orderCreated((GUIHold)o);
 		//End of Order Test
-		Query query = hsession.createQuery("from UserGameEntity where game_id = :g and user_id = :u");
-		query.setInteger("g", id);
-		query.setInteger("u", user.getId());
-		UserGameEntity uge = (UserGameEntity) query.uniqueResult();
+		
+		UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
 		Power p1 = w.getMap().getPowerMatching(uge.getPower());
 		
 		
@@ -210,18 +204,14 @@ public class HomeController {
 
 		UserEntity ue = us.getUserEntity(user.getId());
 		
-		Session hsession = sessionFactory.getCurrentSession();
-		
-		GameEntity game = (GameEntity) hsession.get(GameEntity.class, id);
+		GameEntity game = gameRepo.findById(id);
 		
 		World w = game.getW();
 
 		model.addAttribute("success",w.getLastTurnState().getPosition().getUnitCount());
 		
-		Query query = hsession.createQuery("from UserGameEntity where game_id = :g and user_id = :u");
-		query.setInteger("g", id);
-		query.setInteger("u", ue.getId());
-		UserGameEntity uge = (UserGameEntity) query.uniqueResult();
+		
+		UserGameEntity uge = gameRepo.inGameUser(id, ue.getId());
 		
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 
@@ -243,7 +233,7 @@ public class HomeController {
 		w.getLastTurnState().setOrders(p, orders);
 		//model.addAttribute("success", 1);
 
-		hsession.save(game);
+		gameRepo.updateGame(game);
 		
 		return Collections.singletonMap("success", 1);
 	}

@@ -1,18 +1,12 @@
 package com.chughes.dip;
 
-import java.util.HashSet;
-
-import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.chughes.security.UserDAO;
 import com.chughes.security.UserDetailsImpl;
 import com.chughes.security.UserEntity;
+import com.chughes.service.GameService;
 
 import dip.world.InvalidWorldException;
 import dip.world.World;
@@ -33,7 +28,7 @@ import dip.world.variant.data.Variant;
 public class NewGameController {
 	
 	@Autowired
-	private SessionFactory sessionFactory;
+	private GameService gameService;
 	
 	@Autowired
     UserDAO us;
@@ -45,7 +40,6 @@ public class NewGameController {
 		return "newgame";
 	}
 	
-	@Transactional
 	@RequestMapping(value = "/savegame")
 	public String saveGame(Model model,@ModelAttribute("game")GameEntity game) throws ParserConfigurationException, NoVariantsException{
 
@@ -68,22 +62,10 @@ public class NewGameController {
 		UserEntity ue = us.getUserEntity(user.getId());
 		
 		game.setW(w);
-		HashSet<UserGameEntity> players = new HashSet<UserGameEntity>();
-		UserGameEntity uge = new UserGameEntity();
-		uge.setGame(game);
-		uge.setUser(ue);
-		uge.setPower(w.getMap().getPower("England").getName());
-		players.add(uge);
-		game.setPlayers(players);
-	
-		ue.addGame(uge);
-	
-		Session session = sessionFactory.getCurrentSession();
 		
-		session.save(game);
-		session.save(ue);
-		session.save(uge);
-		
+		gameService.saveGame(game);
+		gameService.addUserToGame(game, ue);
+
 		model.addAttribute("id", game.getId());
 		
 		return "savegame";

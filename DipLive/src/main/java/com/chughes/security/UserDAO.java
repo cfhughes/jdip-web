@@ -1,21 +1,22 @@
 package com.chughes.security;
 
 import org.apache.log4j.Logger;
+import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+@Repository
 public class UserDAO{
 
+	@Autowired
 	private SessionFactory sessionFactory;
 
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
-	@Transactional(readOnly=false)
+	@Transactional
 	public void saveUser(UserDetailsImpl user){
 		
 		Session session = sessionFactory.getCurrentSession();
@@ -24,6 +25,13 @@ public class UserDAO{
 		ue.setPassword(user.getPassword());
 		session.save(ue);
 
+	}
+	
+	@Transactional
+	public void updateUser(UserEntity user){
+		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
+		sessionFactory.getCurrentSession().update(user);
+        sessionFactory.getCurrentSession().flush();
 	}
 
 	@Transactional(readOnly=true)
