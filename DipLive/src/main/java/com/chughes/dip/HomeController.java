@@ -57,10 +57,10 @@ import dip.world.variant.data.Variant;
 
 @Controller
 public class HomeController {
-	
+
 	@Autowired
-    UserDAO us;
-	
+	UserDAO us;
+
 	@Autowired
 	private GameRepository gameRepo;
 
@@ -70,35 +70,38 @@ public class HomeController {
 	public String dash(Model model){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.isAuthenticated()){
-		UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
-		UserEntity ue = us.getUserEntity(user.getId());
-		
-		model.addAttribute("games", ue.getGames());
+			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
+			UserEntity ue = us.getUserEntity(user.getId());
+
+			model.addAttribute("games", ue.getGames());
 		}
 		return "dash";
 	}
-	
+
 	@RequestMapping(value = "/game/{gameID}")
 	public String home(Model model,@PathVariable(value="gameID") int id) throws Exception {
-		
+		boolean loggedin = false;
+		UserDetailsImpl user = null;
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		UserDetails user1 = (UserDetails)auth.getPrincipal();
-		UserDetailsImpl user = (UserDetailsImpl) user1;
+		if (auth.getPrincipal() instanceof UserDetails){
+			UserDetails user1 = (UserDetails)auth.getPrincipal();
+			user = (UserDetailsImpl) user1;
 
-		UserEntity ue = us.getUserEntity(user.getId());
-		model.addAttribute("user",ue);
-		
-		
-		System.out.println(user.getUsername()+" is Logged In");
+			UserEntity ue = us.getUserEntity(user.getId());
+			model.addAttribute("user",ue);
 
+
+			System.out.println(user.getUsername()+" is Logged In");
+			loggedin = true;
+		}
 		//response.setContentType("application/xhtml+xml");
 
-		
+
 		GameEntity game = gameRepo.findById(id);
-		
-		
+
+
 		World w = game.getW();
-		
+
 		World.VariantInfo vi = w.getVariantInfo();
 		Variant variant = VariantManager.getVariant( vi.getVariantName(), vi.getVariantVersion() );
 		MapGraphic mg = variant.getMapGrapic( vi.getMapName() );
@@ -132,34 +135,41 @@ public class HomeController {
 		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[1]);
 
 		//Testing Order View
-//		Power p = w.getMap().getPowerMatching("England");
-//		Order o = new GUIOrderFactory().createHold(p, new Location(w.getMap().getProvinceMatching("lon"),Coast.NONE), Unit.Type.UNDEFINED);
-//		ArrayList<Order> al = new ArrayList<Order>();
-//		al.add(o);
-//		TurnState ts = w.getLastTurnState();
-//		ValidationOptions vo = new ValidationOptions();
-//		vo.setOption(ValidationOptions.KEY_GLOBAL_PARSING, ValidationOptions.VALUE_GLOBAL_PARSING_STRICT);
-//		o.validate(ts, vo, null);
-//		ts.setOrders(p, al);
-//		w.setTurnState(ts);
-//		mr.orderCreated((GUIHold)o);
+		//		Power p = w.getMap().getPowerMatching("England");
+		//		Order o = new GUIOrderFactory().createHold(p, new Location(w.getMap().getProvinceMatching("lon"),Coast.NONE), Unit.Type.UNDEFINED);
+		//		ArrayList<Order> al = new ArrayList<Order>();
+		//		al.add(o);
+		//		TurnState ts = w.getLastTurnState();
+		//		ValidationOptions vo = new ValidationOptions();
+		//		vo.setOption(ValidationOptions.KEY_GLOBAL_PARSING, ValidationOptions.VALUE_GLOBAL_PARSING_STRICT);
+		//		o.validate(ts, vo, null);
+		//		ts.setOrders(p, al);
+		//		w.setTurnState(ts);
+		//		mr.orderCreated((GUIHold)o);
 		//End of Order Test
-		
-		UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
-		Power p1 = w.getMap().getPowerMatching(uge.getPower());
-		
-		
+		if (loggedin){
+			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
+			Power p1 = w.getMap().getPowerMatching(uge.getPower());
 
-		
-		RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
+
+
+
+			RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
+			mr.execRenderCommand(rc2);
+			
+			List<Order> orders = w.getLastTurnState().getOrders(p1);
+			for (Order o : orders) {
+				System.out.println(o.toFullString());
+			}
+		}
 		RenderCommand rc = mr.getRenderCommandFactory().createRCSetTurnstate(mr, w.getLastTurnState());
 
 		RenderCommand rc3 = mr.getRenderCommandFactory().createRCRenderAll(mr);
 		//RenderCommand rc4 = mr.getRenderCommandFactory().createRCSetDisplayUnits(mr, true);
 		//RenderCommand rc5 = mr.getRenderCommandFactory().createRCSetLabel(mr, MapRenderer2.VALUE_LABELS_BRIEF);
+
 		
-		mr.execRenderCommand(rc2);
-		
+
 		mr.execRenderCommand(rc);
 		mr.unsyncUpdateAllOrders();
 		//mr.execRenderCommand(rc4);
@@ -186,12 +196,9 @@ public class HomeController {
 		model.addAttribute("gid", id);
 
 		//session.setAttribute("game", w);
+
 		
-		List<Order> orders = w.getLastTurnState().getOrders(p1);
-		for (Order o : orders) {
-			System.out.println(o.toFullString());
-		}
-		
+
 		return "board";
 
 	}
@@ -204,13 +211,13 @@ public class HomeController {
 		UserDetailsImpl user = (UserDetailsImpl) user1;
 
 		UserEntity ue = us.getUserEntity(user.getId());
-		
+
 		GameEntity game = gameRepo.findById(id);
-		
+
 		World w = game.getW();
-		
+
 		UserGameEntity uge = gameRepo.inGameUser(id, ue.getId());
-		
+
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 
 
@@ -227,12 +234,12 @@ public class HomeController {
 		List<Order> orders = w.getLastTurnState().getOrders(p);
 
 		orders.add(o);
-		
+
 		w.getLastTurnState().setOrders(p, orders);
 		//model.addAttribute("success", 1);
 
 		gameRepo.updateGame(game);
-		
+
 		return Collections.singletonMap("success", 1);
 	}
 }

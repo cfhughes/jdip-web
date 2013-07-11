@@ -17,6 +17,10 @@ body {
 	padding-bottom: 60px;
 }
 
+.row-fluid {
+max-width: 100%;
+}
+
 /* Custom container */
 .container {
 	margin: 0 auto;
