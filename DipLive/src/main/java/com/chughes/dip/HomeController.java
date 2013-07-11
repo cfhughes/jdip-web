@@ -85,7 +85,9 @@ public class HomeController {
 		UserDetails user1 = (UserDetails)auth.getPrincipal();
 		UserDetailsImpl user = (UserDetailsImpl) user1;
 
-		//UserEntity ue = us.getUserEntity(user.getId());
+		UserEntity ue = us.getUserEntity(user.getId());
+		model.addAttribute("user",ue);
+		
 		
 		System.out.println(user.getUsername()+" is Logged In");
 
@@ -194,9 +196,8 @@ public class HomeController {
 
 	}
 
-	@Transactional
 	@RequestMapping(value = "/game/{gameID}/move")
-	public @ResponseBody Map<String, ?> move(Model model,@PathVariable(value="gameID") int id,@RequestBody UIMove move) throws Exception {
+	public @ResponseBody Map<String, ?> move(@PathVariable(value="gameID") int id,@RequestBody UIMove move) throws Exception {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		UserDetails user1 = (UserDetails)auth.getPrincipal();
@@ -207,9 +208,6 @@ public class HomeController {
 		GameEntity game = gameRepo.findById(id);
 		
 		World w = game.getW();
-
-		model.addAttribute("success",w.getLastTurnState().getPosition().getUnitCount());
-		
 		
 		UserGameEntity uge = gameRepo.inGameUser(id, ue.getId());
 		
