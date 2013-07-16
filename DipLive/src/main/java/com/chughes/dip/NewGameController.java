@@ -1,7 +1,5 @@
 package com.chughes.dip;
 
-import javax.xml.parsers.ParserConfigurationException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,7 +18,6 @@ import dip.world.InvalidWorldException;
 import dip.world.World;
 import dip.world.World.VariantInfo;
 import dip.world.WorldFactory;
-import dip.world.variant.NoVariantsException;
 import dip.world.variant.VariantManager;
 import dip.world.variant.data.Variant;
 

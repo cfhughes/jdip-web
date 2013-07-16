@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -14,10 +15,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
 import org.apache.batik.util.XMLResourceDescriptor;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +22,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.w3c.dom.svg.SVGDocument;
 
 import com.chughes.data.GameRepository;
@@ -54,7 +52,6 @@ import dip.world.variant.VariantManager;
 import dip.world.variant.data.MapGraphic;
 import dip.world.variant.data.Variant;
 
-
 @Controller
 public class HomeController {
 
@@ -68,19 +65,6 @@ public class HomeController {
 
 	@RequestMapping(value = "/")
 	public String dash(Model model){
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth.isAuthenticated()){
-			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
-			UserEntity ue = us.getUserEntity(user.getId());
-
-			model.addAttribute("games", ue.getGames());
-		}
-		return "dash";
-	}
-
-	@RequestMapping(value = "/game/{gameID}")
-	public String home(Model model,@PathVariable(value="gameID") int id) throws Exception {
-		boolean loggedin = false;
 		UserDetailsImpl user = null;
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getPrincipal() instanceof UserDetails){
@@ -90,6 +74,26 @@ public class HomeController {
 			UserEntity ue = us.getUserEntity(user.getId());
 			model.addAttribute("user",ue);
 
+
+			System.out.println(user.getUsername()+" is Logged In");
+			model.addAttribute("loggedin", true);
+			model.addAttribute("games", ue.getGames());
+		}
+		return "dash";
+	}
+
+	@RequestMapping(value = "/game/{gameID}")
+	public String home(Model model,@PathVariable(value="gameID") int id, HttpSession session) throws Exception {
+		boolean loggedin = false;
+		UserDetailsImpl user = null;
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.getPrincipal() instanceof UserDetails){
+			UserDetails user1 = (UserDetails)auth.getPrincipal();
+			user = (UserDetailsImpl) user1;
+
+			UserEntity ue = us.getUserEntity(user.getId());
+			model.addAttribute("user",ue);
+			model.addAttribute("loggedin", true);
 
 			System.out.println(user.getUsername()+" is Logged In");
 			loggedin = true;
@@ -133,6 +137,8 @@ public class HomeController {
 		SVGDocument doc = f.createSVGDocument(VariantManager.getVariantPackageJarURL(variant).toString(), new StringReader(sw.toString()));
 
 		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[1]);
+		
+		session.setAttribute("mr", mr);
 
 		//Testing Order View
 		//		Power p = w.getMap().getPowerMatching("England");
@@ -147,37 +153,31 @@ public class HomeController {
 		//		w.setTurnState(ts);
 		//		mr.orderCreated((GUIHold)o);
 		//End of Order Test
-		if (loggedin){
-			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
-			Power p1 = w.getMap().getPowerMatching(uge.getPower());
 
-
-
-
-			RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
-			mr.execRenderCommand(rc2);
-			
-			List<Order> orders = w.getLastTurnState().getOrders(p1);
-			for (Order o : orders) {
-				System.out.println(o.toFullString());
-			}
-		}
 		RenderCommand rc = mr.getRenderCommandFactory().createRCSetTurnstate(mr, w.getLastTurnState());
 
 		RenderCommand rc3 = mr.getRenderCommandFactory().createRCRenderAll(mr);
 		//RenderCommand rc4 = mr.getRenderCommandFactory().createRCSetDisplayUnits(mr, true);
 		//RenderCommand rc5 = mr.getRenderCommandFactory().createRCSetLabel(mr, MapRenderer2.VALUE_LABELS_BRIEF);
+		mr.execRenderCommand(rc3);
+		if (loggedin){
+			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
+			Power p1 = w.getMap().getPowerMatching(uge.getPower());
 
-		
+			RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
+			mr.execRenderCommand(rc2);
 
+			List<Order> orders = w.getLastTurnState().getOrders(p1);
+			for (Order o : orders) {
+				System.out.println(o.toFullString());
+			}
+		}
 		mr.execRenderCommand(rc);
 		mr.unsyncUpdateAllOrders();
 		//mr.execRenderCommand(rc4);
 		//mr.execRenderCommand(rc5);
-		mr.execRenderCommand(rc3);
-
+		
 		//ServletOutputStream os = response.getOutputStream();
-
 
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer1 = tf.newTransformer();
@@ -197,14 +197,12 @@ public class HomeController {
 
 		//session.setAttribute("game", w);
 
-		
-
 		return "board";
 
 	}
 
-	@RequestMapping(value = "/game/{gameID}/move")
-	public @ResponseBody Map<String, ?> move(@PathVariable(value="gameID") int id,@RequestBody UIMove move) throws Exception {
+	@RequestMapping(value = "/game/{gameID}/JSONorder")
+	public @ResponseBody Map<String, ?> move(@PathVariable(value="gameID") int id,HttpSession session,@RequestBody UIOrder order) throws Exception {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		UserDetails user1 = (UserDetails)auth.getPrincipal();
@@ -220,8 +218,13 @@ public class HomeController {
 
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 
-
-		Order o = new GUIOrderFactory().createMove(p, new Location(w.getMap().getProvinceMatching(move.getFrom()),Coast.NONE), Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(move.getTo()),Coast.NONE));
+		DefaultMapRenderer2 mr = (DefaultMapRenderer2) session.getAttribute("mr");
+		Location location = mr.getLocation(order.getLoc());
+		Location location1 = mr.getLocation(order.getLoc1());
+		logger.info("From: "+location.getCoast());
+		if (location.getCoast().equals(Coast.UNDEFINED))location = new Location(location.getProvince(),Coast.NONE);
+		if (location1.getCoast().equals(Coast.UNDEFINED))location1 = new Location(location1.getProvince(),Coast.NONE);
+		Order o = new GUIOrderFactory().createMove(p, location, Unit.Type.UNDEFINED, location1);
 		ValidationOptions vo = new ValidationOptions();
 		vo.setOption(ValidationOptions.KEY_GLOBAL_PARSING, ValidationOptions.VALUE_GLOBAL_PARSING_STRICT);
 		try{

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +11,9 @@
 <meta name="author" content="">
 
 <!-- Le styles -->
-<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css" rel="stylesheet">
+<link
+	href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"
+	rel="stylesheet">
 <style type="text/css">
 body {
 	padding-top: 20px;
@@ -18,13 +21,14 @@ body {
 }
 
 .row-fluid {
-max-width: 100%;
+	max-width: 100%;
 }
 
 /* Custom container */
 .container {
 	margin: 0 auto;
 	max-width: 1300px;
+
 }
 
 .container>hr {
@@ -59,6 +63,10 @@ max-width: 100%;
 
 .marketing p+h4 {
 	margin-top: 28px;
+}
+
+#MouseLayer{
+	visibility:visible;
 }
 
 /* Customize the navbar links to be fill the entire space of the .navbar */
@@ -105,10 +113,21 @@ max-width: 100%;
 
 <body>
 
-	<div class="container">
+	<div class="container" style="	background-color:#E3F2E3;min-height:100%;padding-left:10px;padding-right:10px;">
 
 		<div class="masthead">
-			<p class="pull-right">User: ${user.username}</p>
+			<p class="pull-right">
+			<c:choose>
+			<c:when test="${loggedin}">
+				User: ${user.username} <a
+					href="<c:url value="/j_spring_security_logout" context="/dip"/>"> Logout</a>
+			</c:when>
+			<c:otherwise>
+			<a href="<c:url value="/spring_security_login" context="/dip"/>"><button>Login</button></a>
+			<a href="<c:url value="/newuser" context="/dip"/>"><button>Register</button></a>
+			</c:otherwise>
+			</c:choose>
+			</p>
 			<h3 class="muted">Diplomacy</h3>
 			<div class="navbar">
 				<div class="navbar-inner">
@@ -120,12 +139,9 @@ max-width: 100%;
 						</button>
 						<div class="nav-collapse collapse">
 							<ul class="nav">
-								<li class="active"><a href="#">Home</a></li>
-								<li><a href="#">Projects</a></li>
-								<li><a href="#">Services</a></li>
-								<li><a href="#">Downloads</a></li>
-								<li><a href="#">About</a></li>
-								<li><a href="#">Contact</a></li>
+								<li><a href="<c:url value="/ " context="/dip"/>">Home</a></li>
+								<li><a href="<c:url value="/gamelist" context="/dip"/>">All Games</a></li>
+								<li><a href="<c:url value="/newgame" context="/dip"/>">New Game</a></li>
 							</ul>
 						</div>
 					</div>
