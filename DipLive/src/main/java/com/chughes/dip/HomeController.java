@@ -159,7 +159,7 @@ public class HomeController {
 		RenderCommand rc3 = mr.getRenderCommandFactory().createRCRenderAll(mr);
 		//RenderCommand rc4 = mr.getRenderCommandFactory().createRCSetDisplayUnits(mr, true);
 		//RenderCommand rc5 = mr.getRenderCommandFactory().createRCSetLabel(mr, MapRenderer2.VALUE_LABELS_BRIEF);
-		mr.execRenderCommand(rc3);
+		
 		if (loggedin){
 			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
 			Power p1 = w.getMap().getPowerMatching(uge.getPower());
@@ -176,7 +176,7 @@ public class HomeController {
 		mr.unsyncUpdateAllOrders();
 		//mr.execRenderCommand(rc4);
 		//mr.execRenderCommand(rc5);
-		
+		mr.execRenderCommand(rc3);
 		//ServletOutputStream os = response.getOutputStream();
 
 		TransformerFactory tf = TransformerFactory.newInstance();
@@ -219,12 +219,8 @@ public class HomeController {
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 
 		DefaultMapRenderer2 mr = (DefaultMapRenderer2) session.getAttribute("mr");
-		Location location = mr.getLocation(order.getLoc());
-		Location location1 = mr.getLocation(order.getLoc1());
-		logger.info("From: "+location.getCoast());
-		if (location.getCoast().equals(Coast.UNDEFINED))location = new Location(location.getProvince(),Coast.NONE);
-		if (location1.getCoast().equals(Coast.UNDEFINED))location1 = new Location(location1.getProvince(),Coast.NONE);
-		Order o = new GUIOrderFactory().createMove(p, location, Unit.Type.UNDEFINED, location1);
+
+		Order o = new GUIOrderFactory().createMove(p, new Location(w.getMap().getProvinceMatching(order.getLoc()),Coast.NONE), Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc1()),Coast.NONE));
 		ValidationOptions vo = new ValidationOptions();
 		vo.setOption(ValidationOptions.KEY_GLOBAL_PARSING, ValidationOptions.VALUE_GLOBAL_PARSING_STRICT);
 		try{
