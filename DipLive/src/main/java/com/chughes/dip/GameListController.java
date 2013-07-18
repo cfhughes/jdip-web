@@ -3,6 +3,7 @@ package com.chughes.dip;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,10 +28,10 @@ public class GameListController {
 		return "gamelist";
 	}
 	
-	@RequestMapping(value="/join/{gameID}")
+	@RequestMapping(value="/joingame/{gameID}")
 	public String join(Model model,@PathVariable(value="gameID") int id){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth.isAuthenticated()){
+		if (auth.getPrincipal() instanceof UserDetails){
 			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
 			UserEntity ue = userrepo.getUserEntity(user.getId());
 			GameEntity ge = gameService.getGame(id);

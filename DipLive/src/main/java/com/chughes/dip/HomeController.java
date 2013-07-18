@@ -23,15 +23,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttributes;
 import org.w3c.dom.svg.SVGDocument;
 
 import com.chughes.data.GameRepository;
+import com.chughes.dip.GameEntity.Stage;
 import com.chughes.security.UserDAO;
 import com.chughes.security.UserDetailsImpl;
 import com.chughes.security.UserEntity;
@@ -55,11 +54,8 @@ import dip.world.variant.data.Variant;
 @Controller
 public class HomeController {
 
-	@Autowired
-	UserDAO us;
-
-	@Autowired
-	private GameRepository gameRepo;
+	@Autowired UserDAO us;
+	@Autowired private GameRepository gameRepo;
 
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
@@ -73,7 +69,6 @@ public class HomeController {
 
 			UserEntity ue = us.getUserEntity(user.getId());
 			model.addAttribute("user",ue);
-
 
 			System.out.println(user.getUsername()+" is Logged In");
 			model.addAttribute("loggedin", true);
@@ -102,7 +97,6 @@ public class HomeController {
 
 
 		GameEntity game = gameRepo.findById(id);
-
 
 		World w = game.getW();
 
@@ -137,7 +131,7 @@ public class HomeController {
 		SVGDocument doc = f.createSVGDocument(VariantManager.getVariantPackageJarURL(variant).toString(), new StringReader(sw.toString()));
 
 		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[1]);
-		
+
 		session.setAttribute("mr", mr);
 
 		//Testing Order View
@@ -159,17 +153,20 @@ public class HomeController {
 		RenderCommand rc3 = mr.getRenderCommandFactory().createRCRenderAll(mr);
 		//RenderCommand rc4 = mr.getRenderCommandFactory().createRCSetDisplayUnits(mr, true);
 		//RenderCommand rc5 = mr.getRenderCommandFactory().createRCSetLabel(mr, MapRenderer2.VALUE_LABELS_BRIEF);
-		
+		boolean member = false;
 		if (loggedin){
 			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
-			Power p1 = w.getMap().getPowerMatching(uge.getPower());
-
-			RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
-			mr.execRenderCommand(rc2);
-
-			List<Order> orders = w.getLastTurnState().getOrders(p1);
-			for (Order o : orders) {
-				System.out.println(o.toFullString());
+			if (uge != null){
+				member = true;
+				if (game.getStage() == Stage.PLAYING){
+					Power p1 = w.getMap().getPowerMatching(uge.getPower());
+					RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
+					mr.execRenderCommand(rc2);
+					List<Order> orders = w.getLastTurnState().getOrders(p1);
+					for (Order o : orders) {
+						System.out.println(o.toFullString());
+					}
+				}
 			}
 		}
 		mr.execRenderCommand(rc);
@@ -194,11 +191,12 @@ public class HomeController {
 
 		model.addAttribute("svg", sw1.toString());
 		model.addAttribute("gid", id);
-
+		model.addAttribute("players", game.getPlayers());
+		model.addAttribute("member_of_game", member);
+		model.addAttribute("started", game.getStage() == Stage.PLAYING);
 		//session.setAttribute("game", w);
 
 		return "board";
-
 	}
 
 	@RequestMapping(value = "/game/{gameID}/JSONorder")
@@ -219,8 +217,27 @@ public class HomeController {
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 
 		DefaultMapRenderer2 mr = (DefaultMapRenderer2) session.getAttribute("mr");
+		Order o = null;
+		switch (order.getType()) {
+		case "order-move":
+			o = new GUIOrderFactory().createMove(p, new Location(w.getMap().getProvinceMatching(order.getLoc()),Coast.NONE), Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc1()),Coast.NONE));
+			break;
+		case "order-hold":
+			o = new GUIOrderFactory().createHold(p, new Location(w.getMap().getProvinceMatching(order.getLoc()),Coast.NONE), Unit.Type.UNDEFINED);
+			break;
+		case "order-shold":
+			o = new GUIOrderFactory().createSupport(p, new Location(w.getMap().getProvinceMatching(order.getLoc()), Coast.NONE),Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc1()), Coast.NONE), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED);
+			break;
+		case "order-smove":
+			o = new GUIOrderFactory().createSupport(p, new Location(w.getMap().getProvinceMatching(order.getLoc()), Coast.NONE),Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc1()), Coast.NONE), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED,new Location(w.getMap().getProvinceMatching(order.getLoc2()), Coast.NONE));
+			break;
+		case "order-convoy":
+			o = new GUIOrderFactory().createConvoy(p, new Location(w.getMap().getProvinceMatching(order.getLoc()), Coast.NONE), Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc1()), Coast.NONE), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc2()), Coast.NONE));
+			break;
+		default:
+			break;
+		}
 
-		Order o = new GUIOrderFactory().createMove(p, new Location(w.getMap().getProvinceMatching(order.getLoc()),Coast.NONE), Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc1()),Coast.NONE));
 		ValidationOptions vo = new ValidationOptions();
 		vo.setOption(ValidationOptions.KEY_GLOBAL_PARSING, ValidationOptions.VALUE_GLOBAL_PARSING_STRICT);
 		try{

@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.chughes.dip.GameEntity.Stage;
 import com.chughes.security.UserDAO;
 import com.chughes.security.UserDetailsImpl;
 import com.chughes.security.UserEntity;
@@ -59,6 +60,8 @@ public class NewGameController {
 		UserEntity ue = us.getUserEntity(user.getId());
 		
 		game.setW(w);
+		game.setStage(Stage.PREGAME);
+		game.setMaxplayers(vs.getPowers().length);
 		
 		gameService.saveGame(game);
 		gameService.addUserToGame(game, ue);

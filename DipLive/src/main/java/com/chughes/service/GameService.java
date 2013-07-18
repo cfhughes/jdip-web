@@ -5,9 +5,12 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.chughes.data.GameRepository;
 import com.chughes.dip.GameEntity;
+import com.chughes.dip.GameEntity.Stage;
+import com.chughes.dip.GameMaster;
 import com.chughes.dip.UserGameEntity;
 import com.chughes.security.UserDAO;
 import com.chughes.security.UserEntity;
@@ -17,18 +20,24 @@ public class GameService {
 
 	@Autowired private GameRepository gameRepo;
 	@Autowired private UserDAO userRepo;
+	@Autowired private GameMaster gm;
 
+	@Transactional
 	public void addUserToGame(GameEntity game, UserEntity user){
+		if (game.getStage() != Stage.PREGAME){
+			return;
+		}
 		if (gameRepo.inGameUser(game.getId(), user.getId()) != null){
 			return;
 		}
 		UserGameEntity uge = new UserGameEntity();
 		uge.setGame(game);
-		uge.setUser(user);
-		//TODO: Some sort of power selection
-		uge.setPower("England");
+		uge.setUser(user);		
 		Set<UserGameEntity> players = game.getPlayers();
 		players.add(uge);
+		if (players.size() == game.getMaxplayers()){
+			gm.beginGame(game);
+		}
 		game.setPlayers(players);
 		user.addGame(uge);
 

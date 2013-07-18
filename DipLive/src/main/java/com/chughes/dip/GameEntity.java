@@ -6,6 +6,8 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,13 +19,16 @@ import dip.world.World;
 
 @Entity
 public class GameEntity {
+	public enum Stage {PREGAME,PLAYING,ENDED};
 	
+	private Stage stage;
 	private Set<UserGameEntity> players = new HashSet<UserGameEntity>();
 	private World w;
 	private int id;
 	private String name;
+	private int maxplayers;
 	
-	@OneToMany(fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+	@OneToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
 	public Set<UserGameEntity> getPlayers() {
 		return players;
 	}
@@ -50,6 +55,19 @@ public class GameEntity {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public int getMaxplayers() {
+		return maxplayers;
+	}
+	public void setMaxplayers(int maxplayers) {
+		this.maxplayers = maxplayers;
+	}
+	@Enumerated(EnumType.STRING)
+	public Stage getStage() {
+		return stage;
+	}
+	public void setStage(Stage stage) {
+		this.stage = stage;
 	}
 	
 }

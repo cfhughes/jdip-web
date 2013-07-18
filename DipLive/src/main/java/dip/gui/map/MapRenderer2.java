@@ -180,7 +180,7 @@ public abstract class MapRenderer2
 //				}
 			}
 		}
-		else if(isReady)
+		else if(true)
 		{
 			// a RCSetTurnstate() has been issued. We can accept render events.
 			// if we have queued events, add them.
