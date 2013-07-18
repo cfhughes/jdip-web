@@ -1,6 +1,7 @@
 <%@include file="head.jsp"%>
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 ${svg}
+<br/>
 <c:if test="${member_of_game and started}">
 <div id="order-type" class="btn-group">
 	<button id="order-move" class="btn active">Move</button>

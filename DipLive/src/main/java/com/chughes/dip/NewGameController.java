@@ -6,8 +6,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.chughes.dip.GameEntity.Stage;
 import com.chughes.security.UserDAO;
@@ -35,13 +37,14 @@ public class NewGameController {
 	public String newGame(Model model){
 		GameEntity ge = new GameEntity();
 		model.addAttribute("game", ge);
+		model.addAttribute("variants",VariantManager.getVariants());
 		return "newgame";
 	}
 	
 	@RequestMapping(value = "/savegame")
-	public String saveGame(Model model,@ModelAttribute("game")GameEntity game){
+	public String saveGame(Model model,@ModelAttribute("game")GameEntity game,@RequestParam(value="variant")String variant){
 
-		Variant vs = VariantManager.getVariant("Standard", 1.0f);
+		Variant vs = VariantManager.getVariant(variant, 1.0f);
 		World w = null;
 		try {
 			w = WorldFactory.getInstance().createWorld(vs);
@@ -49,7 +52,7 @@ public class NewGameController {
 			e.printStackTrace();
 		}
 		VariantInfo vi1 =new VariantInfo();
-		vi1.setVariantName("Standard");
+		vi1.setVariantName(variant);
 		vi1.setVariantVersion(1.0f);
 		w.setVariantInfo(vi1);
 		
