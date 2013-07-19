@@ -1,5 +1,6 @@
 package com.chughes.data;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.FlushMode;
@@ -7,15 +8,20 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chughes.dip.GameEntity;
 import com.chughes.dip.UserGameEntity;
 
+import dip.gui.map.DefaultMapRenderer2;
+
 @Repository
 public class GameRepository {
 	protected @Autowired SessionFactory sessionFactory;
+	
+	private DefaultMapRenderer2 mr; 
 	
 	@Transactional(readOnly = true)
 	public GameEntity findById(int id){
@@ -56,6 +62,14 @@ public class GameRepository {
 	public List<GameEntity> queryGames(){
 		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity");
 		return query.list();
+	}
+
+	public DefaultMapRenderer2 getMr() {
+		return mr;
+	}
+
+	public void setMr(DefaultMapRenderer2 mr) {
+		this.mr = mr;
 	}
 	
 	

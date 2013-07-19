@@ -403,7 +403,7 @@ public class GUIMove extends Move implements GUIOrder
 			float offset = mapInfo.getMapMetadata().getOrderParamFloat(MapMetadata.EL_MOVE, MapMetadata.ATT_HILIGHT_OFFSET);	
 			float width = GUIOrderUtils.getLineWidth(mapInfo, MapMetadata.EL_MOVE, MapMetadata.ATT_SHADOW_WIDTHS, numSupports);
 			
-			element = drawOrder(mapInfo, offset, false);
+			element = drawNCOrder(mapInfo, offset, false);
 			element.setAttributeNS(null, SVGConstants.SVG_STROKE_WIDTH_ATTRIBUTE, GUIOrderUtils.floatToString(width));
 			
 			GUIOrderUtils.makeHilight(element, mapInfo.getMapMetadata(), MapMetadata.EL_MOVE);
@@ -413,8 +413,10 @@ public class GUIMove extends Move implements GUIOrder
 		// create real line
 		float width = GUIOrderUtils.getLineWidth(mapInfo, MapMetadata.EL_MOVE, MapMetadata.ATT_WIDTHS, numSupports);
 		
-		element = drawOrder(mapInfo, 0, true);
+		element = drawNCOrder(mapInfo, 0, true);
 		element.setAttributeNS(null, SVGConstants.SVG_STROKE_WIDTH_ATTRIBUTE, GUIOrderUtils.floatToString(width));
+		
+		
 		
 		GUIOrderUtils.makeStyled(element, mapInfo.getMapMetadata(), MapMetadata.EL_MOVE, power);
 		group.appendChild(element);
@@ -429,7 +431,7 @@ public class GUIMove extends Move implements GUIOrder
 	
 	
 	/** draws convoyed or non-convoyed order, depending upon flag */
-	private SVGElement drawOrder(MapInfo mapInfo, float offset, boolean addMarker)
+	public SVGElement[] drawOrder(MapInfo mapInfo)
 	{
 		/*
 		if(isByConvoy())
@@ -442,7 +444,7 @@ public class GUIMove extends Move implements GUIOrder
 		}
 		*/
 		
-		return drawNCOrder(mapInfo, offset, addMarker);
+		return new SVGElement[]{drawNCOrder(mapInfo, 0, true)};
 	}// drawOrder()
 	
 	
@@ -510,6 +512,8 @@ public class GUIMove extends Move implements GUIOrder
 		{
 			GUIOrderUtils.addMarker(line, mmd, MapMetadata.EL_MOVE);
 		}
+		
+		System.out.println(line.getXMLbase());
 		
 		// end
 		return line;

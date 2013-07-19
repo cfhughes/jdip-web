@@ -43,6 +43,7 @@ import dip.process.Adjustment.AdjustmentInfoMap;
 import dip.process.RetreatChecker;
 
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGElement;
 import org.w3c.dom.svg.SVGGElement;
 
 
@@ -141,6 +142,8 @@ public interface GUIOrder extends Orderable
 	
 	/** Updates the DOM, given the given parameters. Adds if appropriate. */
 	public void updateDOM(MapInfo mapInfo);
+	
+	public SVGElement[] drawOrder(MapInfo mapInfo);
 	
 	/** Removes order from the DOM */
 	public void removeFromDOM(MapInfo mapInfo);

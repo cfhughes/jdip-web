@@ -22,6 +22,7 @@
 //
 package dip.world.variant.data;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -32,7 +33,7 @@ import java.util.List;
 *
 *
 */
-public class SymbolPack implements Comparable
+public class SymbolPack implements Comparable,Serializable
 {
 	private String 		name = null;
 	private float 		version = 0.0f;

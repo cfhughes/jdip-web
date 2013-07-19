@@ -785,6 +785,13 @@ public class GUIMoveExplicit extends Move implements GUIOrder
 			super(name);
 		}// MoveParameter()
 	}// nested class MoveParameter
+
+
+
+	@Override
+	public SVGElement[] drawOrder(MapInfo mapInfo) {
+		return new SVGElement[]{drawOrder(mapInfo, 0, true)};
+	}
 	
 	
 }// class GUIMoveExplicit

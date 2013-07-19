@@ -428,5 +428,10 @@ public class GUIRetreat extends Retreat implements GUIOrder
 		}
 	}// getRetLocText()
 
+	@Override
+	public SVGElement[] drawOrder(MapInfo mapInfo) {
+		return new SVGElement[]{drawOrder(mapInfo, 0, true)};
+	}
+
 	
 }// class GUIRetreat

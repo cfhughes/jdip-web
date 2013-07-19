@@ -22,6 +22,8 @@
 //
 package dip.gui.map;
  
+import java.io.Serializable;
+
 import dip.gui.map.RenderCommandFactory.*;
 
 import dip.misc.Log;
@@ -32,7 +34,7 @@ import dip.world.Province;
 
 import org.w3c.dom.svg.SVGElement;
 
-public class DMR2RenderCommandFactory extends RenderCommandFactory
+public class DMR2RenderCommandFactory extends RenderCommandFactory implements Serializable
 {
 	
 	/** */

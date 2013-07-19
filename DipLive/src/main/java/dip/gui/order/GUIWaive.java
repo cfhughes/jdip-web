@@ -320,7 +320,7 @@ public class GUIWaive extends Waive implements GUIOrder
 		// (no highlight + shadow required here)
 		// no offset required
 		//
-		group.appendChild(drawOrder(mapInfo));
+		group.appendChild(drawOrder(mapInfo)[0]);
 		
 		// draw 'failed' marker, if appropriate.
 		if(!mapInfo.getTurnState().isOrderSuccessful(this))
@@ -331,7 +331,7 @@ public class GUIWaive extends Waive implements GUIOrder
 	}// updateDOM()
 	
 	
-	private SVGElement drawOrder(MapInfo mapInfo)
+	public SVGElement[] drawOrder(MapInfo mapInfo)
 	{
 		MapMetadata mmd = mapInfo.getMapMetadata();
 		
@@ -358,7 +358,7 @@ public class GUIWaive extends Waive implements GUIOrder
 			center.y,
 			symbolSize);
 		
-		return element;
+		return new SVGElement[]{element};
 	}// drawOrder()	
 	
 	

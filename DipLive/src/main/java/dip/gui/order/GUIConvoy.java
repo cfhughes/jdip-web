@@ -453,6 +453,10 @@ public class GUIConvoy extends Convoy implements GUIOrder
 		}
 	}// updateDOM()
 	
+	public SVGElement[] drawOrder(MapInfo mapInfo)
+	{
+		return drawOrder(mapInfo, 0, true);
+	}
 	
 	private SVGElement[] drawOrder(MapInfo mapInfo, float offset, boolean addMarker)
 	{

@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.w3c.dom.svg.SVGDocument;
+import org.w3c.dom.svg.SVGElement;
 
 import com.chughes.data.GameRepository;
 import com.chughes.dip.GameEntity.Stage;
@@ -36,11 +37,20 @@ import com.chughes.security.UserDetailsImpl;
 import com.chughes.security.UserEntity;
 
 import dip.gui.map.DefaultMapRenderer2;
+import dip.gui.map.DefaultMapRenderer2.DMRMapInfo;
 import dip.gui.map.RenderCommandFactory.RenderCommand;
 import dip.gui.map.SymbolInjector;
+import dip.gui.order.GUIConvoy;
+import dip.gui.order.GUIHold;
+import dip.gui.order.GUIMove;
+import dip.gui.order.GUIOrder;
 import dip.gui.order.GUIOrderFactory;
+import dip.gui.order.GUISupport;
+import dip.gui.order.GUIOrder.MapInfo;
+import dip.order.Move;
 import dip.order.Order;
 import dip.order.OrderException;
+import dip.order.Support;
 import dip.order.ValidationOptions;
 import dip.world.Coast;
 import dip.world.Location;
@@ -132,7 +142,7 @@ public class HomeController {
 
 		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[1]);
 
-		session.setAttribute("mr", mr);
+		gameRepo.setMr(mr);
 
 		//Testing Order View
 		//		Power p = w.getMap().getPowerMatching("England");
@@ -189,6 +199,8 @@ public class HomeController {
 
 		transformer1.transform(new DOMSource(doc), new StreamResult(sw1));
 
+		//session.setAttribute("svg", doc);
+		
 		model.addAttribute("svg", sw1.toString());
 		model.addAttribute("gid", id);
 		model.addAttribute("players", game.getPlayers());
@@ -216,7 +228,7 @@ public class HomeController {
 
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 
-		DefaultMapRenderer2 mr = (DefaultMapRenderer2) session.getAttribute("mr");
+		DefaultMapRenderer2 mr = gameRepo.getMr();
 		Order o = null;
 		switch (order.getType()) {
 		case "order-move":
@@ -247,15 +259,36 @@ public class HomeController {
 		}
 		logger.info("From: "+o.getSourceUnitType());
 
+		SVGElement[] elements = ((GUIOrder)o).drawOrder(mr.new DMRMapInfo(w.getLastTurnState()));
+		
+		String result = "";
+		
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer1 = tf.newTransformer();
+		transformer1.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		transformer1.setOutputProperty(OutputKeys.METHOD, "xml");
+		transformer1.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer1.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+		//ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		StringWriter sw1 = new StringWriter();
+
+		for (int i = 0; i < elements.length; i++) {
+			transformer1.transform(new DOMSource(elements[i]), new StreamResult(sw1));
+		}
+		
 		List<Order> orders = w.getLastTurnState().getOrders(p);
 
 		orders.add(o);
+		
+		
 
 		w.getLastTurnState().setOrders(p, orders);
 		//model.addAttribute("success", 1);
 
 		gameRepo.updateGame(game);
 
-		return Collections.singletonMap("success", 1);
+		return Collections.singletonMap("success",sw1.toString());
 	}
 }

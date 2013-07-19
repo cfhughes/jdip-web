@@ -254,7 +254,7 @@ public class GUIRemove extends Remove implements GUIOrder
 		// unlike typical orders (move, hold, etc.)
 		// we use a symbol; thus we don't have to draw highlight and shadow svg elements.
 		//
-		group.appendChild(drawOrder(mapInfo));
+		group.appendChild(drawOrder(mapInfo)[0]);
 		
 		// draw 'failed' marker, if appropriate.
 		if(!mapInfo.getTurnState().isOrderSuccessful(this))
@@ -264,7 +264,7 @@ public class GUIRemove extends Remove implements GUIOrder
 		}
 	}// updateDOM()
 	
-	private SVGElement drawOrder(MapInfo mapInfo)
+	public SVGElement[] drawOrder(MapInfo mapInfo)
 	{
 		MapMetadata mmd = mapInfo.getMapMetadata();
 		// Note: Remove orders use unit; Disband orders use the dislodged unit coordinates.
@@ -289,7 +289,7 @@ public class GUIRemove extends Remove implements GUIOrder
 			symbolSize);
 			
 		// add to parent
-		return useElement;
+		return new SVGElement[]{useElement};
 	}// drawOrder()
 	
 	public boolean isDependent()	{ return false; }

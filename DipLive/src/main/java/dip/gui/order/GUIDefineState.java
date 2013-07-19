@@ -22,6 +22,8 @@
 //
 package dip.gui.order;
 
+import org.w3c.dom.svg.SVGElement;
+
 import dip.order.DefineState;
 import dip.order.Orderable;
 import dip.order.ValidationOptions;
@@ -135,6 +137,13 @@ public class GUIDefineState extends DefineState implements GUIOrder
 	}// updateDOM()	
 	
 	public boolean isDependent()	{ return false; }
+
+
+	@Override
+	public SVGElement[] drawOrder(MapInfo mapInfo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 	
 }// class GUIDefineState

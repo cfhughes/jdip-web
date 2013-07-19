@@ -716,5 +716,15 @@ public class GUISupport extends Support implements GUIOrder
 	}// checkMove()
 
 
+	@Override
+	public SVGElement[] drawOrder(MapInfo mapInfo) {
+		if (isSupportingHold()){
+			return drawSupportedHold(mapInfo, 0);
+		}else{
+			return drawSupportedMove(mapInfo, 0, true);
+		}
+	}
+
+
 	
 }// class GUISupport

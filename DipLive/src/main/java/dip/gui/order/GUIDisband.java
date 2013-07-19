@@ -238,7 +238,7 @@ public class GUIDisband extends Disband implements GUIOrder
 		
 		// now, render the order
 		//
-		group.appendChild(drawOrder(mapInfo));
+		group.appendChild(drawSingleOrder(mapInfo));
 		
 		// draw 'failed' marker, if appropriate.
 		if(!mapInfo.getTurnState().isOrderSuccessful(this))
@@ -248,8 +248,12 @@ public class GUIDisband extends Disband implements GUIOrder
 		}
 	}// updateDOM()
 	
+	public SVGElement[] drawOrder(MapInfo mapInfo)
+	{
+		return new SVGElement[]{drawSingleOrder(mapInfo)};
+	}
 	
-	private SVGElement drawOrder(MapInfo mapInfo)
+	private SVGElement drawSingleOrder(MapInfo mapInfo)
 	{
 		MapMetadata mmd = mapInfo.getMapMetadata();
 		Point2D.Float srcPt = mmd.getDislodgedUnitPt(src.getProvince(), src.getCoast());	// dislodged unit!

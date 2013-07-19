@@ -362,7 +362,7 @@ public class GUIBuild extends Build implements GUIOrder
 	}// updateDOM()
 	
 	
-	private SVGElement[] drawOrder(MapInfo mapInfo)
+	public SVGElement[] drawOrder(MapInfo mapInfo)
 	{
 		MapMetadata mmd = mapInfo.getMapMetadata();
 		Point2D.Float center = mmd.getUnitPt(src.getProvince(), src.getCoast());

@@ -29,6 +29,7 @@ import dip.gui.order.GUIOrder;
 import dip.gui.order.GUIOrder.MapInfo;
 
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -77,7 +78,7 @@ import org.apache.batik.css.engine.*;
 *
 *
 */
-public class DefaultMapRenderer2 extends MapRenderer2
+public class DefaultMapRenderer2 extends MapRenderer2 implements Serializable
 {
 	// Symbol Names
 	//

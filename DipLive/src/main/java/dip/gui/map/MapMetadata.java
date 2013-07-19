@@ -44,6 +44,7 @@ import java.util.Properties;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.io.StringReader;
 import java.io.IOException;
 
@@ -68,7 +69,7 @@ import org.apache.batik.util.SVGConstants;
 *
 *
 */
-public class MapMetadata
+public class MapMetadata implements Serializable
 {
 	/** jDip namespace constant */
 	public static final String JDIP_NAMESPACE = "http://jdip.sourceforge.org/jdipNS";
