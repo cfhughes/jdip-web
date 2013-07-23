@@ -41,7 +41,8 @@ ${svg}
 					contentType : 'application/json',
 					type : 'POST',
 					success : function(msg) {
-						alert(msg["success"]);
+						$("#Layer1").append(msg["success"]);
+						console.log(msg)
 					}
 				});
 			}

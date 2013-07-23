@@ -69,6 +69,10 @@ import java.util.*;
 public class Province implements java.io.Serializable, Comparable
 {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4248077817013191699L;
 	// immutable persistent fields
 	private final String fullName; 				// fullName MUST BE UNIQUE
 	private final String shortNames[]; 			// always has AT LEAST one, and all are globally unique
@@ -91,6 +95,10 @@ public class Province implements java.io.Serializable, Comparable
 	*/
 	protected static class Adjacency implements java.io.Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -7184227986040255178L;
 		private final HashMap adjLoc;
 		
 		/**

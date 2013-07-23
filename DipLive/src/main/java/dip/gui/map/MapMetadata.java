@@ -246,7 +246,11 @@ public class MapMetadata implements Serializable
 	
 	/** Convenience method: get Unit placement point for this Province */
 	public Point2D.Float getUnitPt(Province key, Coast coast)
-	{ return getInfoEntry(key).getUnitPt(coast); }
+	{ 
+		InfoEntry entry = getInfoEntry(key);
+		return entry.getUnitPt(coast); 
+	
+	}
 	
 	/** Convenience method: get Dislodged Unit placement point for this Province */
 	public Point2D.Float getDislodgedUnitPt(Province key, Coast coast)	

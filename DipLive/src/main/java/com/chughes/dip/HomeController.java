@@ -229,22 +229,23 @@ public class HomeController {
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 
 		DefaultMapRenderer2 mr = gameRepo.getMr();
+
 		Order o = null;
 		switch (order.getType()) {
 		case "order-move":
-			o = new GUIOrderFactory().createMove(p, new Location(w.getMap().getProvinceMatching(order.getLoc()),Coast.NONE), Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc1()),Coast.NONE));
+			o = new GUIOrderFactory().createMove(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()));
 			break;
 		case "order-hold":
-			o = new GUIOrderFactory().createHold(p, new Location(w.getMap().getProvinceMatching(order.getLoc()),Coast.NONE), Unit.Type.UNDEFINED);
+			o = new GUIOrderFactory().createHold(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED);
 			break;
 		case "order-shold":
-			o = new GUIOrderFactory().createSupport(p, new Location(w.getMap().getProvinceMatching(order.getLoc()), Coast.NONE),Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc1()), Coast.NONE), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED);
+			o = new GUIOrderFactory().createSupport(p, mr.getLocation(order.getLoc()),Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED);
 			break;
 		case "order-smove":
-			o = new GUIOrderFactory().createSupport(p, new Location(w.getMap().getProvinceMatching(order.getLoc()), Coast.NONE),Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc1()), Coast.NONE), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED,new Location(w.getMap().getProvinceMatching(order.getLoc2()), Coast.NONE));
+			o = new GUIOrderFactory().createSupport(p, mr.getLocation(order.getLoc()),Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED,mr.getLocation(order.getLoc2()));
 			break;
 		case "order-convoy":
-			o = new GUIOrderFactory().createConvoy(p, new Location(w.getMap().getProvinceMatching(order.getLoc()), Coast.NONE), Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc1()), Coast.NONE), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED, new Location(w.getMap().getProvinceMatching(order.getLoc2()), Coast.NONE));
+			o = new GUIOrderFactory().createConvoy(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED,mr.getLocation(order.getLoc2()));
 			break;
 		default:
 			break;
