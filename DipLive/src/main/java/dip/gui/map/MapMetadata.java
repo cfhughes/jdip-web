@@ -22,42 +22,24 @@
 //
 package dip.gui.map;
 
-import dip.world.Power;
-import dip.world.Province;
-import dip.world.Coast;
-import dip.world.World;
-
-import dip.world.variant.data.Symbol;
-import dip.world.variant.data.SymbolPack;
-
-import dip.misc.Log;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.StringTokenizer;
-import java.util.NoSuchElementException;
-import java.util.Properties;
-
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.io.IOException;
-
 import java.awt.geom.Point2D;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.svg.SVGDocument;
-import org.w3c.dom.svg.SVGElement;
 
-import org.apache.batik.util.SVGConstants;
+import dip.misc.Log;
+import dip.world.Coast;
+import dip.world.Power;
+import dip.world.Province;
+import dip.world.World;
+import dip.world.variant.data.Symbol;
+import dip.world.variant.data.SymbolPack;
 
 
 /**
@@ -248,6 +230,15 @@ public class MapMetadata implements Serializable
 	public Point2D.Float getUnitPt(Province key, Coast coast)
 	{ 
 		InfoEntry entry = getInfoEntry(key);
+		if (entry == null){
+			System.out.println(key.hashCode());
+			System.out.println(key);
+			System.out.println("Available:");
+			for (Object k: infoMap.keySet()){
+				System.out.println(k + ":"+k.hashCode());
+			}
+			return null;
+		}
 		return entry.getUnitPt(coast); 
 	
 	}

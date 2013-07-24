@@ -115,10 +115,13 @@ public class Power implements Comparable, java.io.Serializable
 	}// hashCode()
 	
 	
-	/* 	
-		Implementation of Object.equals()
-	 	NOTE: we just use default referential equality, since these objects are immutable!
-	*/
+	public boolean equals(Object o){
+		if (o instanceof Power){
+			return o.hashCode() == this.hashCode(); 
+		}else{
+			return false;
+		}
+	}
 	
 	/** Implementation of Object.toString() */
 	public String toString()

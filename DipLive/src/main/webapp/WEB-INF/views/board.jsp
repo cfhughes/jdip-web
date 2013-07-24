@@ -41,11 +41,16 @@ ${svg}
 					contentType : 'application/json',
 					type : 'POST',
 					success : function(msg) {
-						$("#Layer1").append(msg["success"]);
-						console.log(msg)
+						for (var layer in msg["orders"]){
+							var $svg = document.createElementNS('http://www.w3.org/2000/svg', "g");
+							var $elements = document.importNode(new DOMParser().parseFromString(msg["orders"][layer], "image/svg+xml").documentElement,true);
+							$svg.appendChild($elements);
+							$("#Layer1 > #"+layer).append($svg);
+						}
+						console.log(msg);
 					}
 				});
-			}
+			};
 			if (!order.hasOwnProperty("loc")) {
 				order["loc"] = $(this).attr("id");
 				if(order["type"] == "order-hold"){

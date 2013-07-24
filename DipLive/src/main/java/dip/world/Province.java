@@ -577,7 +577,13 @@ public class Province implements java.io.Serializable, Comparable
 		return hashCode;
 	}// hashCode()
 	
-	
+	public boolean equals(Object o){
+		if (o instanceof Province){
+			return this.hashCode() == o.hashCode();
+		}else{
+			return false;
+		}
+	}
 	
 	/** Checks if unit can transit from a Location to this Province. */
 	public boolean canTransit(Location fromLoc, Unit.Type unit, Phase phase, Class orderClass)

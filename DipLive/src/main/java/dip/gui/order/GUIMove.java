@@ -443,8 +443,10 @@ public class GUIMove extends Move implements GUIOrder
 			return drawNCOrder(mapInfo, offset, addMarker);
 		}
 		*/
-		
-		return new SVGElement[]{drawNCOrder(mapInfo, 0, true)};
+		float width = GUIOrderUtils.getLineWidth(mapInfo, MapMetadata.EL_MOVE, MapMetadata.ATT_WIDTHS, numSupports);
+		SVGElement element = drawNCOrder(mapInfo, 0, true);
+		GUIOrderUtils.makeStyled(element, mapInfo.getMapMetadata(), MapMetadata.EL_MOVE, power);
+		return new SVGElement[]{element};
 	}// drawOrder()
 	
 	
@@ -513,7 +515,7 @@ public class GUIMove extends Move implements GUIOrder
 			GUIOrderUtils.addMarker(line, mmd, MapMetadata.EL_MOVE);
 		}
 		
-		System.out.println(line.getXMLbase());
+		//System.out.println(line.getXMLbase());
 		
 		// end
 		return line;

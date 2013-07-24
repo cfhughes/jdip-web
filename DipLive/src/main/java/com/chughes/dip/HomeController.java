@@ -37,23 +37,14 @@ import com.chughes.security.UserDetailsImpl;
 import com.chughes.security.UserEntity;
 
 import dip.gui.map.DefaultMapRenderer2;
-import dip.gui.map.DefaultMapRenderer2.DMRMapInfo;
 import dip.gui.map.RenderCommandFactory.RenderCommand;
 import dip.gui.map.SymbolInjector;
-import dip.gui.order.GUIConvoy;
-import dip.gui.order.GUIHold;
-import dip.gui.order.GUIMove;
 import dip.gui.order.GUIOrder;
-import dip.gui.order.GUIOrderFactory;
-import dip.gui.order.GUISupport;
 import dip.gui.order.GUIOrder.MapInfo;
-import dip.order.Move;
+import dip.gui.order.GUIOrderFactory;
 import dip.order.Order;
 import dip.order.OrderException;
-import dip.order.Support;
 import dip.order.ValidationOptions;
-import dip.world.Coast;
-import dip.world.Location;
 import dip.world.Power;
 import dip.world.Unit;
 import dip.world.World;
@@ -172,15 +163,16 @@ public class HomeController {
 					Power p1 = w.getMap().getPowerMatching(uge.getPower());
 					RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
 					mr.execRenderCommand(rc2);
-					List<Order> orders = w.getLastTurnState().getOrders(p1);
-					for (Order o : orders) {
+					List<GUIOrder> orders = w.getLastTurnState().getOrders(p1);
+					for (GUIOrder o : orders) {
+						o.updateDOM(mr.new DMRMapInfo(w.getLastTurnState()));
 						System.out.println(o.toFullString());
 					}
 				}
 			}
 		}
 		mr.execRenderCommand(rc);
-		mr.unsyncUpdateAllOrders();
+
 		//mr.execRenderCommand(rc4);
 		//mr.execRenderCommand(rc5);
 		mr.execRenderCommand(rc3);
@@ -260,9 +252,9 @@ public class HomeController {
 		}
 		logger.info("From: "+o.getSourceUnitType());
 
-		SVGElement[] elements = ((GUIOrder)o).drawOrder(mr.new DMRMapInfo(w.getLastTurnState()));
+		MapInfo info = mr.new DMRMapInfo(w.getLastTurnState());
+		SVGElement[] elements = ((GUIOrder)o).drawOrder(info);
 		
-		String result = "";
 		
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer1 = tf.newTransformer();
@@ -289,7 +281,7 @@ public class HomeController {
 		//model.addAttribute("success", 1);
 
 		gameRepo.updateGame(game);
-
-		return Collections.singletonMap("success",sw1.toString());
+		String id1 = info.getPowerSVGGElement(p, 1).getId();
+		return Collections.singletonMap("orders",Collections.singletonMap(id1,sw1.toString()));
 	}
 }
