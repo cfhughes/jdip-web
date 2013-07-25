@@ -40,21 +40,21 @@ public class GameRepository {
 	public void updateGame(GameEntity ge){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
         sessionFactory.getCurrentSession().update(ge);
-        sessionFactory.getCurrentSession().flush();
+        //sessionFactory.getCurrentSession().flush();
 	}
 	
 	@Transactional
 	public void saveInGameUser(UserGameEntity uge){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
 		sessionFactory.getCurrentSession().save(uge);
-		sessionFactory.getCurrentSession().flush();
+		//sessionFactory.getCurrentSession().flush();
 	}
 	
 	@Transactional
 	public void saveGame(GameEntity ge){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
 		sessionFactory.getCurrentSession().save(ge);
-		sessionFactory.getCurrentSession().flush();
+		//sessionFactory.getCurrentSession().flush();
 	}
 	
 	@SuppressWarnings("unchecked")

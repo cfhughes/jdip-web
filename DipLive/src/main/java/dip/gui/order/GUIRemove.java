@@ -264,7 +264,12 @@ public class GUIRemove extends Remove implements GUIOrder
 		}
 	}// updateDOM()
 	
-	public SVGElement[] drawOrder(MapInfo mapInfo)
+	public SVGElement orderSVG(MapInfo mapInfo){
+		updateDOM(mapInfo);
+		return group;
+	}
+	
+	private SVGElement[] drawOrder(MapInfo mapInfo)
 	{
 		MapMetadata mmd = mapInfo.getMapMetadata();
 		// Note: Remove orders use unit; Disband orders use the dislodged unit coordinates.

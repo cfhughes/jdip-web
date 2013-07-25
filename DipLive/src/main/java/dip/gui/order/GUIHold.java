@@ -326,9 +326,9 @@ public class GUIHold extends Hold implements GUIOrder
 	/** We are dependent upon Support orders for proper rendering */
 	public boolean isDependent()	{ return true; }
 
-	@Override
-	public SVGElement[] drawOrder(MapInfo mapInfo) {
-		return new SVGElement[]{drawOrder(mapInfo, 0)};
+	public SVGElement orderSVG(MapInfo mapInfo){
+		updateDOM(mapInfo);
+		return group;
 	}
 
 	

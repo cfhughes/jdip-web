@@ -28,9 +28,10 @@
 	<beans:bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<beans:property name="url" value="jdbc:mysql://abqwtb.com/dip" />
-		<beans:property name="username" value="chris" />
-		<beans:property name="password" value="F@t4#$" />
+		<beans:property name="url" value="jdbc:mysql://localhost/dip" />
+		<beans:property name="username" value="root" />
+		<beans:property name="password" value="F@t4mutant" />
+<!-- 		<beans:property name="password" value="F@t4#$" /> -->
 	</beans:bean>
 
 	<beans:bean id="sessionFactory"
@@ -52,7 +53,7 @@
 
 		<beans:property name="hibernateProperties">
 			<beans:props>
-				<beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQLInnoDBDialect
+				<beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect
 				</beans:prop>
 				<beans:prop key="hibernate.show_sql">true</beans:prop>
 				<beans:prop key="hibernate.hbm2ddl.auto">update</beans:prop>

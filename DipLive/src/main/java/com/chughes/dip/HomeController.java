@@ -253,7 +253,7 @@ public class HomeController {
 		logger.info("From: "+o.getSourceUnitType());
 
 		MapInfo info = mr.new DMRMapInfo(w.getLastTurnState());
-		SVGElement[] elements = ((GUIOrder)o).drawOrder(info);
+		SVGElement element = ((GUIOrder)o).orderSVG(info);
 		
 		
 		TransformerFactory tf = TransformerFactory.newInstance();
@@ -267,9 +267,9 @@ public class HomeController {
 
 		StringWriter sw1 = new StringWriter();
 
-		for (int i = 0; i < elements.length; i++) {
-			transformer1.transform(new DOMSource(elements[i]), new StreamResult(sw1));
-		}
+
+		transformer1.transform(new DOMSource(element), new StreamResult(sw1));
+
 		
 		List<Order> orders = w.getLastTurnState().getOrders(p);
 

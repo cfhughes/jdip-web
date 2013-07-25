@@ -788,9 +788,9 @@ public class GUIMoveExplicit extends Move implements GUIOrder
 
 
 
-	@Override
-	public SVGElement[] drawOrder(MapInfo mapInfo) {
-		return new SVGElement[]{drawOrder(mapInfo, 0, true)};
+	public SVGElement orderSVG(MapInfo mapInfo){
+		updateDOM(mapInfo);
+		return group;
 	}
 	
 	

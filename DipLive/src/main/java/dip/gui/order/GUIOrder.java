@@ -143,7 +143,7 @@ public interface GUIOrder extends Orderable
 	/** Updates the DOM, given the given parameters. Adds if appropriate. */
 	public void updateDOM(MapInfo mapInfo);
 	
-	public SVGElement[] drawOrder(MapInfo mapInfo);
+	public SVGElement orderSVG(MapInfo mapInfo);
 	
 	/** Removes order from the DOM */
 	public void removeFromDOM(MapInfo mapInfo);

@@ -330,8 +330,13 @@ public class GUIWaive extends Waive implements GUIOrder
 		}
 	}// updateDOM()
 	
+	public SVGElement orderSVG(MapInfo mapInfo){
+		updateDOM(mapInfo);
+		return group;
+	}
 	
-	public SVGElement[] drawOrder(MapInfo mapInfo)
+	
+	private SVGElement[] drawOrder(MapInfo mapInfo)
 	{
 		MapMetadata mmd = mapInfo.getMapMetadata();
 		

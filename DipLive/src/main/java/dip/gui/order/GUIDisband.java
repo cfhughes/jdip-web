@@ -248,9 +248,14 @@ public class GUIDisband extends Disband implements GUIOrder
 		}
 	}// updateDOM()
 	
-	public SVGElement[] drawOrder(MapInfo mapInfo)
-	{
-		return new SVGElement[]{drawSingleOrder(mapInfo)};
+//	public SVGElement[] drawOrder(MapInfo mapInfo)
+//	{
+//		return new SVGElement[]{drawSingleOrder(mapInfo)};
+//	}
+	
+	public SVGElement orderSVG(MapInfo mapInfo){
+		updateDOM(mapInfo);
+		return group;
 	}
 	
 	private SVGElement drawSingleOrder(MapInfo mapInfo)

@@ -361,8 +361,13 @@ public class GUIBuild extends Build implements GUIOrder
 		}
 	}// updateDOM()
 	
+	public SVGElement orderSVG(MapInfo mapInfo){
+		updateDOM(mapInfo);
+		return group;
+	}
 	
-	public SVGElement[] drawOrder(MapInfo mapInfo)
+	
+	private SVGElement[] drawOrder(MapInfo mapInfo)
 	{
 		MapMetadata mmd = mapInfo.getMapMetadata();
 		Point2D.Float center = mmd.getUnitPt(src.getProvince(), src.getCoast());

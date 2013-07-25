@@ -140,8 +140,7 @@ public class GUIDefineState extends DefineState implements GUIOrder
 
 
 	@Override
-	public SVGElement[] drawOrder(MapInfo mapInfo) {
-		// TODO Auto-generated method stub
+	public SVGElement orderSVG(MapInfo mapInfo) {
 		return null;
 	}
 	

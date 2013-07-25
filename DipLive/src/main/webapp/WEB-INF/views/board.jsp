@@ -1,4 +1,8 @@
 <%@include file="head.jsp"%>
+<style type="text/css">
+.chat-input{padding:5px 2px;margin:5px;border:1px solid #bbb;width:335px;float:left}
+.chat-messages{max-height:200px;overflow-y:auto}
+</style>
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 ${svg}
 <br/>
@@ -10,15 +14,35 @@ ${svg}
 	<button id="order-smove" class="btn">Support Move</button>
 	<button id="order-convoy" class="btn">Convoy</button>
 </div>
-<div id="bottom-bar"></div>
+<div style="height:20px" id="bottom-bar"></div>
 </c:if>
 <div>
+<ul class="nav nav-tabs">
 <c:forEach items="${players}" var="player">
-<h3>${player.user.username}</h3><p>${player.power}</p> 
+<li><a href="#${player.power}" data-toggle="tab">${player.user.username}(${player.power})</a></li>
+
 </c:forEach>
+</ul>
+<div class="tab-content">
+<c:forEach items="${players}" var="player">
+<div class="tab-pane" id="${player.power}">
+<form>
+<textarea class="chat-input" rows="3"></textarea><button class="dipchat-submit" type="submit">Send</button>
+</form>
+<h3>${player.user.username}</h3><p>${player.power}</p> 
+</div>
+</c:forEach>
+</div>
 </div>
 <c:if test="${member_of_game and started}">
 <script>
+		$(".dipchat-submit").click(function(){
+			$.ajax("JSONchat", {
+				success : function(msg) {
+					alert(msg);	
+				}
+			});
+		});
 		var from = 0;
 		var order = {"type" : "order-move"};
 		$("#MouseLayer > *").hover(
@@ -42,10 +66,8 @@ ${svg}
 					type : 'POST',
 					success : function(msg) {
 						for (var layer in msg["orders"]){
-							var $svg = document.createElementNS('http://www.w3.org/2000/svg', "g");
-							var $elements = document.importNode(new DOMParser().parseFromString(msg["orders"][layer], "image/svg+xml").documentElement,true);
-							$svg.appendChild($elements);
-							$("#Layer1 > #"+layer).append($svg);
+							var $element = document.importNode(new DOMParser().parseFromString(msg["orders"][layer], "image/svg+xml").documentElement,true);
+							$("#Layer1 > #"+layer).append($element);
 						}
 						console.log(msg);
 					}

@@ -429,25 +429,27 @@ public class GUIMove extends Move implements GUIOrder
 		}
 	}// updateDOM()
 	
+	public SVGElement orderSVG(MapInfo mapInfo){
+		updateDOM(mapInfo);
+		return group;
+	}
 	
 	/** draws convoyed or non-convoyed order, depending upon flag */
-	public SVGElement[] drawOrder(MapInfo mapInfo)
-	{
-		/*
-		if(isByConvoy())
-		{
-			return drawConvoyedOrder(mapInfo, offset, addMarker);
-		}
-		else
-		{
-			return drawNCOrder(mapInfo, offset, addMarker);
-		}
-		*/
-		float width = GUIOrderUtils.getLineWidth(mapInfo, MapMetadata.EL_MOVE, MapMetadata.ATT_WIDTHS, numSupports);
-		SVGElement element = drawNCOrder(mapInfo, 0, true);
-		GUIOrderUtils.makeStyled(element, mapInfo.getMapMetadata(), MapMetadata.EL_MOVE, power);
-		return new SVGElement[]{element};
-	}// drawOrder()
+//	public SVGElement drawOrder(MapInfo mapInfo)
+//	{
+//		/*
+//		if(isByConvoy())
+//		{
+//			return drawConvoyedOrder(mapInfo, offset, addMarker);
+//		}
+//		else
+//		{
+//			return drawNCOrder(mapInfo, offset, addMarker);
+//		}
+//		*/
+//		updateDOM(mapInfo);
+//		return group;
+//	}// drawOrder()
 	
 	
 	/** if addMarker == true, ALWAYS add marker; otherwise, only added if offset is non-zero */
