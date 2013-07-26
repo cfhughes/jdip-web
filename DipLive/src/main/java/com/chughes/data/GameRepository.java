@@ -36,6 +36,11 @@ public class GameRepository {
 		return (UserGameEntity) query.uniqueResult();
 	}
 	
+	@Transactional(readOnly = true)
+	public UserGameEntity inGameUser(int id){
+		return (UserGameEntity) sessionFactory.getCurrentSession().get(UserGameEntity.class, id);
+	}
+	
 	@Transactional
 	public void updateGame(GameEntity ge){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
@@ -46,7 +51,7 @@ public class GameRepository {
 	@Transactional
 	public void saveInGameUser(UserGameEntity uge){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
-		sessionFactory.getCurrentSession().save(uge);
+		sessionFactory.getCurrentSession().saveOrUpdate(uge);
 		//sessionFactory.getCurrentSession().flush();
 	}
 	

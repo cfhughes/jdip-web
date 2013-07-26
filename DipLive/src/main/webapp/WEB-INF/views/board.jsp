@@ -15,7 +15,6 @@ ${svg}
 	<button id="order-convoy" class="btn">Convoy</button>
 </div>
 <div style="height:20px" id="bottom-bar"></div>
-</c:if>
 <div>
 <ul class="nav nav-tabs">
 <c:forEach items="${players}" var="player">
@@ -26,18 +25,23 @@ ${svg}
 <div class="tab-content">
 <c:forEach items="${players}" var="player">
 <div class="tab-pane" id="${player.power}">
-<form>
-<textarea class="chat-input" rows="3"></textarea><button class="dipchat-submit" type="submit">Send</button>
-</form>
+
+<textarea id="chat-${player.id}" name="${player.id}" class="chat-input" rows="3"></textarea><button userid="${player.id}" class="dipchat-submit" type="button">Send</button>
+<br>
 <h3>${player.user.username}</h3><p>${player.power}</p> 
 </div>
 </c:forEach>
 </div>
 </div>
+</c:if>
 <c:if test="${member_of_game and started}">
 <script>
 		$(".dipchat-submit").click(function(){
+			var chat = {"to" : $(this).attr("userid"), "message" : $("#chat-"+$(this).attr("userid")).val()};
 			$.ajax("JSONchat", {
+				data : JSON.stringify(chat),
+				contentType : 'application/json',
+				type : 'POST',
 				success : function(msg) {
 					alert(msg);	
 				}

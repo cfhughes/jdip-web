@@ -51,7 +51,7 @@ public class UserGameEntity {
 	public void setPower(String power) {
 		this.power = power;
 	}
-	@OneToMany
+	@OneToMany(fetch=FetchType.EAGER)
 	public List<Message> getMessages() {
 		return messages;
 	}

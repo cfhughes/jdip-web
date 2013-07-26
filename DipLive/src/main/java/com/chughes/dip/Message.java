@@ -6,11 +6,13 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import com.chughes.security.UserEntity;
+
 @Entity
 public class Message {
 	private String text;
 	private int id;
-	private UserGameEntity from;
+	private UserEntity from;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -30,10 +32,10 @@ public class Message {
 	}
 	
 	@OneToOne
-	public UserGameEntity getFrom() {
+	public UserEntity getFrom() {
 		return from;
 	}
-	public void setFrom(UserGameEntity from) {
+	public void setFrom(UserEntity from) {
 		this.from = from;
 	}
 	
