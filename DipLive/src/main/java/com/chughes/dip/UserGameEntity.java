@@ -8,6 +8,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
@@ -51,12 +52,46 @@ public class UserGameEntity {
 	public void setPower(String power) {
 		this.power = power;
 	}
-	@OneToMany(fetch=FetchType.EAGER)
+	@ManyToMany(fetch=FetchType.EAGER)
 	public List<Message> getMessages() {
 		return messages;
 	}
 	public void setMessages(List<Message> messages) {
 		this.messages = messages;
 	}
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((game == null) ? 0 : game.hashCode());
+		result = prime * result + id;
+		result = prime * result + ((power == null) ? 0 : power.hashCode());
+		return result;
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserGameEntity other = (UserGameEntity) obj;
+		if (game == null) {
+			if (other.game != null)
+				return false;
+		} else if (!game.equals(other.game))
+			return false;
+		if (id != other.id)
+			return false;
+		if (power == null) {
+			if (other.power != null)
+				return false;
+		} else if (!power.equals(other.power))
+			return false;
+		return true;
+	}
 
+	
+	
 }

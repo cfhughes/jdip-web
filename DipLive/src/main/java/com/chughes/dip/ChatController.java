@@ -1,6 +1,10 @@
 package com.chughes.dip;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpSession;
 
@@ -20,13 +24,13 @@ import com.chughes.security.UserDetailsImpl;
 
 @Controller
 public class ChatController {
-	
+
 	@Autowired UserDAO us;
 	@Autowired ChatRepository cr;
 	@Autowired GameRepository gr;
 
 	@RequestMapping(value="/game/JSONchat")
-	public @ResponseBody Map<String, ?> chat(@RequestBody UIChat chat, HttpSession session){
+	public @ResponseBody Map<String, Integer> chat(@RequestBody UIChat chat, HttpSession session){
 		UserDetailsImpl user = null;
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getPrincipal() instanceof UserDetails){
@@ -38,16 +42,39 @@ public class ChatController {
 
 			System.out.println(user.getUsername()+" is Logged In");
 
+			UserGameEntity uge = gr.inGameUser(chat.getGameid(), user.getId());
+			if (uge != null){ 
+				UserGameEntity gu = gr.inGameUser(chat.getTo());
+				if (uge.getGame().getPlayers().contains(gu)){
+					Message m = new Message();
+					m.setText(chat.getMessage());
 
-			Message m = new Message();
-			m.setText(chat.getMessage());
-			m.setFrom(us.getUserEntity(user.getId()));
-			
-			cr.saveMessage(m);
-			UserGameEntity gu = gr.inGameUser(Integer.parseInt(chat.getTo()));
-			gu.getMessages().add(m);
-			gr.saveInGameUser(gu);
-			
+					m.setFrom(uge);
+					uge.getMessages().add(m);
+
+					gu.getMessages().add(m);
+					m.setTo(gu);
+
+					cr.saveMessage(m);
+					gr.saveInGameUser(uge);
+					gr.saveInGameUser(gu);
+					return Collections.singletonMap("success", 1);
+				}
+			}
+		}
+		return null;
+	}
+
+	@RequestMapping(value="/game/JSONmessages")
+	public @ResponseBody List<Object> retreiveChat(@RequestBody UIChatRequest request){
+		UserDetailsImpl user = null;
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.getPrincipal() instanceof UserDetails){
+			UserDetails user1 = (UserDetails)auth.getPrincipal();
+			user = (UserDetailsImpl) user1;
+			if (gr.inGameUser(request.getGameid(), user.getId()) != null){
+				return cr.getMessages(user.getId(), request);
+			}
 		}
 		return null;
 	}
