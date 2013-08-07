@@ -159,6 +159,7 @@ public class HomeController {
 			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
 			if (uge != null){
 				member = true;
+				model.addAttribute("me_id", uge.getId());
 				if (game.getStage() == Stage.PLAYING){
 					Power p1 = w.getMap().getPowerMatching(uge.getPower());
 					RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
@@ -195,6 +196,7 @@ public class HomeController {
 		
 		model.addAttribute("svg", sw1.toString());
 		model.addAttribute("gid", id);
+		
 		model.addAttribute("players", game.getPlayers());
 		model.addAttribute("member_of_game", member);
 		model.addAttribute("started", game.getStage() == Stage.PLAYING);

@@ -32,14 +32,14 @@ public class UserGameEntity {
 		this.id = id;
 	}
 	
-	@ManyToOne(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToOne
 	public UserEntity getUser() {
 		return user;
 	}
 	public void setUser(UserEntity user) {
 		this.user = user;
 	}
-	@ManyToOne(cascade=CascadeType.ALL)
+	@ManyToOne
 	public GameEntity getGame() {
 		return game;
 	}
@@ -52,7 +52,7 @@ public class UserGameEntity {
 	public void setPower(String power) {
 		this.power = power;
 	}
-	@ManyToMany(fetch=FetchType.EAGER)
+	@ManyToMany
 	public List<Message> getMessages() {
 		return messages;
 	}

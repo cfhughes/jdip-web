@@ -20,7 +20,7 @@ public class ChatRepository {
 	@Transactional
 	public void saveMessage(Message m){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
-		sessionFactory.getCurrentSession().save(m);
+		sessionFactory.getCurrentSession().saveOrUpdate(m);
 	}
 	
 	@Transactional
