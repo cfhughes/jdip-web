@@ -3,6 +3,7 @@ package com.chughes.dip;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -44,6 +45,7 @@ import dip.gui.order.GUIOrder.MapInfo;
 import dip.gui.order.GUIOrderFactory;
 import dip.order.Order;
 import dip.order.OrderException;
+import dip.order.Orderable;
 import dip.order.ValidationOptions;
 import dip.world.Power;
 import dip.world.Unit;
@@ -79,7 +81,7 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "/game/{gameID}")
-	public String home(Model model,@PathVariable(value="gameID") int id, HttpSession session) throws Exception {
+	public String home(Model model,@PathVariable(value="gameID") int id) throws Exception {
 		boolean loggedin = false;
 		UserDetailsImpl user = null;
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -271,15 +273,24 @@ public class HomeController {
 
 
 		transformer1.transform(new DOMSource(element), new StreamResult(sw1));
-
 		
-		List<Order> orders = w.getLastTurnState().getOrders(p);
+		//Preventing two orders for same unit
+		List orders = w.getLastTurnState().getOrders(p);
+		Iterator iter = orders.iterator();
+		//boolean isDuplicate = false;
+		while(iter.hasNext())
+		{
+			//System.out.println("Looping");
+			Orderable listOrder = (Orderable) iter.next();
+			if( listOrder.getSource().isProvinceEqual(o.getSource()) )
+			{
+				//System.out.println("Should be removed");
+				iter.remove();
+			}
+		}
 
 		orders.add(o);
 		
-		
-
-		w.getLastTurnState().setOrders(p, orders);
 		//model.addAttribute("success", 1);
 
 		gameRepo.updateGame(game);

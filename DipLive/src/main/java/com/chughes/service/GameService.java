@@ -44,7 +44,7 @@ public class GameService {
 		gameRepo.updateGame(game);
 		userRepo.updateUser(user);
 		//Apparently, hibernate does this already
-		//gameRepo.saveInGameUser(uge);
+		gameRepo.saveInGameUser(uge);
 	}
 
 	public void saveGame(GameEntity ge){
