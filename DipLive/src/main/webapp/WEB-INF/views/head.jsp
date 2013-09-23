@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="sec"
+	uri="http://www.springframework.org/security/tags"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,7 +30,6 @@ body {
 .container {
 	margin: 0 auto;
 	max-width: 1300px;
-
 }
 
 .container>hr {
@@ -65,8 +66,8 @@ body {
 	margin-top: 28px;
 }
 
-#MouseLayer{
-	visibility:visible;
+#MouseLayer {
+	visibility: visible;
 }
 
 /* Customize the navbar links to be fill the entire space of the .navbar */
@@ -113,20 +114,21 @@ body {
 
 <body>
 
-	<div class="container" style="	background-color:#E3F2E3;min-height:100%;padding-left:10px;padding-right:10px;">
+	<div class="container"
+		style="background-color: #E3F2E3; min-height: 100%; padding-left: 10px; padding-right: 10px;">
 
 		<div class="masthead">
 			<p class="pull-right">
-			<c:choose>
-			<c:when test="${loggedin}">
-				User: ${user.username} <a
-					href="<c:url value="/j_spring_security_logout" context="/dip"/>"> Logout</a>
-			</c:when>
-			<c:otherwise>
-			<a href="<c:url value="/spring_security_login" context="/dip"/>"><button>Login</button></a>
-			<a href="<c:url value="/newuser" context="/dip"/>"><button>Register</button></a>
-			</c:otherwise>
-			</c:choose>
+				<sec:authorize access="isAuthenticated()"> 
+				User: <sec:authentication property="principal.username" />
+					<a href="<c:url value="/j_spring_security_logout" context="/dip"/>">
+						Logout</a>
+				</sec:authorize>
+
+				<sec:authorize access="!isAuthenticated()">
+					<a href="<c:url value="/login" context="/dip"/>"><button>Login</button></a>
+					<a href="<c:url value="/newuser" context="/dip"/>"><button>Register</button></a>
+				</sec:authorize>
 			</p>
 			<h3 class="muted">Diplomacy</h3>
 			<div class="navbar">
@@ -140,8 +142,10 @@ body {
 						<div class="nav-collapse collapse">
 							<ul class="nav">
 								<li><a href="<c:url value="/ " context="/dip"/>">Home</a></li>
-								<li><a href="<c:url value="/gamelist" context="/dip"/>">All Games</a></li>
-								<li><a href="<c:url value="/newgame" context="/dip"/>">New Game</a></li>
+								<li><a href="<c:url value="/gamelist" context="/dip"/>">All
+										Games</a></li>
+								<li><a href="<c:url value="/newgame" context="/dip"/>">New
+										Game</a></li>
 							</ul>
 						</div>
 					</div>

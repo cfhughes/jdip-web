@@ -37,6 +37,6 @@ public class GameListController {
 			GameEntity ge = gameService.getGame(id);
 			gameService.addUserToGame(ge, ue);
 		}
-		return "redirect:game/"+id;
+		return "redirect:../game/"+id;
 	}
 }

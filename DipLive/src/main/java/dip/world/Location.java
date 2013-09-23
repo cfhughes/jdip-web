@@ -140,7 +140,7 @@ public class Location implements Cloneable,Serializable
 	*/
 	public boolean isProvinceEqual(Location location)
 	{
-		return (this.province == location.province);
+		return (this.province.equals(location.province));
 	}// isProvinceEqual()
 	
 	/** 
@@ -149,7 +149,7 @@ public class Location implements Cloneable,Serializable
 	*/
 	public boolean isProvinceEqual(Province province)
 	{
-		return (this.province == province);
+		return (this.province.equals(province));
 	}// isProvinceEqual()
 	
 	

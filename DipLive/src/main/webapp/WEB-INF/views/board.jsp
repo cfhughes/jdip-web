@@ -28,7 +28,7 @@ ${svg}
 	</div>
 	<div style="height: 20px" id="bottom-bar"></div>
 </c:if>
-<c:if test="member_of_game">
+<c:if test="${member_of_game}">
 	<div>
 		<ul id="chat-tabs" class="nav nav-tabs">
 			<c:forEach items="${players}" var="player">
