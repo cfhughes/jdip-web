@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,7 +27,8 @@ public class GameEntity {
 	private String name;
 	private int maxplayers;
 	
-	@OneToMany
+	//Fetching Eagerly to help Async Methods, but there is probably a better way
+	@OneToMany(fetch = FetchType.EAGER)
 	public Set<UserGameEntity> getPlayers() {
 		return players;
 	}

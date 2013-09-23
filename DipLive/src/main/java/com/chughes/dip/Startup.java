@@ -17,7 +17,7 @@ public class Startup{
 
 	@PostConstruct
 	public void afterPropertiesSet() throws Exception {
-		File vresource = new File("C:/variants");
+		File vresource = new File("/home/chris/variants");
 		//logger.info(vresource.getFile().getAbsolutePath());
 
 		VariantManager.init(new File[]{vresource}, false);

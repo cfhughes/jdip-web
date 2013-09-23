@@ -27,6 +27,7 @@ ${svg}
 		<button id="order-convoy" class="btn">Convoy</button>
 	</div>
 	<div style="height: 20px" id="bottom-bar"></div>
+	<button id="ready-button" class="btn<c:if test="${isready}"> active</c:if>">Ready</button>
 </c:if>
 <c:if test="${member_of_game}">
 	<div>
@@ -44,7 +45,7 @@ ${svg}
 					<div id="chatlog-${player.id}" class="chat-messages"></div>
 					<textarea id="chat-${player.id}" name="${player.id}"
 						class="chat-input" rows="3" cols=""></textarea>
-					<button userid="${player.id}" class="dipchat-submit" type="button">Send</button>
+					<button userid="${player.id}" class="dipchat-submit button" type="btn">Send</button>
 					<br>
 					<h3>${player.user.username}</h3>
 					<p>${player.power}</p>
@@ -141,6 +142,19 @@ $("#MouseLayer > *").click(function() {
 		}
 	}
 });
+
+$('button#ready-button').click(function(){
+	var ready = $(this).hasClass("active");
+	$.ajax("${gid}/JSONready", {
+		success : function(msg) {
+			if (msg["ready"] != ready){
+				$('button#ready-button').toggleClass("active");
+			}
+		}
+	});
+    
+});
+
 });
 </script>
 </c:if>

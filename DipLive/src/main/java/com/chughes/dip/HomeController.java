@@ -59,6 +59,7 @@ public class HomeController {
 
 	@Autowired UserDAO us;
 	@Autowired private GameRepository gameRepo;
+	@Autowired private GameMaster gm;
 
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
 
@@ -162,6 +163,7 @@ public class HomeController {
 			if (uge != null){
 				member = true;
 				model.addAttribute("me_id", uge.getId());
+				model.addAttribute("isready", uge.isReady());
 				if (game.getStage() == Stage.PLAYING){
 					Power p1 = w.getMap().getPowerMatching(uge.getPower());
 					RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
@@ -275,20 +277,19 @@ public class HomeController {
 		transformer1.transform(new DOMSource(element), new StreamResult(sw1));
 		
 		//Preventing two orders for same unit
-		List orders = w.getLastTurnState().getOrders(p);
-		Iterator iter = orders.iterator();
+		List<Orderable> orders = w.getLastTurnState().getOrders(p);
+		Iterator<Orderable> iter = orders.iterator();
 		//boolean isDuplicate = false;
 		while(iter.hasNext())
 		{
 			//System.out.println("Looping");
-			Orderable listOrder = (Orderable) iter.next();
+			Orderable listOrder = iter.next();
 			if( listOrder.getSource().isProvinceEqual(o.getSource()) )
 			{
 				//System.out.println("Should be removed");
 				iter.remove();
 			}
 		}
-
 		orders.add(o);
 		
 		//model.addAttribute("success", 1);
@@ -296,5 +297,18 @@ public class HomeController {
 		gameRepo.updateGame(game);
 		String id1 = info.getPowerSVGGElement(p, 1).getId();
 		return Collections.singletonMap("orders",Collections.singletonMap(id1,sw1.toString()));
+	}
+	
+	@RequestMapping(value = "/game/{gameID}/JSONready")
+	public @ResponseBody Map<String, ?> setReady(HttpSession session,@PathVariable(value="gameID") int id){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserDetails user1 = (UserDetails)auth.getPrincipal();
+		UserDetailsImpl user = (UserDetailsImpl) user1;
+		UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
+		boolean ready = uge.isReady();
+		uge.setReady(!ready);
+		gameRepo.saveInGameUser(uge);
+		gm.processGame(uge.getGame());
+		return Collections.singletonMap("ready", !ready);
 	}
 }

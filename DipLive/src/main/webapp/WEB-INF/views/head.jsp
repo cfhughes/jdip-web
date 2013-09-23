@@ -141,7 +141,7 @@ body {
 						</button>
 						<div class="nav-collapse collapse">
 							<ul class="nav">
-								<li><a href="<c:url value="/ " context="/dip"/>">Home</a></li>
+								<li><a href="<c:url value="/" context="/dip"/>">Home</a></li>
 								<li><a href="<c:url value="/gamelist" context="/dip"/>">All
 										Games</a></li>
 								<li><a href="<c:url value="/newgame" context="/dip"/>">New

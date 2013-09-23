@@ -3,6 +3,8 @@ package com.chughes.service;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,7 @@ import com.chughes.data.GameRepository;
 import com.chughes.dip.GameEntity;
 import com.chughes.dip.GameEntity.Stage;
 import com.chughes.dip.GameMaster;
+import com.chughes.dip.HomeController;
 import com.chughes.dip.UserGameEntity;
 import com.chughes.security.UserDAO;
 import com.chughes.security.UserEntity;
@@ -21,6 +24,8 @@ public class GameService {
 	@Autowired private GameRepository gameRepo;
 	@Autowired private UserDAO userRepo;
 	@Autowired private GameMaster gm;
+	
+	private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
 	@Transactional
 	public void addUserToGame(GameEntity game, UserEntity user){
@@ -58,4 +63,6 @@ public class GameService {
 	public GameEntity getGame(int id){
 		return gameRepo.findById(id);
 	}
+	
+
 }

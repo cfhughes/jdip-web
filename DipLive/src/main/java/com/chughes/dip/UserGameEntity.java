@@ -22,6 +22,7 @@ public class UserGameEntity {
 	private GameEntity game;
 	private String power;
 	private int id;
+	private boolean ready;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -32,14 +33,14 @@ public class UserGameEntity {
 		this.id = id;
 	}
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	public UserEntity getUser() {
 		return user;
 	}
 	public void setUser(UserEntity user) {
 		this.user = user;
 	}
-	@ManyToOne
+	@ManyToOne(optional = false)
 	public GameEntity getGame() {
 		return game;
 	}
@@ -59,6 +60,12 @@ public class UserGameEntity {
 	public void setMessages(List<Message> messages) {
 		this.messages = messages;
 	}
+	public boolean isReady() {
+		return ready;
+	}
+	public void setReady(boolean ready) {
+		this.ready = ready;
+	}	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -91,7 +98,5 @@ public class UserGameEntity {
 			return false;
 		return true;
 	}
-
-	
 	
 }
