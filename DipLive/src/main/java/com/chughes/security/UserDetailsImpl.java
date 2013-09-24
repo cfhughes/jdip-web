@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class UserDetailsImpl implements UserDetails {
 
+	/**
+	 * 
+	 */
 	private String username;
     private String password;
     private int id;
@@ -20,6 +23,10 @@ public class UserDetailsImpl implements UserDetails {
 	}
 
 	public UserDetailsImpl() {
+	}
+
+	public UserDetailsImpl(String userId) {
+		id = Integer.parseInt(userId);
 	}
 
 	@Override

@@ -48,6 +48,8 @@
 				</beans:value>
 				<beans:value>com.chughes.dip.Message
 				</beans:value>
+				<beans:value>com.chughes.security.SocialUser
+				</beans:value>
 			</beans:list>
 		</beans:property>
 
@@ -88,7 +90,7 @@
 		<remember-me />
 	</http>
 
-	<beans:bean id="customUserService" class="com.chughes.security.UserDetailsServiceImpl" />
+	
 
 	<authentication-manager>
 		<authentication-provider user-service-ref="customUserService">

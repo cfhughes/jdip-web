@@ -1,5 +1,8 @@
 package com.chughes.security;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
@@ -14,6 +17,10 @@ public class UserDAO{
 
 	@Autowired
 	private SessionFactory sessionFactory;
+	
+	public List<String> findSocialUser(String providerId, String providerUserId){
+		return null;
+	}
 
 	@Transactional
 	public void saveUser(UserDetailsImpl user){
@@ -24,6 +31,11 @@ public class UserDAO{
 		ue.setPassword(user.getPassword());
 		session.save(ue);
 
+	}
+	
+	public Serializable saveUser(UserEntity ue){
+		Session session = sessionFactory.getCurrentSession();
+		return session.save(ue);
 	}
 	
 	@Transactional

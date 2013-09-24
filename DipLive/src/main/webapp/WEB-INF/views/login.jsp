@@ -25,4 +25,5 @@
 		</div>
 	</div>
 </form>
+<p><a href="<c:url value="/signin/facebook"/>"><img src="<c:url value="/resources/img/fblogin.png"/>" border="0"/></a><br/></p>
 <%@include file="tail.jsp"%>
