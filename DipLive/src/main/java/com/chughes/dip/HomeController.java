@@ -74,7 +74,7 @@ public class HomeController {
 			UserEntity ue = us.getUserEntity(user.getId());
 			model.addAttribute("user",ue);
 
-			System.out.println(user.getUsername()+" is Logged In");
+			System.out.println(ue.getUsername()+" is Logged In");
 			model.addAttribute("loggedin", true);
 			model.addAttribute("games", ue.getGames());
 		}

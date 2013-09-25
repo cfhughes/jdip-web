@@ -10,11 +10,20 @@ import org.springframework.web.context.request.NativeWebRequest;
 public final class SimpleSignInAdapter implements SignInAdapter {
 	
 	//private final UserCookieGenerator userCookieGenerator = new UserCookieGenerator();
+	private UserDAO userR;
+
+	public SimpleSignInAdapter(UserDAO userR) {
+		super();
+		this.userR = userR;
+	}
 
 	public String signIn(String userId, Connection<?> connection, NativeWebRequest request) {
-		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(new UserDetailsImpl(userId), null, null));
+		UserDetailsImpl user = new UserDetailsImpl(userId);
+		UserEntity u = userR.getUserEntity(user.getId());
+		user.setUsername(u.getUsername());
+		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null, null));
 		//userCookieGenerator.addCookie(userId, request.getNativeResponse(HttpServletResponse.class));
-		return "redirect:/";
+		return null;
 	}
 
 }

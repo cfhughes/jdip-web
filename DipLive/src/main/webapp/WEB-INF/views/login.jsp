@@ -31,4 +31,7 @@
     <div id="fb-root"></div>
     <p><button type="submit">Signin with Facebook</button></p>
 </form>
+<form id="google_signin" action="<c:url value="/signin/google"/>" method="POST">
+    <p><button type="submit">Signin with Google</button></p>
+</form>
 <%@include file="tail.jsp"%>
