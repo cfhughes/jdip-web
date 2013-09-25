@@ -14,7 +14,7 @@ public final class SimpleSignInAdapter implements SignInAdapter {
 	public String signIn(String userId, Connection<?> connection, NativeWebRequest request) {
 		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(new UserDetailsImpl(userId), null, null));
 		//userCookieGenerator.addCookie(userId, request.getNativeResponse(HttpServletResponse.class));
-		return null;
+		return "redirect:/";
 	}
 
 }

@@ -1,4 +1,6 @@
 <%@include file="head.jsp"%>
+
+
 <form name='f' action="<c:url value='j_spring_security_check' />"
 	method='POST' class="form-horizontal">
 	<c:if test="${not empty error}">
@@ -25,5 +27,8 @@
 		</div>
 	</div>
 </form>
-<p><a href="<c:url value="/signin/facebook"/>"><img src="<c:url value="/resources/img/fblogin.png"/>" border="0"/></a><br/></p>
+<form id="fb_signin" action="<c:url value="/signin/facebook"/>" method="POST">
+    <div id="fb-root"></div>
+    <p><button type="submit">Signin with Facebook</button></p>
+</form>
 <%@include file="tail.jsp"%>

@@ -3,6 +3,7 @@ package com.chughes.security;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -24,7 +25,7 @@ public class SocialConfig {
 	@Bean
 	public ConnectionFactoryLocator connectionFactoryLocator() {
 	    ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
-	    registry.addConnectionFactory(new FacebookConnectionFactory("8604176918","ae3373b76ece6bebeefad1dcaf10b9d3"));
+	    registry.addConnectionFactory(new FacebookConnectionFactory("8583553497","f415251f2db9dcb661c5f8a79bd9681b"));
 	    return registry;
 	}
 	
@@ -32,9 +33,12 @@ public class SocialConfig {
 	public UsersConnectionRepository usersConnectionRepository() {
 	    JdbcUsersConnectionRepository repository = new JdbcUsersConnectionRepository(dataSource, 
 	        connectionFactoryLocator(), Encryptors.noOpText());
-	    repository.setConnectionSignUp(new SimpleConnectionSignUp());
+	    repository.setConnectionSignUp(new SimpleConnectionSignUp(user));
 	    return repository;
 	}
+	
+	@Inject
+	private UserDAO user;
 	
 	@Bean
 	@Scope(value="request", proxyMode=ScopedProxyMode.INTERFACES)

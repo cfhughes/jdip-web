@@ -1,12 +1,16 @@
 package com.chughes.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionSignUp;
 
+
 public class SimpleConnectionSignUp implements ConnectionSignUp {
 	
-	@Autowired private UserDAO userRepo;
+	private UserDAO userRepo;
+
+	public SimpleConnectionSignUp(UserDAO user) {
+		userRepo = user;
+	}
 
 	@Override
 	public String execute(Connection<?> conn) {

@@ -48,8 +48,6 @@
 				</beans:value>
 				<beans:value>com.chughes.dip.Message
 				</beans:value>
-				<beans:value>com.chughes.security.SocialUser
-				</beans:value>
 			</beans:list>
 		</beans:property>
 

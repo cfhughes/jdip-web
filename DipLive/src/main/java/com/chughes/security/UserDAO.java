@@ -9,6 +9,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +18,6 @@ public class UserDAO{
 
 	@Autowired
 	private SessionFactory sessionFactory;
-	
-	public List<String> findSocialUser(String providerId, String providerUserId){
-		return null;
-	}
 
 	@Transactional
 	public void saveUser(UserDetailsImpl user){
@@ -33,6 +30,7 @@ public class UserDAO{
 
 	}
 	
+	@Transactional
 	public Serializable saveUser(UserEntity ue){
 		Session session = sessionFactory.getCurrentSession();
 		return session.save(ue);
