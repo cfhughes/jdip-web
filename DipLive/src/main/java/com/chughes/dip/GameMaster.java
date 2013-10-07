@@ -27,10 +27,10 @@ public class GameMaster {
 	private static final Logger logger = LoggerFactory.getLogger(GameMaster.class);
 
 	//Every minute
-	@Scheduled(cron="0 * * * * ?")
-	public void resolveGames(){
-		System.out.println("Executed");
-	}
+//	@Scheduled(cron="0 * * * * ?")
+//	public void resolveGames(){
+//		System.out.println("Executed");
+//	}
 
 	@Async
 	public void beginGame(GameEntity game){
@@ -48,7 +48,6 @@ public class GameMaster {
 		try{
 			for (UserGameEntity player : ge.getPlayers()) {
 				if (!player.isReady()){
-
 					return;
 				}
 			}
@@ -56,7 +55,11 @@ public class GameMaster {
 			StdAdjudicator stdJudge = new StdAdjudicator(new GUIOrderFactory(), ge.getW().getLastTurnState());
 			stdJudge.process();
 			ge.getW().setTurnState(stdJudge.getNextTurnState());
+			for (UserGameEntity player : ge.getPlayers()) {
+				player.setReady(false);
+			}
 			gameS.saveGame(ge);
+
 		}
 		catch(Exception e){
 			e.printStackTrace();

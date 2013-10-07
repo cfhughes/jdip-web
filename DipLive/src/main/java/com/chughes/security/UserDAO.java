@@ -54,7 +54,7 @@ public class UserDAO{
 		//System.out.println(sessionFactory);
 		session = sessionFactory.getCurrentSession();
 		//System.out.println("About Here");
-		Query query = session.createQuery("from UserEntity i where i.username = :name");
+		Query query = session.createQuery("from UserEntity i where i.username = :name and i.password is not null");
 		query.setString("name", name);
 		user = (UserEntity) query.uniqueResult();
 		if (user != null){

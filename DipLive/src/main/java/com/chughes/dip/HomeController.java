@@ -164,6 +164,7 @@ public class HomeController {
 				member = true;
 				model.addAttribute("me_id", uge.getId());
 				model.addAttribute("isready", uge.isReady());
+				model.addAttribute("phasetype", w.getLastTurnState().getPhase().getPhaseType().getBriefName());
 				if (game.getStage() == Stage.PLAYING){
 					Power p1 = w.getMap().getPowerMatching(uge.getPower());
 					RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
@@ -244,6 +245,21 @@ public class HomeController {
 			break;
 		case "order-convoy":
 			o = new GUIOrderFactory().createConvoy(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED,mr.getLocation(order.getLoc2()));
+			break;
+		case "order-retreat":
+			o = new GUIOrderFactory().createRetreat(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()));
+			break;
+		case "order-disband":
+			o = new GUIOrderFactory().createDisband(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED);
+			break;
+		case "order-builda":
+			o = new GUIOrderFactory().createBuild(p, mr.getLocation(order.getLoc()), Unit.Type.ARMY);
+			break;
+		case "order-buildf":
+			o = new GUIOrderFactory().createBuild(p, mr.getLocation(order.getLoc()), Unit.Type.FLEET);
+			break;
+		case "order-destroy":
+			o = new GUIOrderFactory().createRemove(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED);
 			break;
 		default:
 			break;
