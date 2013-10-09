@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -27,6 +26,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGElement;
@@ -211,7 +211,7 @@ public class HomeController {
 	}
 
 	@RequestMapping(value = "/game/{gameID}/JSONorder")
-	public @ResponseBody Map<String, ?> move(@PathVariable(value="gameID") int id,HttpSession session,@RequestBody UIOrder order) throws Exception {
+	public @ResponseBody Map<String, ?> move(@PathVariable(value="gameID") int id,@RequestBody UIOrder order) throws Exception {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		UserDetails user1 = (UserDetails)auth.getPrincipal();
@@ -316,7 +316,7 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/game/{gameID}/JSONready")
-	public @ResponseBody Map<String, ?> setReady(HttpSession session,@PathVariable(value="gameID") int id){
+	public @ResponseBody Map<String, ?> setReady(@PathVariable(value="gameID") int id){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		UserDetails user1 = (UserDetails)auth.getPrincipal();
 		UserDetailsImpl user = (UserDetailsImpl) user1;

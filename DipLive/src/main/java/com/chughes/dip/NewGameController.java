@@ -44,6 +44,7 @@ public class NewGameController {
 	@RequestMapping(value = "/savegame")
 	public String saveGame(Model model,@ModelAttribute("game")GameEntity game,@RequestParam(value="variant")String variant){
 
+		//TODO: Are all variants version 1.0?
 		Variant vs = VariantManager.getVariant(variant, 1.0f);
 		World w = null;
 		try {
@@ -67,7 +68,7 @@ public class NewGameController {
 		game.setMaxplayers(vs.getPowers().length);
 		
 		gameService.saveGame(game);
-		gameService.addUserToGame(game, ue);
+		gameService.addUserToGame(game, ue, game.getSecret());
 
 		model.addAttribute("id", game.getId());
 		

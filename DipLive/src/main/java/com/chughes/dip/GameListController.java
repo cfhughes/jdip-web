@@ -1,5 +1,7 @@
 package com.chughes.dip;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.chughes.security.UserDAO;
 import com.chughes.security.UserDetailsImpl;
@@ -29,13 +32,13 @@ public class GameListController {
 	}
 	
 	@RequestMapping(value="/joingame/{gameID}")
-	public String join(Model model,@PathVariable(value="gameID") int id){
+	public String join(Model model,@PathVariable(value="gameID") int id,@RequestParam(value="secret", required = false) String secret){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getPrincipal() instanceof UserDetails){
 			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
 			UserEntity ue = userrepo.getUserEntity(user.getId());
 			GameEntity ge = gameService.getGame(id);
-			gameService.addUserToGame(ge, ue);
+			gameService.addUserToGame(ge, ue, secret);
 		}
 		return "redirect:../game/"+id;
 	}

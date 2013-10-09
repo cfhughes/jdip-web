@@ -26,6 +26,7 @@ public class GameEntity {
 	private int id;
 	private String name;
 	private int maxplayers;
+	private String secret;
 	
 	//Fetching Eagerly to help Async Methods, but there is probably a better way
 	@OneToMany(fetch = FetchType.EAGER)
@@ -69,7 +70,13 @@ public class GameEntity {
 	public void setStage(Stage stage) {
 		this.stage = stage;
 	}
-	
+	//for private games
+	public String getSecret() {
+		return secret;
+	}
+	public void setSecret(String secret) {
+		this.secret = secret;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -28,11 +28,14 @@ public class GameService {
 	private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
 	@Transactional
-	public void addUserToGame(GameEntity game, UserEntity user){
+	public void addUserToGame(GameEntity game, UserEntity user, String secret){
 		if (game.getStage() != Stage.PREGAME){
 			return;
 		}
 		if (gameRepo.inGameUser(game.getId(), user.getId()) != null){
+			return;
+		}
+		if (game.getSecret() != null && game.getSecret().length() > 0 && !game.getSecret().equals(secret)) {
 			return;
 		}
 		UserGameEntity uge = new UserGameEntity();

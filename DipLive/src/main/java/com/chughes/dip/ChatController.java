@@ -1,12 +1,8 @@
 package com.chughes.dip;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -30,7 +26,7 @@ public class ChatController {
 	@Autowired GameRepository gr;
 
 	@RequestMapping(value="/game/JSONchat")
-	public @ResponseBody Map<String, Integer> chat(@RequestBody UIChat chat, HttpSession session){
+	public @ResponseBody Map<String, Integer> chat(@RequestBody UIChat chat){
 		UserDetailsImpl user = null;
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getPrincipal() instanceof UserDetails){
