@@ -67,14 +67,13 @@ public class HomeController {
 	public String dash(Model model){
 		UserDetailsImpl user = null;
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth.getPrincipal() instanceof UserDetails){
+		if (auth.getPrincipal() instanceof UserDetailsImpl){
 			UserDetails user1 = (UserDetails)auth.getPrincipal();
 			user = (UserDetailsImpl) user1;
 
 			UserEntity ue = us.getUserEntity(user.getId());
 			model.addAttribute("user",ue);
 
-			System.out.println(ue.getUsername()+" is Logged In");
 			model.addAttribute("loggedin", true);
 			model.addAttribute("games", ue.getGames());
 		}

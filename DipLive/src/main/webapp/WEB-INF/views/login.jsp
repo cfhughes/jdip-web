@@ -29,9 +29,9 @@
 </form>
 <form id="fb_signin" action="<c:url value="/signin/facebook"/>" method="POST">
     <div id="fb-root"></div>
-    <p><input type="image" src="<c:url value="/resources/img/fb.gif"/>" name="submit">Signin with Facebook</input></p>
+    <p><input type="image" src="<c:url value="/resources/img/fb.gif"/>" name="submit" alt="Signin with Facebook"/></p>
 </form>
 <form id="google_signin" action="<c:url value="/signin/google"/>" method="POST">
-    <p><input type="image" src="<c:url value="/resources/img/gg.gif"/>" name="submit">Signin with Google</input></p>
+    <p><input type="image" src="<c:url value="/resources/img/gg.gif"/>" name="submit" alt="Signin with Google"/></p>
 </form>
 <%@include file="tail.jsp"%>
