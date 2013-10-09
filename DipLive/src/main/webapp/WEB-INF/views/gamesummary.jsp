@@ -1,0 +1,1 @@
+<p><a href="game/${game.game.id}">${game.game.name}</a> ${game.game.phase}</p>

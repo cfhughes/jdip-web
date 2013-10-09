@@ -58,6 +58,7 @@ public class GameMaster {
 			for (UserGameEntity player : ge.getPlayers()) {
 				player.setReady(false);
 			}
+			ge.setPhase(ge.getW().getLastTurnState().getPhase().toString());
 			gameS.saveGame(ge);
 
 		}

@@ -18,6 +18,8 @@
 	type="text/javascript"></script>
 ${svg}
 <br />
+<h3>${gamephase}</h3>
+
 <c:if test="${member_of_game and started}">
 	<div id="order-type" class="btn-group">
 		<c:choose>

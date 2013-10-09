@@ -27,6 +27,7 @@ public class GameEntity {
 	private String name;
 	private int maxplayers;
 	private String secret;
+	private String phase;
 	
 	//Fetching Eagerly to help Async Methods, but there is probably a better way
 	@OneToMany(fetch = FetchType.EAGER)
@@ -76,6 +77,12 @@ public class GameEntity {
 	}
 	public void setSecret(String secret) {
 		this.secret = secret;
+	}
+	public String getPhase() {
+		return phase;
+	}
+	public void setPhase(String phase) {
+		this.phase = phase;
 	}
 	@Override
 	public int hashCode() {

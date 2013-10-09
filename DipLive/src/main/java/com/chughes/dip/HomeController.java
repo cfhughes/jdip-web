@@ -201,8 +201,11 @@ public class HomeController {
 		model.addAttribute("svg", sw1.toString());
 		model.addAttribute("gid", id);
 		
+//		model.addAttribute("position",game.getW().getLastTurnState().getPosition().getOwnedSupplyCenters());
+		
 		model.addAttribute("players", game.getPlayers());
 		model.addAttribute("member_of_game", member);
+		model.addAttribute("gamephase", game.getW().getLastTurnState().getPhase().toString());
 		model.addAttribute("started", game.getStage() == Stage.PLAYING);
 		//session.setAttribute("game", w);
 
