@@ -35,12 +35,15 @@ import java.util.Map;
 import java.net.*;
 import java.util.zip.*;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.MapKey;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Transient;
@@ -78,27 +81,24 @@ public class World implements Serializable
 	
 	// instance variables
 	
-	private SortedMap<Phase, TurnState> 				turnStates = null;			// turn data
+	private SortedMap<Integer, TurnState> 				turnStates = null;			// turn data
 	
-	private Map<Comparable, Object> 					nonTurnData = null;			// non-turn data (misc data & per-player data)
+	private Map<String, Serializable> 					nonTurnData = null;			// non-turn data (misc data & per-player data)
 	
 	private dip.world.Map		map;						// the actual map (constant)
 	private int id;
 
 	@ElementCollection
-	@MapKeyColumn
 	@Sort(type = SortType.NATURAL)
 	@Lob
-	public SortedMap<Phase, TurnState> getTurnStates() {
+	public SortedMap<Integer, TurnState> getTurnStates() {
 		return turnStates;
 	}
-	public void setTurnStates(SortedMap<Phase, TurnState> turnStates) {
+	public void setTurnStates(SortedMap<Integer, TurnState> turnStates) {
 		this.turnStates = turnStates;
 	}
 	@ElementCollection
-	@MapKeyColumn
-	@Lob
-	public Map<Comparable, Object> getNonTurnData() {
+	public Map<String, Serializable> getNonTurnData() {
 		return nonTurnData;
 	}
 	public void setNonTurnData(Map nonTurnData) {
@@ -188,6 +188,9 @@ public class World implements Serializable
 		this.id = id;
 	}
 	
+	public World(){
+		//Just for Hibernate
+	}
 	
 	/**
 	*	Constructs a World object.
@@ -195,8 +198,8 @@ public class World implements Serializable
 	protected World(dip.world.Map map)
 	{
 		this.map = map;
-		turnStates = new TreeMap<Phase, TurnState>();	// synchronize on TreeMap
-		nonTurnData = new HashMap<Comparable, Object>(17);
+		turnStates = new TreeMap<Integer, TurnState>();	// synchronize on TreeMap
+		nonTurnData = new HashMap<String, Serializable>(17);
 	}// World()
 	
 	
@@ -216,34 +219,34 @@ public class World implements Serializable
 	*	Sets any special per-power state information that is not associated with
 	*	a particular TurnState. This may be set to null.
 	*/
-	public void setPowerState(Power power, Object state)
-	{
-		nonTurnData.put(power, state);
-	}// setPowerState()
+//	public void setPowerState(Power power, Object state)
+//	{
+//		nonTurnData.put(power, state);
+//	}// setPowerState()
 	
 	/** 
 	*	Gets any special per-power state information that is not associated with
 	*	a particular TurnState. This may return null.
 	*/
-	@Transient
-	public Object getPowerState(Power power)
-	{
-		return nonTurnData.get(power);
-	}// getPowerState()
+//	@Transient
+//	public Object getPowerState(Power power)
+//	{
+//		return nonTurnData.get(power);
+//	}// getPowerState()
 	
 	
 	/** Set the Global state object. This may be set to null. */
-	public void setGlobalState(Object state)
-	{
-		nonTurnData.put(KEY_GLOBAL_DATA, state);
-	}// setGlobalState()
+//	public void setGlobalState(Object state)
+//	{
+//		nonTurnData.put(KEY_GLOBAL_DATA, state);
+//	}// setGlobalState()
 	
 	/** Get the Global state object. This may return null. */
-	@Transient
-	public Object getGlobalState()
-	{
-		return nonTurnData.get(KEY_GLOBAL_DATA);
-	}// getGlobalState()	
+//	@Transient
+//	public Object getGlobalState()
+//	{
+//		return nonTurnData.get(KEY_GLOBAL_DATA);
+//	}// getGlobalState()	
 	
 	
 	/** Set the Victory Conditions */
@@ -290,7 +293,7 @@ public class World implements Serializable
 	@Transient
 	public TurnState getTurnState(Phase phase)
 	{
-		TurnState ts = (TurnState) turnStates.get(phase);
+		TurnState ts = (TurnState) turnStates.get(phase.hashCode());
 		if(ts != null)
 		{
 			ts.setWorld(this);
@@ -308,29 +311,30 @@ public class World implements Serializable
 	@Transient
 	public TurnState getNextTurnState(TurnState state)
 	{
-		Phase current = state.getPhase();
-		if(current == null)
+		if(state.getPhase() == null)
 		{
 			return null;
 		}
+		int current = state.getPhase().hashCode();
+
 		
-		Phase next = null;
+		int next = Integer.MIN_VALUE;
 		Iterator iter = turnStates.keySet().iterator();
 		while(iter.hasNext())
 		{
-			Phase phase = (Phase) iter.next();
-			if(current.compareTo(phase) == 0)
+			int phase = iter.next().hashCode();
+			if(current == phase)
 			{
 				if(iter.hasNext())
 				{
-					next = (Phase) iter.next();
+					next = (int) iter.next();
 				}
 				
 				break;
 			}
 		}
 		
-		if(next == null)
+		if(next == Integer.MIN_VALUE)
 		{
 			return null;
 		}
@@ -374,12 +378,12 @@ public class World implements Serializable
 		}
 		
 		
-		Phase previous = null;
+		int previous =  Integer.MIN_VALUE;
 		Iterator iter = turnStates.keySet().iterator();
 		while(iter.hasNext())
 		{
-			Phase phase = (Phase) iter.next();
-			if(phase.compareTo(current) != 0)
+			int phase = (int) iter.next();
+			if(phase != current.hashCode())
 			{
 				previous = phase;
 			}
@@ -389,7 +393,7 @@ public class World implements Serializable
 			}
 		}
 		
-		if(previous == null)
+		if(previous ==  Integer.MIN_VALUE)
 		{
 			return null;
 		}
@@ -403,7 +407,7 @@ public class World implements Serializable
 	/** If a TurnState with the given phase already exists, it is replaced. */
 	public void setTurnState(TurnState turnState)
 	{
-		turnStates.put(turnState.getPhase(), turnState);
+		turnStates.put(turnState.getPhase().hashCode(), turnState);
 	}// setTurnState()
 	
 	
@@ -413,7 +417,7 @@ public class World implements Serializable
 	*/
 	public void removeTurnState(TurnState turnState)
 	{
-		turnStates.remove(turnState.getPhase());
+		turnStates.remove(turnState.getPhase().hashCode());
 	}// removeTurnState()
 	
 	
@@ -425,11 +429,11 @@ public class World implements Serializable
 	
 	
 	/** returns sorted (ascending) set of all Phases */
-	@Transient
-	public Set getPhaseSet()
-	{
-		return turnStates.keySet();
-	}// getPhaseSet()
+//	@Transient
+//	public Set getPhaseSet()
+//	{
+//		return turnStates.keySet();
+//	}// getPhaseSet()
 	
 	
 	/** Sets the Game metadata */
@@ -464,7 +468,7 @@ public class World implements Serializable
 		{
 			throw new IllegalArgumentException("null power or metadata");
 		}
-		nonTurnData.put(power, pmd);
+		nonTurnData.put(power.getName(), pmd);
 	}// setPlayerMetadata()
 	
 	/** Gets the metadata for a power. Never returns null. Does not return a copy. */
@@ -476,7 +480,7 @@ public class World implements Serializable
 			throw new IllegalArgumentException("null power");
 		}
 		
-		PlayerMetadata pmd = (PlayerMetadata) nonTurnData.get(power);
+		PlayerMetadata pmd = (PlayerMetadata) nonTurnData.get(power.getName());
 		if(pmd == null)
 		{
 			pmd = new PlayerMetadata();
@@ -501,33 +505,33 @@ public class World implements Serializable
 	
 	
 	/** Sets the GameSetup object */
-	public void setGameSetup(GameSetup gs)
-	{
-		if(gs == null) { throw new IllegalArgumentException(); }
-		nonTurnData.put(KEY_GAME_SETUP, gs);
-	}// setGameSetup()
+//	public void setGameSetup(GameSetup gs)
+//	{
+//		if(gs == null) { throw new IllegalArgumentException(); }
+//		nonTurnData.put(KEY_GAME_SETUP, gs);
+//	}// setGameSetup()
 	
 	
 	/** Returns the GameSetup object */
-	@Transient
-	public GameSetup getGameSetup()
-	{
-		return (GameSetup) nonTurnData.get(KEY_GAME_SETUP);
-	}// getGameSetup()
+//	@Transient
+//	public GameSetup getGameSetup()
+//	{
+//		return (GameSetup) nonTurnData.get(KEY_GAME_SETUP);
+//	}// getGameSetup()
 	
 	
 	/** Get the PressStore object, which stores and retreives Press messages. */
-	@Transient
-	public synchronized PressStore getPressStore()
-	{
-		// create on demand
-		if(nonTurnData.get(KEY_PRESS_STORE) == null)
-		{
-			nonTurnData.put(KEY_PRESS_STORE, new DefaultPressStore());
-		}
-		
-		return (PressStore) nonTurnData.get(KEY_PRESS_STORE);
-	}// getPressStore()
+//	@Transient
+//	public synchronized PressStore getPressStore()
+//	{
+//		// create on demand
+//		if(nonTurnData.get(KEY_PRESS_STORE) == null)
+//		{
+//			nonTurnData.put(KEY_PRESS_STORE, new DefaultPressStore());
+//		}
+//		
+//		return (PressStore) nonTurnData.get(KEY_PRESS_STORE);
+//	}// getPressStore()
 	
 	
 	

@@ -24,6 +24,7 @@ package dip.net.message;
 
 import dip.world.Phase;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 *	Support for the retrieval of select messages is not yet specified.
 *	
 */
-public class DefaultPressStore implements PressStore
+public class DefaultPressStore implements PressStore, Serializable
 {
 	// serialized fields
 	protected List messages;

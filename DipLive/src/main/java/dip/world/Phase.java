@@ -377,6 +377,16 @@ public class Phase implements java.io.Serializable, Comparable
 		return this;
 	}// readResolve()
 	
+	public int hashCode(){
+		int code = 0;
+		
+		code += yearType.hashCode() * 10000;
+		code += seasonType.hashCode() * 100;
+		code += phaseType.hashCode();
+		
+		return code;
+	}
+	
 	
 	
 	
@@ -407,8 +417,8 @@ public class Phase implements java.io.Serializable, Comparable
 		protected static final String IL8N_FALL = "SEASONTYPE_FALL";
 		
 		// positions are spaced such that other seasons can be inserted easily
-		protected static final int POS_SPRING = 1000;
-		protected static final int POS_FALL = 2000;
+		protected static final int POS_SPRING = 10;
+		protected static final int POS_FALL = 20;
 		
 		// Season Type Constants
 		/** Spring season */
@@ -630,9 +640,9 @@ public class Phase implements java.io.Serializable, Comparable
 		protected static final String IL8N_RETREAT = "PHASETYPE_RETREAT";
 		
 		// position constants
-		protected static final int POS_MOVEMENT 	= 100;
-		protected static final int POS_RETREAT 		= 200;
-		protected static final int POS_ADJUSTMENT 	= 300;
+		protected static final int POS_MOVEMENT 	= 10;
+		protected static final int POS_RETREAT 		= 20;
+		protected static final int POS_ADJUSTMENT 	= 30;
 		
 		
 		// PhaseType Constants
@@ -691,7 +701,7 @@ public class Phase implements java.io.Serializable, Comparable
 		/** Returns the hashCode */
 		public int hashCode()
 		{
-			return constName.hashCode();
+			return position;
 		}// hashCode()
 		
 		/** Returns <code>true</code> if PhaseType objects are equivalent */
