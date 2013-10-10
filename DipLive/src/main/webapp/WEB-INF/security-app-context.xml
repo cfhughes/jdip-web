@@ -48,6 +48,8 @@
 				</beans:value>
 				<beans:value>com.chughes.dip.Message
 				</beans:value>
+				<beans:value>dip.world.World
+				</beans:value>
 			</beans:list>
 		</beans:property>
 
@@ -56,7 +58,7 @@
 				<beans:prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect
 				</beans:prop>
 				<beans:prop key="hibernate.show_sql">true</beans:prop>
-				<beans:prop key="hibernate.hbm2ddl.auto">update</beans:prop>
+				<beans:prop key="hibernate.hbm2ddl.auto">create-drop</beans:prop>
 				<beans:prop key="hibernate.c3p0.min_size">5</beans:prop>
 				<beans:prop key="current_session_context_class">thread</beans:prop>
 			</beans:props>

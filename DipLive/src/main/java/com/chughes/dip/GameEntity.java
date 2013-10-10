@@ -13,6 +13,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import dip.world.World;
 
@@ -37,7 +41,8 @@ public class GameEntity {
 	public void setPlayers(Set<UserGameEntity> players) {
 		this.players = players;
 	}
-	@Lob
+	@OneToOne
+	@Cascade({CascadeType.SAVE_UPDATE})
 	public World getW() {
 		return w;
 	}
