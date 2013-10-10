@@ -1,5 +1,91 @@
 <%@include file="head.jsp"%>
 <style type="text/css">
+
+.chatcontainer {
+	position:relative;
+	padding:10px;
+	margin:1em 0 3em;
+	color:#000;
+	background:#f3961c; /* default background for browsers without gradient support */
+	/* css3 */
+	background:-webkit-gradient(linear, 0 0, 0 100%, from(#f9d835), to(#f3961c));
+	background:-moz-linear-gradient(#f9d835, #f3961c);
+	background:-o-linear-gradient(#f9d835, #f3961c);
+	background:linear-gradient(#f9d835, #f3961c);
+	-webkit-border-radius:10px;
+	-moz-border-radius:10px;
+	border-radius:10px;
+	max-width: 300px;
+}
+
+/* Variant : for left/right positioned triangle */
+
+.chatcontainer.chat-left {
+	margin-left:50px;
+}
+
+/* Variant : for right positioned triangle
+------------------------------------------ */
+
+.chatcontainer.chat-right {
+	margin-right:50px;
+}
+
+/* THE TRIANGLE
+------------------------------------------------------------------------------------------------------------------------------- */
+
+/* creates triangle */
+.chatcontainer:after {
+	content:"";
+	position:absolute;
+	bottom:-15px; /* value = - border-top-width - border-bottom-width */
+	left:50px; /* controls horizontal position */
+	border-width:15px 15px 0; /* vary these values to change the angle of the vertex */
+	border-style:solid;
+	border-color:#f3961c transparent;
+    /* reduce the damage in FF3.0 */
+    display:block; 
+    width:0;
+}
+
+
+
+/* Variant : left
+------------------------------------------ */
+
+.chatcontainer.chat-left:after {
+	top:16px; /* controls vertical position */
+	left:-50px; /* value = - border-left-width - border-right-width */
+	bottom:auto;
+	border-width:10px 50px 10px 0;
+	border-color:transparent #f3961c;
+}
+
+/* Variant : right
+------------------------------------------ */
+
+.chatcontainer.chat-right:after {
+	top:16px; /* controls vertical position */
+	right:-50px; /* value = - border-left-width - border-right-width */
+	bottom:auto;
+    left:auto;
+	border-width:10px 0 10px 50px;
+	border-color:transparent #f3961c;
+}
+
+.chat-me:after {
+	border-color:#075698 transparent;
+}
+
+.chat-me {
+	background:#075698;
+	/* css3 */
+	background:-webkit-gradient(linear, 0 0, 0 100%, from(#2e88c4), to(#075698));
+	background:-moz-linear-gradient(#2e88c4, #075698);
+	background:-o-linear-gradient(#2e88c4, #075698);
+	background:linear-gradient(#2e88c4, #075698);
+}
+
 .chat-input {
 	padding: 5px 2px;
 	margin: 5px;
@@ -50,17 +136,27 @@ ${svg}
 <c:if test="${member_of_game}">
 	<div>
 		<ul id="chat-tabs" class="nav nav-tabs">
+		<li chatid="-1"><a href="#allchat" data-toggle="tab">All Players</a></li>
 			<c:forEach items="${players}" var="player">
 				<c:if test="${player.id != me_id}">
-					<li chatid="${player.id}"><a href="#${player.power}"
+					<li chatid="${player.id}"><a href="#tab-${player.id}"
 						data-toggle="tab">${player.user.username}(${player.power})</a></li>
 				</c:if>
 			</c:forEach>
 		</ul>
 		<div class="tab-content">
+			<div class="tab-pane" id="allchat">
+				<div id="chatlog--1" class="chat-messages"></div>
+				<textarea id="chat--1" name="-1"
+							class="chat-input" rows="3" cols=""></textarea>
+				<button userid="-1" class="dipchat-submit button"
+							type="btn">Send</button>
+				<br>
+				<h3>All Players</h3>
+			</div>
 			<c:forEach items="${players}" var="player">
 				<c:if test="${player.id != me_id}">
-					<div class="tab-pane" id="${player.power}">
+					<div class="tab-pane" id="tab-${player.id}">
 						<div id="chatlog-${player.id}" class="chat-messages"></div>
 						<textarea id="chat-${player.id}" name="${player.id}"
 							class="chat-input" rows="3" cols=""></textarea>
@@ -75,7 +171,7 @@ ${svg}
 		</div>
 	</div>
 </c:if>
-<c:if test="${member_of_game and started}">
+<c:if test="${member_of_game}">
 	<script type="text/javascript">
 		$(function() {
 			var last_seen = {};
@@ -93,8 +189,12 @@ ${svg}
 					success : function(msg) {
 						console.log(msg);
 						for (i = 0; i < msg.length; i++) {
+							var chatclass = "";
+							if (msg[i][2] == ${me_id}){
+								chatclass = "chat-me";
+							}
 							$("#chatlog-" + from).append(
-									"<p>" + msg[i][1] + "</p>");
+									"<p class='chatcontainer "+chatclass+"'>" + msg[i][1] + "</p>");
 							last_seen[from] = msg[i][0];
 						}
 					}
@@ -112,9 +212,9 @@ ${svg}
 						var chat = {
 							"gameid" : "${gid}",
 							"to" : this_user,
-							"message" : $("#chat-" + $(this).attr("userid"))
-									.val()
+							"message" : $("#chat-" + this_user).val()
 						};
+						console.log(chat);
 						$.ajax("JSONchat", {
 							data : JSON.stringify(chat),
 							contentType : 'application/json',
@@ -126,6 +226,7 @@ ${svg}
 							}
 						});
 					});
+			<c:if test="${started}">
 			var from = 0;
 			var order = {};
 			$("#MouseLayer > *").hover(
@@ -206,6 +307,7 @@ ${svg}
 				});
 
 			});
+			</c:if>
 
 		});
 	</script>

@@ -144,8 +144,10 @@ body {
 								<li><a href="<c:url value="/" context="/dip"/>">Home</a></li>
 								<li><a href="<c:url value="/gamelist" context="/dip"/>">All
 										Games</a></li>
+								<sec:authorize access="hasRole('PLAYER')">
 								<li><a href="<c:url value="/newgame" context="/dip"/>">New
 										Game</a></li>
+								</sec:authorize>
 							</ul>
 						</div>
 					</div>

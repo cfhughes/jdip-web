@@ -25,6 +25,12 @@ public class ChatRepository {
 	
 	@Transactional
 	public List<Object> getMessages(int user, UIChatRequest req){
+		if (req.getFromid() == -1){
+			Query q = sessionFactory.getCurrentSession().createQuery("select m.id,m.text,m.from.id,m.to.id from UserGameEntity u join u.messages m where u.game.id = :g and m.id > :l and m.to.id is null");
+			q.setInteger("g", req.getGameid());
+			q.setInteger("l", req.getLastseen());
+			return q.list();
+		}
 		Query q = sessionFactory.getCurrentSession().createQuery("select m.id,m.text,m.from.id,m.to.id from UserGameEntity u join u.messages m where u.user.id = :u and u.game.id = :g and (m.from.id = :f or m.to.id = :f) and m.id > :l");
 		q.setInteger("u", user);
 		q.setInteger("g", req.getGameid());

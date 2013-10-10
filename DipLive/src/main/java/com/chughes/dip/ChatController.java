@@ -36,24 +36,29 @@ public class ChatController {
 			//UserEntity ue = us.getUserEntity(user.getId());
 
 
-			System.out.println(user.getUsername()+" is Logged In");
+			//System.out.println(user.getUsername()+" is Logged In");
 
 			UserGameEntity uge = gr.inGameUser(chat.getGameid(), user.getId());
-			if (uge != null){ 
-				UserGameEntity gu = gr.inGameUser(chat.getTo());
-				if (uge.getGame().getPlayers().contains(gu)){
+			if (uge != null){
+				UserGameEntity gu = null;
+				if (chat.getTo() != -1){
+					gu = gr.inGameUser(chat.getTo());
+				}
+				if (uge.getGame().getPlayers().contains(gu) || chat.getTo() == -1){
 					Message m = new Message();
 					m.setText(chat.getMessage());
 
 					m.setFrom(uge);
 					uge.getMessages().add(m);
-
-					gu.getMessages().add(m);
-					m.setTo(gu);
+					
+					if (gu != null){
+						gu.getMessages().add(m);
+						m.setTo(gu);
+					}
 
 					cr.saveMessage(m);
 					gr.saveInGameUser(uge);
-					gr.saveInGameUser(gu);
+					if (gu != null)gr.saveInGameUser(gu);
 					return Collections.singletonMap("success", 1);
 				}
 			}

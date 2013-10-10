@@ -33,7 +33,7 @@ public class UserDetailsImpl implements UserDetails {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		List<GrantedAuthority> l1 = new ArrayList<GrantedAuthority>();
 
-        l1.add(new SimpleGrantedAuthority("User"));
+        l1.add(new SimpleGrantedAuthority("Player"));
 
         return l1;
 	}
