@@ -21,7 +21,7 @@ public final class SimpleSignInAdapter implements SignInAdapter {
 		UserDetailsImpl user = new UserDetailsImpl(userId);
 		UserEntity u = userR.getUserEntity(user.getId());
 		user.setUsername(u.getUsername());
-		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null, null));
+		SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, user.getPassword(), user.getAuthorities()));
 		//userCookieGenerator.addCookie(userId, request.getNativeResponse(HttpServletResponse.class));
 		return null;
 	}

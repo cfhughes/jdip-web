@@ -19,6 +19,11 @@ public class UserToolsController {
 		return "login";
 	}
 	
+	@RequestMapping(value="/signin")
+	public String signin(){
+		return "redirect:/login";
+	}
+	
 	@RequestMapping(value="/newuser")
 	public String newUser(Model model){
 		UserDetailsImpl user = new UserDetailsImpl();
