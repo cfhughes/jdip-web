@@ -45,4 +45,9 @@ public class UserToolsController {
 		us.saveUser(user);
 		return "newuser";
 	}
+	
+	@RequestMapping(value="/not-found")
+	public String notfound(){
+		return "not-found";
+	}
 }

@@ -121,13 +121,13 @@ body {
 			<p class="pull-right">
 				<sec:authorize access="isAuthenticated()"> 
 				User: <sec:authentication property="principal.username" />
-					<a href="<c:url value="/j_spring_security_logout" context="/dip"/>">
+					<a href="<c:url value="/j_spring_security_logout" />">
 						Logout</a>
 				</sec:authorize>
 
 				<sec:authorize access="!isAuthenticated()">
-					<a href="<c:url value="/login" context="/dip"/>"><button>Login</button></a>
-					<a href="<c:url value="/newuser" context="/dip"/>"><button>Register</button></a>
+					<a href="<c:url value="/login" />"><button>Login</button></a>
+					<a href="<c:url value="/newuser" />"><button>Register</button></a>
 				</sec:authorize>
 			</p>
 			<h3 class="muted">Diplomacy</h3>
@@ -141,11 +141,11 @@ body {
 						</button>
 						<div class="nav-collapse collapse">
 							<ul class="nav">
-								<li><a href="<c:url value="/" context="/dip"/>">Home</a></li>
-								<li><a href="<c:url value="/gamelist" context="/dip"/>">All
+								<li><a href="<c:url value="/" />">Home</a></li>
+								<li><a href="<c:url value="/gamelist" />">All
 										Games</a></li>
 								<sec:authorize access="hasRole('PLAYER')">
-								<li><a href="<c:url value="/newgame" context="/dip"/>">New
+								<li><a href="<c:url value="/newgame" />">New
 										Game</a></li>
 								</sec:authorize>
 							</ul>

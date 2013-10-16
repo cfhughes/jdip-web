@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.chughes.data.GameRepository;
 import com.chughes.dip.GameEntity.Stage;
 import com.chughes.service.GameService;
 
@@ -22,7 +23,7 @@ import dip.world.Power;
 @Service
 public class GameMaster {
 
-	@Autowired private GameService gameS;
+	@Autowired private GameRepository gameR;
 
 	private static final Logger logger = LoggerFactory.getLogger(GameMaster.class);
 
@@ -59,7 +60,7 @@ public class GameMaster {
 				player.setReady(false);
 			}
 			ge.setPhase(ge.getW().getLastTurnState().getPhase().toString());
-			gameS.saveGame(ge);
+			gameR.saveGame(ge);
 
 		}
 		catch(Exception e){
