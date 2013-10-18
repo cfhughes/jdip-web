@@ -272,7 +272,7 @@ public class HomeController {
 		try{
 			o.validate(w.getLastTurnState(), vo, null);
 		}catch(OrderException oe){
-			return Collections.singletonMap("success", oe.getLocalizedMessage());
+			return Collections.singletonMap("error", new String[]{oe.getLocalizedMessage()});
 		}
 		logger.info("From: "+o.getSourceUnitType());
 
@@ -312,7 +312,7 @@ public class HomeController {
 		
 		//model.addAttribute("success", 1);
 
-		gameRepo.updateGame(game);
+		gameRepo.updateWorld(w);
 		String id1 = info.getPowerSVGGElement(p, 1).getId();
 		return Collections.singletonMap("orders",Collections.singletonMap(id1,sw1.toString()));
 	}

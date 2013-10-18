@@ -13,6 +13,8 @@ import com.chughes.dip.GameEntity;
 import com.chughes.dip.UserGameEntity;
 
 import dip.gui.map.DefaultMapRenderer2;
+import dip.world.TurnState;
+import dip.world.World;
 
 @Repository
 public class GameRepository {
@@ -36,6 +38,12 @@ public class GameRepository {
 	@Transactional(readOnly = true)
 	public UserGameEntity inGameUser(int id){
 		return (UserGameEntity) sessionFactory.getCurrentSession().get(UserGameEntity.class, id);
+	}
+	
+	@Transactional
+	public void updateWorld(World w){
+		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
+        sessionFactory.getCurrentSession().update(w);
 	}
 	
 	@Transactional

@@ -260,7 +260,13 @@ ${svg}
 																.importNode(
 																		new DOMParser()
 																				.parseFromString(msg["orders"][layer],"image/svg+xml").documentElement,true);
+														$("#"+$element.id).remove();
 														$("#Layer1 > #" + layer).append($element);
+													}
+													if (msg["error"] !== undefined){
+														for (var i = 0;i < msg["error"].length;i++) {
+															alert(msg["error"][i]);
+														}
 													}
 													console.log(msg);
 												}

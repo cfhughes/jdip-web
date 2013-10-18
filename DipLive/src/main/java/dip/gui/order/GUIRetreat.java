@@ -317,6 +317,8 @@ public class GUIRetreat extends Retreat implements GUIOrder
 			// create group
 			group = (SVGGElement) mapInfo.getDocument().createElementNS(
 								SVGDOMImplementation.SVG_NAMESPACE_URI, SVGConstants.SVG_G_TAG);
+			
+			group.setId("order_" + this.src.toString());
 		
 			mapInfo.getPowerSVGGElement(power, LAYER_TYPICAL).appendChild(group);
 		}

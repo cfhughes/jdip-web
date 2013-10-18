@@ -592,7 +592,7 @@ final class GUIOrderUtils
 		final Power[] displayedPowers = mapInfo.getDisplayablePowers();
 		for(int i=0; i<displayedPowers.length; i++)
 		{
-			if(displayedPowers[i] == power)
+			if(displayedPowers[i].equals(power))
 			{
 				return true;
 			}
