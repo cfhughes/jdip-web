@@ -42,6 +42,10 @@ import javax.xml.parsers.*;
 */
 public class Map implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6975129388283822932L;
 	// constants
 	private static final int MAP_SIZE = 211; 	// should be prime
 	private static final int POWER_SIZE = 17;	// should be prime

@@ -75,24 +75,24 @@ public class Adjustment
 			// tally units
 			Unit unit = position.getUnit(province);
 			if( unit != null
-				&& unit.getPower() == power ) 
+				&& unit.getPower().equals(power) ) 
 			{
 				ai.numUnits++;
 			}
 			
 			unit = position.getDislodgedUnit(province);
 			if( unit != null
-				&& unit.getPower() == power ) 
+				&& unit.getPower().equals(power) ) 
 			{
 				ai.numDislodgedUnits++;
 			}
 			
 			// tally supply centers
-			if(power == position.getSupplyCenterOwner(province))
+			if(power.equals(position.getSupplyCenterOwner(province)))
 			{
 				ai.numSC++;
 				
-				if(power == position.getSupplyCenterHomePower(province))
+				if(power.equals(position.getSupplyCenterHomePower(province)))
 				{
 					ai.numHSC++;
 				}

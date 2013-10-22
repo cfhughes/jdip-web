@@ -251,7 +251,7 @@ public class StdAdjudicator implements Adjudicator
 			
 			if(	!support.isSupportingHold()
 				&& destOS != null 
-				&& destOS.getPower() == os.getPower() )
+				&& destOS.getPower().equals(os.getPower()) )
 			{
 				return true;
 			}
@@ -330,7 +330,7 @@ public class StdAdjudicator implements Adjudicator
 			while(iter.hasNext())
 			{
 				Orderable order = (Orderable) iter.next();
-				if(order.getPower() != power)
+				if(!order.getPower().equals(power))
 				{
 					// remove order: it is invalid (and 
 					// likely a bug or a cheat attempt)
@@ -1909,7 +1909,7 @@ public class StdAdjudicator implements Adjudicator
 			OrderState os = orderStates[i];
 			Order order = os.getOrder();
 			if( order instanceof Move
-				&& moveDest == ((Move) order).getDest().getProvince() )
+				&& moveDest.equals(((Move) order).getDest().getProvince() ))
 			{
 				list.add(order);
 			}
@@ -1965,7 +1965,7 @@ public class StdAdjudicator implements Adjudicator
 		for(int i=0; i<orderStates.length; i++)
 		{
 			OrderState os = orderStates[i];
-			if(os.getPower() == power)
+			if(os.getPower().equals(power))
 			{
 				list.add(os);
 			}
@@ -2034,7 +2034,7 @@ public class StdAdjudicator implements Adjudicator
 		for(int i=0; i<orderStates.length; i++)
 		{
 			OrderState os = orderStates[i];
-			if(	os.getEvalState() == Tristate.UNCERTAIN 
+			if(	os.getEvalState().equals(Tristate.UNCERTAIN) 
 				&& !os.isCircular() 
 				&& os.getOrder() instanceof Move )
 			{

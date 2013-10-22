@@ -63,6 +63,10 @@ import dip.order.result.OrderResult;
 */
 public class TurnState implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -507830632257884049L;
 	// instance variables (we serialize all of this)
 	private Phase 		phase = null;				
 	private List     	resultList = null; 				// order results, post-adjudication

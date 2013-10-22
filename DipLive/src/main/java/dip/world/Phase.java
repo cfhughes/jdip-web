@@ -46,6 +46,11 @@ import java.util.Iterator;
 */
 public class Phase implements java.io.Serializable, Comparable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3651316399336505136L;
+
 	// internal constants: describes ordering of phases
 	// Setup is independent of this ordering.
 	// ordering: (for a given year)
@@ -406,6 +411,10 @@ public class Phase implements java.io.Serializable, Comparable
 	*/
 	public static class SeasonType implements Serializable, Comparable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8755829601640636554L;
 		// always-accepted english constants for SeasonTypes
 		protected static final String CONST_SPRING 	= "SPRING";
 		protected static final String CONST_FALL 	= "FALL";
@@ -628,6 +637,10 @@ public class Phase implements java.io.Serializable, Comparable
 	*/
 	public static class PhaseType implements Serializable, Comparable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -274023424634001759L;
 		// always-accepted english constants for phase types
 		// these MUST be in lower case
 		protected static final String CONST_ADJUSTMENT = "adjustment";
@@ -869,6 +882,10 @@ public class Phase implements java.io.Serializable, Comparable
 	*/
 	public static class YearType implements Serializable, Comparable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -602034791661770642L;
 		// instance fields
 		protected final int year;
 		

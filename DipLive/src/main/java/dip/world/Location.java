@@ -44,6 +44,11 @@ import dip.misc.Utils;
 */
 public class Location implements Cloneable,Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8978127254201266827L;
+
 	/** Constant defining an empty array of Location() objects */
 	public static final Location[] EMPTY = new Location[0];
 	
@@ -174,9 +179,9 @@ public class Location implements Cloneable,Serializable
 		}
 		else if(obj instanceof Location)
 		{
-			// compare referential Province and Coast equality
+			// compare non-referential Province and Coast equality
 			Location loc = (Location) obj;
-			return (province == loc.province && coast == loc.coast);
+			return (province.equals(loc.province) && coast.equals(loc.coast));
 		}
 		
 		return false;

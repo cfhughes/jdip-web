@@ -53,6 +53,11 @@ import dip.world.variant.data.SymbolPack;
 */
 public class MapMetadata implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9061880502629595108L;
+
 	/** jDip namespace constant */
 	public static final String JDIP_NAMESPACE = "http://jdip.sourceforge.org/jdipNS";
 	

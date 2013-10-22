@@ -62,6 +62,10 @@ import java.io.*;
  */
 public abstract class Order extends Object implements Orderable, java.io.Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5487204449795813995L;
 	// resource keys
 	private static final String ORD_VAL_NOUNIT = "ORD_VAL_NOUNIT";
 	private static final String ORD_VAL_BADPOWER = "ORD_VAL_BADPOWER";

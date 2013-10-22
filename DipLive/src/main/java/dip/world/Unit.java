@@ -38,6 +38,10 @@ import dip.misc.Utils;
 
 public class Unit implements java.io.Serializable, Cloneable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -9051046255140798593L;
 	// instance variables
 	protected final Unit.Type type;
 	protected final Power owner;
@@ -148,6 +152,10 @@ public class Unit implements java.io.Serializable, Cloneable
 	*/
 	public static class Type extends Object implements java.io.Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 6516825379720373661L;
 		// internal i18n key constants
 		private static final String UNIT_TYPE_PREFIX			= "unit.type.";
 		private static final String UNIT_TYPE_BRIEF_SUFFIX 		= ".brief";
@@ -218,6 +226,14 @@ public class Unit implements java.io.Serializable, Cloneable
 		{
 			return name.hashCode();
 		}// hashCode()
+		
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof Unit.Type){
+				return obj.hashCode() == this.hashCode();
+			}
+			return false; 
+		}
 		
 		/*
 			equals():

@@ -41,6 +41,10 @@ import dip.process.Adjustment.AdjustmentInfo;
 
 public class Build extends Order
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5327391111285830332L;
 	// il8n constants
 	private static final String BUILD_MULTICOAST = "BUILD_MULTICOAST";
 	private static final String BUILD_HOME_SUPPLY = "BUILD_HOME_SUPPLY";
@@ -173,11 +177,11 @@ public class Build extends Order
 		{
 			throw new OrderException(Utils.getLocalString(BUILD_EXISTINGUNIT));
 		}
-		else if( power != position.getSupplyCenterOwner(province) )
+		else if( !power.equals(position.getSupplyCenterOwner(province)) )
 		{
 			throw new OrderException(Utils.getLocalString(BUILD_OWNED_SUPPLY, power));
 		}
-		else if( power != position.getSupplyCenterHomePower(province) 
+		else if( !power.equals(position.getSupplyCenterHomePower(province)) 
 				 && ruleOpts.getOptionValue(RuleOptions.OPTION_BUILDS) == RuleOptions.VALUE_BUILDS_HOME_ONLY )
 		{
 			throw new OrderException(Utils.getLocalString(BUILD_HOME_SUPPLY));
@@ -190,7 +194,7 @@ public class Build extends Order
 		}
 		
 		// disallow wing units, if wing unit option prohibited
-		if(	srcUnitType == Unit.Type.WING
+		if(	srcUnitType.equals(Unit.Type.WING)
 			&& ruleOpts.getOptionValue(RuleOptions.OPTION_WINGS) == RuleOptions.VALUE_WINGS_DISABLED )
 		{
 			throw new OrderException(Utils.getLocalString(BUILD_WING_PROHIBITED));

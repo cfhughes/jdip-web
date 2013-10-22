@@ -65,6 +65,11 @@ import org.w3c.dom.*;
 */
 public class GUIMove extends Move implements GUIOrder
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -374549771166450606L;
+
 	// MoveParameter constants
 	/** Optional. Sets this Move to be by convoy. Value must be a Boolean object (Boolean.TRUE or Boolean.FALSE) */
 	public transient static final MoveParameter BY_CONVOY = new MoveParameter("BY_CONVOY");

@@ -453,8 +453,16 @@ public final class Coast implements java.io.Serializable
 		return hashCode;
 	}// hashCode()
 	
+	@Override
+	public boolean equals(Object obj) {
+		return this.hashCode() == obj.hashCode();
+	}
+	
 	
 	/*
+	 * 
+	 * Doesn't work for web version:
+		
 		equals():
 		
 		We use Object.equals(), which just does a test of 

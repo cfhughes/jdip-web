@@ -34,7 +34,6 @@ public class GameMaster {
 //		System.out.println("Executed");
 //	}
 
-	@Async
 	public void beginGame(GameEntity game){
 		game.setStage(Stage.PLAYING);
 		Vector<Power> powers = new Vector<Power>(Arrays.asList(game.getW().getMap().getPowers()));

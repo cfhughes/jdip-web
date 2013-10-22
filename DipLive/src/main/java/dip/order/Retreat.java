@@ -48,6 +48,10 @@ import java.util.Iterator;
 
 public class Retreat extends Move
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3349911124867265066L;
 	// il8n constants
 	private static final String RETREAT_SRC_EQ_DEST = "RETREAT_SRC_EQ_DEST";
 	private static final String RETREAT_CANNOT = "RETREAT_CANNOT";

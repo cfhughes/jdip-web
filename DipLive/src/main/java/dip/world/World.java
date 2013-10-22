@@ -72,6 +72,10 @@ import org.hibernate.annotations.SortType;
 @Entity
 public class World implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2820481380993122362L;
 	// constants for non-turn-data lookup
 	private static final String KEY_GLOBAL_DATA = "_global_data_";
 	private static final String KEY_VICTORY_CONDITIONS = "_victory_conditions_";
@@ -582,6 +586,10 @@ public class World implements Serializable
 	*/
 	public static class VariantInfo implements Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 3933248847724969465L;
 		private String variantName;
 		private String mapName;
 		private String symbolsName;

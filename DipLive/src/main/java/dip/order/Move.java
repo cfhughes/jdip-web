@@ -50,6 +50,10 @@ import java.util.Collections;
 */
 public class Move extends Order
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -913887796934729599L;
 	// il8n constants
 	/*
 	private static final String MOVE_VAL_CONVOY_WARNING = "MOVE_VAL_CONVOY_WARNING";

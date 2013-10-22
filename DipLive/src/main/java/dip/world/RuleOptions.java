@@ -58,6 +58,11 @@ import java.lang.reflect.*;
 */
 public class RuleOptions implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6922232860462500876L;
+
 	// internal constnats
 	private static final String DESCRIPTION = "_description";
 	

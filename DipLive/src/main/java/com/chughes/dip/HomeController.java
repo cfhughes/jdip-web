@@ -270,7 +270,7 @@ public class HomeController {
 		ValidationOptions vo = new ValidationOptions();
 		vo.setOption(ValidationOptions.KEY_GLOBAL_PARSING, ValidationOptions.VALUE_GLOBAL_PARSING_STRICT);
 		try{
-			o.validate(w.getLastTurnState(), vo, null);
+			o.validate(w.getLastTurnState(), vo, w.getRuleOptions());
 		}catch(OrderException oe){
 			return Collections.singletonMap("error", new String[]{oe.getLocalizedMessage()});
 		}

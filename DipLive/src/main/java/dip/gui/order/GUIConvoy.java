@@ -59,6 +59,10 @@ import org.w3c.dom.*;
 */
 public class GUIConvoy extends Convoy implements GUIOrder
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6697266601127024865L;
 	// i18n keys
 	private final static String ONLY_SEA_OR_CC_FLEETS_CAN_CONVOY = "GUIConvoy.only_fleets_can_convoy";
 	private final static String CLICK_TO_CONVOY = "GUIConvoy.click_to_convoy";

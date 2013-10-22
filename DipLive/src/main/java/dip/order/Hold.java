@@ -42,6 +42,11 @@ import java.util.Iterator;
 */
 public class Hold extends Order
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5559732762181576491L;
+
 	// il8n
 	private static final String HOLD_FORMAT = "HOLD_FORMAT";
 	

@@ -23,6 +23,8 @@
 
 package dip.process;
 
+import java.io.Serializable;
+
 /**
 *
 *	Trinary state object. Immutable.
@@ -32,8 +34,12 @@ package dip.process;
 *	of referential equality.
 *
 */
-final public class Tristate
+final public class Tristate implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4928015884974719029L;
 	// constants
 	public static final Tristate TRUE		= new Tristate("True");
 	public static final Tristate FALSE		= new Tristate("False");
@@ -63,6 +69,15 @@ final public class Tristate
 	{
 		return text;
 	}// toString()
+	
+	@Override
+	public int hashCode() {
+		return text.hashCode();
+	}
+	
+	public boolean equals(Tristate obj) {
+		return obj.hashCode() == this.hashCode();
+	}
 	
 	/** Compares a Tristate to a boolean */
 	public boolean equals(boolean value)

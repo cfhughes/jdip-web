@@ -59,6 +59,10 @@ import org.w3c.dom.*;
 */
 public class GUIRetreat extends Retreat implements GUIOrder
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -533550076665382971L;
 	// i18n keys
 	private final static String UNIT_MUST_DISBAND = "GUIRetreat.must_disband";
 	private final static String CLICK_TO_SET_DEST = "GUIRetreat.set_dest";
