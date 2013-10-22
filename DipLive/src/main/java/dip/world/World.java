@@ -101,6 +101,7 @@ public class World implements Serializable
 		this.turnStates = turnStates;
 	}
 	@ElementCollection
+	@Lob
 	public Map<String, Serializable> getNonTurnData() {
 		return nonTurnData;
 	}

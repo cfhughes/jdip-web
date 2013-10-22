@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.chughes.data.GameRepository;
 import com.chughes.dip.GameEntity.Stage;
@@ -23,7 +24,7 @@ import dip.world.Power;
 @Service
 public class GameMaster {
 
-	@Autowired private GameRepository gameR;
+	@Autowired private Judge j;
 
 	private static final Logger logger = LoggerFactory.getLogger(GameMaster.class);
 
@@ -49,18 +50,12 @@ public class GameMaster {
 		try{
 			for (UserGameEntity player : ge.getPlayers()) {
 				if (!player.isReady()){
+					System.out.println(":"+player.getPower()+" isn't ready");
 					return;
 				}
 			}
 
-			StdAdjudicator stdJudge = new StdAdjudicator(new GUIOrderFactory(), ge.getW().getLastTurnState());
-			stdJudge.process();
-			ge.getW().setTurnState(stdJudge.getNextTurnState());
-			for (UserGameEntity player : ge.getPlayers()) {
-				player.setReady(false);
-			}
-			ge.setPhase(ge.getW().getLastTurnState().getPhase().toString());
-			gameR.saveGame(ge);
+		j.advanceGame(ge.getId());
 
 		}
 		catch(Exception e){
