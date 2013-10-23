@@ -158,6 +158,7 @@ public class HomeController {
 		//RenderCommand rc5 = mr.getRenderCommandFactory().createRCSetLabel(mr, MapRenderer2.VALUE_LABELS_BRIEF);
 		boolean member = false;
 		if (loggedin){
+			model.addAttribute("private", game.getSecret() != null);
 			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
 			if (uge != null){
 				member = true;

@@ -13,147 +13,61 @@
 <meta name="author" content="">
 
 <!-- Le styles -->
+<script src="http://code.jquery.com/jquery-2.0.3.min.js"
+	type="text/javascript"></script>
 <link
-	href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
 	rel="stylesheet">
 <style type="text/css">
-body {
-	padding-top: 20px;
-	padding-bottom: 60px;
-}
-
-.row-fluid {
-	max-width: 100%;
-}
-
-/* Custom container */
 .container {
-	margin: 0 auto;
-	max-width: 1300px;
+padding: 30px;
 }
 
-.container>hr {
-	margin: 60px 0;
+.navbar {
+margin-bottom: 30px;
 }
-
-/* Main marketing message and sign up button */
-.jumbotron {
-	margin: 80px 0;
-	text-align: center;
-}
-
-.jumbotron h1 {
-	font-size: 100px;
-	line-height: 1;
-}
-
-.jumbotron .lead {
-	font-size: 24px;
-	line-height: 1.25;
-}
-
-.jumbotron .btn {
-	font-size: 21px;
-	padding: 14px 24px;
-}
-
-/* Supporting marketing content */
-.marketing {
-	margin: 60px 0;
-}
-
-.marketing p+h4 {
-	margin-top: 28px;
-}
-
-#MouseLayer {
-	visibility: visible;
-}
-
-/* Customize the navbar links to be fill the entire space of the .navbar */
-/*.navbar .navbar-inner { 
-	padding: 0; 
-} 
-
-.navbar .nav {
-	margin: 0;
-	display: table;
-	width: 100%;
-}
-
-.navbar .nav li {
-	display: table-cell;
-	width: 1%;
-	float: none;
-}
-
-.navbar .nav li a {
-	font-weight: bold;
-	text-align: center;
-	border-left: 1px solid rgba(255, 255, 255, .75);
-	border-right: 1px solid rgba(0, 0, 0, .1);
-}
-
-.navbar .nav li:first-child a {
-	border-left: 0;
-	border-radius: 3px 0 0 3px;
-}
-
-.navbar .nav li:last-child a {
-	border-right: 0;
-	border-radius: 0 3px 3px 0;
-}*/
 </style>
-
-<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-<!--[if lt IE 9]>
-      <script src="../assets/js/html5shiv.js"></script>
-    <![endif]-->
 
 </head>
 
 <body>
 
 	<div class="container"
-		style="background-color: #E3F2E3; min-height: 100%; padding-left: 10px; padding-right: 10px;">
+		style="background-color: #E3F2E3; padding-left: 10px; padding-right: 10px;">
 
-		<div class="masthead">
-			<p class="pull-right">
-				<sec:authorize access="isAuthenticated()"> 
-				User: <sec:authentication property="principal.username" />
-					<a href="<c:url value="/j_spring_security_logout" />">
-						Logout</a>
-				</sec:authorize>
 
-				<sec:authorize access="!isAuthenticated()">
-					<a href="<c:url value="/login" />"><button>Login</button></a>
-					<a href="<c:url value="/newuser" />"><button>Register</button></a>
-				</sec:authorize>
-			</p>
-			<h3 class="muted">Diplomacy</h3>
-			<div class="navbar">
-				<div class="navbar-inner">
-					<div class="container">
-						<button type="button" class="btn btn-navbar"
-							data-toggle="collapse" data-target=".nav-collapse">
-							<span class="icon-bar"></span> <span class="icon-bar"></span> <span
-								class="icon-bar"></span>
-						</button>
-						<div class="nav-collapse collapse">
-							<ul class="nav">
-								<li><a href="<c:url value="/" />">Home</a></li>
-								<li><a href="<c:url value="/gamelist" />">All
-										Games</a></li>
-								<sec:authorize access="hasRole('PLAYER')">
-								<li><a href="<c:url value="/newgame" />">New
-										Game</a></li>
-								</sec:authorize>
-							</ul>
-						</div>
-					</div>
+
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target=".navbar-ex1-collapse">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="<c:url value="/" />">Diplomacy</a>
+			</div>
+			<div class="collapse navbar-collapse navbar-ex1-collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="<c:url value="/gamelist" />">All Games</a></li>
+					<sec:authorize access="hasRole('PLAYER')">
+						<li><a href="<c:url value="/newgame" />">New Game</a></li>
+					</sec:authorize>
+				</ul>
+				<div class="pull-right">
+					<sec:authorize access="isAuthenticated()"> 
+					<p class="navbar-text">
+				User: <sec:authentication property="principal.username" /></p>
+						<a href="<c:url value="/j_spring_security_logout" />"><button class="btn btn-default navbar-btn">Logout</button></a>
+					</sec:authorize>
+
+					<sec:authorize access="!isAuthenticated()">
+						<a href="<c:url value="/login" />"><button class="btn btn-default navbar-btn">Login</button></a>
+						<a href="<c:url value="/newuser" />"><button class="btn btn-default navbar-btn">Register</button></a>
+					</sec:authorize>
 				</div>
 			</div>
-			<!-- /.navbar -->
-		</div>
+		</nav>
+		<!-- /.navbar -->
 
 		<div class="row-fluid">

@@ -99,10 +99,28 @@
 	overflow: auto;
 	border: 1px solid #000;
 }
+
+use,symbol {
+	overflow: visible;
+}
+
+.invisible{
+	visibility: visible;
+}
 </style>
-<script src="http://code.jquery.com/jquery-1.9.1.min.js"
-	type="text/javascript"></script>
+
+	<c:if test="${!member_of_game and !started}">
+	<form action="<c:url value="/joingame/${gid}" />">
+	Join this game: 
+	<c:if test="${secret}">
+	<input type="text" name="secret" placeholder="Password">
+	</c:if>
+	<button type="submit" class="btn">Join</button>
+	</form>
+	</c:if>
+	<div id="svg-map">
 ${svg}
+</div>
 <br />
 <h3>${gamephase}</h3>
 
@@ -111,32 +129,32 @@ ${svg}
 		<c:choose>
 			<c:when test="${phasetype == 'M'}">
 
-				<button id="order-move" class="btn">Move</button>
-				<button id="order-hold" class="btn">Hold</button>
-				<button id="order-shold" class="btn">Support Hold</button>
-				<button id="order-smove" class="btn">Support Move</button>
-				<button id="order-convoy" class="btn">Convoy</button>
+				<button id="order-move" class="btn btn-default">Move</button>
+				<button id="order-hold" class="btn btn-default">Hold</button>
+				<button id="order-shold" class="btn btn-default">Support Hold</button>
+				<button id="order-smove" class="btn btn-default">Support Move</button>
+				<button id="order-convoy" class="btn btn-default">Convoy</button>
 
 			</c:when>
 			<c:when test="${phasetype == 'R'}">
-				<button id="order-retreat" class="btn">Retreat</button>
-				<button id="order-disband" class="btn">Disband</button>
+				<button id="order-retreat" class="btn btn-default">Retreat</button>
+				<button id="order-disband" class="btn btn-default">Disband</button>
 			</c:when>
 			<c:when test="${phasetype == 'B'}">
-				<button id="order-builda" class="btn">Build Army</button>
-				<button id="order-buildf" class="btn">Build Fleet</button>
-				<button id="order-destroy" class="btn">Disband</button>
+				<button id="order-builda" class="btn btn-default">Build Army</button>
+				<button id="order-buildf" class="btn btn-default">Build Fleet</button>
+				<button id="order-destroy" class="btn btn-default">Disband</button>
 			</c:when>
 		</c:choose>
 	</div>
 	<div style="height: 20px" id="bottom-bar"></div>
 	<button id="ready-button"
-		class="btn<c:if test="${isready}"> active</c:if>">Ready</button>
+		class="btn btn-default<c:if test="${isready}"> active</c:if>">Ready</button>
 </c:if>
 <c:if test="${member_of_game}">
 	<div>
 		<ul id="chat-tabs" class="nav nav-tabs">
-		<li chatid="-1"><a href="#allchat" data-toggle="tab">All Players</a></li>
+		<li chatid="-1" class="active"><a href="#allchat" data-toggle="tab">All Players</a></li>
 			<c:forEach items="${players}" var="player">
 				<c:if test="${player.id != me_id}">
 					<li chatid="${player.id}"><a href="#tab-${player.id}"
@@ -145,35 +163,39 @@ ${svg}
 			</c:forEach>
 		</ul>
 		<div class="tab-content">
-			<div class="tab-pane" id="allchat">
+			<div class="tab-pane active" id="allchat">
 				<div id="chatlog--1" class="chat-messages"></div>
-				<textarea id="chat--1" name="-1"
-							class="chat-input" rows="3" cols=""></textarea>
-				<button userid="-1" class="dipchat-submit button"
+				<textarea class="form-control" id="chat--1" name="-1"
+							class="chat-input span4" cols="" rows="3"></textarea>
+				<button userid="-1" class="dipchat-submit btn btn-default"
 							type="btn">Send</button>
-				<br>
-				<h3>All Players</h3>
+
+				<h4 class="pull-right">All Players</h4>
 			</div>
 			<c:forEach items="${players}" var="player">
 				<c:if test="${player.id != me_id}">
 					<div class="tab-pane" id="tab-${player.id}">
 						<div id="chatlog-${player.id}" class="chat-messages"></div>
-						<textarea id="chat-${player.id}" name="${player.id}"
+						<textarea class="form-control" id="chat-${player.id}" name="${player.id}"
 							class="chat-input" rows="3" cols=""></textarea>
-						<button userid="${player.id}" class="dipchat-submit button"
+						<button userid="${player.id}" class="dipchat-submit btn btn-default"
 							type="btn">Send</button>
-						<br>
-						<h3>${player.user.username}</h3>
-						<p>${player.power}</p>
+						<div class="pull-right">
+						<p><span style="font-weight: bold;">${player.user.username}</span> ${player.power}</p>
+						</div>
 					</div>
 				</c:if>
 			</c:forEach>
 		</div>
 	</div>
 </c:if>
-<c:if test="${member_of_game}">
 	<script type="text/javascript">
-		$(function() {
+	$(function() {
+		if (!document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")){
+			$("#svg-map").html("<h3>Error: Your Browser doesn't support SVG, which is vital to this app.</h3>");
+		}
+<c:if test="${member_of_game}">
+
 			var last_seen = {};
 			var loadchat = function(from, last) {
 				var request = {
@@ -229,11 +251,9 @@ ${svg}
 			<c:if test="${started}">
 			var from = 0;
 			var order = {};
-			$("#MouseLayer > *").hover(
+			$("#MouseLayer").children().hover(
 					function() {
-						$("#bottom-bar").html(
-								"<p>Hovering Over " + $(this).attr("id")
-										+ " </p>");
+						$("#bottom-bar").html("<p>Hovering Over " + $(this).attr("id") + " </p>");
 					}, function() {
 						$("#bottom-bar").html("");
 					});
@@ -245,9 +265,7 @@ ${svg}
 				};
 				from = 0;
 			});
-			$("#MouseLayer > *")
-					.click(
-							function() {
+			$("#MouseLayer > *").click(function() {
 								var send = function() {
 									$.ajax("${gid}/JSONorder",
 											{
@@ -313,9 +331,9 @@ ${svg}
 				});
 
 			});
-			</c:if>
+			</c:if></c:if>
 
 		});
 	</script>
-</c:if>
+
 <%@include file="tail.jsp"%>
