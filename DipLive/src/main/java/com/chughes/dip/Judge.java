@@ -5,9 +5,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chughes.data.GameRepository;
+import com.chughes.dip.GameEntity.Stage;
 
 import dip.gui.order.GUIOrderFactory;
 import dip.process.StdAdjudicator;
+import dip.world.TurnState;
 
 @Service
 public class Judge {
@@ -19,13 +21,19 @@ public class Judge {
 		GameEntity ge = gameR.findById(game);
 		StdAdjudicator stdJudge = new StdAdjudicator(new GUIOrderFactory(), ge.getW().getLastTurnState());
 		stdJudge.process();
-		ge.getW().setTurnState(stdJudge.getNextTurnState());
+		TurnState ts = stdJudge.getNextTurnState();
+		if (ts != null){
+			ge.getW().setTurnState(ts);
+		}
+		ge.setPhase(ge.getW().getLastTurnState().getPhase().toString());
+		if (ge.getW().getLastTurnState().isEnded()){
+			ge.setStage(Stage.ENDED);
+			ge.setPhase("Ended");
+		}
 		gameR.updateWorld(ge.getW());
 		for (UserGameEntity player : ge.getPlayers()) {
 			player.setReady(false);
 		}
-		ge.setPhase(ge.getW().getLastTurnState().getPhase().toString());
-		
 		gameR.saveGame(ge);
 	}
 	
