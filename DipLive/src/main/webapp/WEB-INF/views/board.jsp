@@ -173,10 +173,10 @@ ${svg}
 		<div class="tab-content">
 			<div class="tab-pane active" id="allchat">
 				<div id="chatlog--1" class="chat-messages"></div>
-				<textarea class="form-control" id="chat--1" name="-1"
-							class="chat-input span4" cols="" rows="3"></textarea>
-				<button userid="-1" class="dipchat-submit btn btn-default"
-							type="btn">Send</button>
+				<textarea id="chat--1" name="-1"
+							class="chat-input span4 form-control" cols="" rows="3"></textarea>
+				<button class="dipchat-submit btn btn-default"
+							type="btn" userid="-1" >Send</button>
 
 				<h4 class="pull-right">All Players</h4>
 			</div>
@@ -184,8 +184,8 @@ ${svg}
 				<c:if test="${player.id != me_id}">
 					<div class="tab-pane" id="tab-${player.id}">
 						<div id="chatlog-${player.id}" class="chat-messages"></div>
-						<textarea class="form-control" id="chat-${player.id}" name="${player.id}"
-							class="chat-input" rows="3" cols=""></textarea>
+						<textarea id="chat-${player.id}" name="${player.id}"
+							class="chat-input form-control span4" rows="3" cols=""></textarea>
 						<button userid="${player.id}" class="dipchat-submit btn btn-default"
 							type="btn">Send</button>
 						<div class="pull-right">
@@ -198,6 +198,7 @@ ${svg}
 	</div>
 </c:if>
 	<script type="text/javascript">
+	//<![CDATA[
 	$(function() {
 		if (!document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")){
 			$("#svg-map").html("<h3>Error: Your Browser doesn't support SVG, which is vital to this app.</h3>");
@@ -342,6 +343,7 @@ ${svg}
 			</c:if></c:if>
 
 		});
+	//]]>
 	</script>
 
 <%@include file="tail.jsp"%>

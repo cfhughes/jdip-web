@@ -12,7 +12,7 @@
 	<div class="form-group">
 		<label class="control-label col-lg-2" for="uname">User</label>
 		<div class="col-lg-5">
-		<input class="form-control" id="uname" type='text' name='j_username' value=''>
+		<input class="form-control" id="uname" type='text' name='j_username' value=''/>
 		</div>
 	</div>
 	<div class="form-group">
