@@ -107,6 +107,14 @@ use,symbol {
 .invisible{
 	visibility: visible;
 }
+
+svg:not(:root) {
+    overflow: visible;
+}
+
+svg:FIRST-CHILD{
+	overflow: hidden;
+}
 </style>
 
 	<c:if test="${!member_of_game and !started}">
@@ -115,7 +123,7 @@ use,symbol {
 	<c:if test="${secret}">
 	<input type="text" name="secret" placeholder="Password">
 	</c:if>
-	<button type="submit" class="btn">Join</button>
+	<button type="submit" class="btn btn-default">Join</button>
 	</form>
 	</c:if>
 	<div id="svg-map">
