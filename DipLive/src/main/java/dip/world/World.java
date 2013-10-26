@@ -327,7 +327,7 @@ public class World implements Serializable
 
 		
 		int next = Integer.MIN_VALUE;
-		Iterator iter = turnStates.keySet().iterator();
+		Iterator<Integer> iter = turnStates.keySet().iterator();
 		while(iter.hasNext())
 		{
 			int phase = iter.next().hashCode();
@@ -335,7 +335,7 @@ public class World implements Serializable
 			{
 				if(iter.hasNext())
 				{
-					next = (int) iter.next();
+					next = (Integer)iter.next();
 				}
 				
 				break;
@@ -387,10 +387,10 @@ public class World implements Serializable
 		
 		
 		int previous =  Integer.MIN_VALUE;
-		Iterator iter = turnStates.keySet().iterator();
+		Iterator<Integer> iter = turnStates.keySet().iterator();
 		while(iter.hasNext())
 		{
-			int phase = (int) iter.next();
+			int phase = (Integer) iter.next();
 			if(phase != current.hashCode())
 			{
 				previous = phase;

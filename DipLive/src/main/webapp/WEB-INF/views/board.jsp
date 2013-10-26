@@ -108,6 +108,10 @@ use,symbol {
 	visibility: visible;
 }
 
+.intangible{
+	visibility: hidden;
+}
+
 svg:not(:root) {
     overflow: visible;
 }
@@ -117,22 +121,18 @@ svg:FIRST-CHILD{
 }
 </style>
 
-	<c:if test="${!member_of_game and !started}">
+<c:if test="${!member_of_game and !started}">
 	<form action="<c:url value="/joingame/${gid}" />">
-	Join this game: 
-	<c:if test="${secret}">
-	<input type="text" name="secret" placeholder="Password">
-	</c:if>
-	<button type="submit" class="btn btn-default">Join</button>
+		Join this game:
+		<c:if test="${secret}">
+			<input type="text" name="secret" placeholder="Password">
+		</c:if>
+		<button type="submit" class="btn btn-default">Join</button>
 	</form>
-	</c:if>
-	<div id="svg-map">
-${svg}
-</div>
-<br />
-<h3>${gamephase}</h3>
-
+</c:if>
+<div id="svg-map">${svg}</div>
 <c:if test="${member_of_game and started}">
+	<div style="height: 20px" id="bottom-bar"></div>
 	<div id="order-type" class="btn-group">
 		<c:choose>
 			<c:when test="${phasetype == 'M'}">
@@ -155,10 +155,10 @@ ${svg}
 			</c:when>
 		</c:choose>
 	</div>
-	<div style="height: 20px" id="bottom-bar"></div>
 	<button id="ready-button"
-		class="btn btn-default<c:if test="${isready}"> active</c:if>">Ready</button>
+		class="btn btn-default<c:if test="${isready}"> active</c:if>">Ready</button><img id="ready-img" src="<c:url value="/resources/img/check.png"/>" <c:if test="${!isready}">class="intangible"</c:if>/>
 </c:if>
+<h4>${gamephase}</h4>
 <c:if test="${member_of_game}">
 	<div>
 		<ul id="chat-tabs" class="nav nav-tabs">
@@ -205,145 +205,138 @@ ${svg}
 		}
 <c:if test="${member_of_game}">
 
-			var last_seen = {};
-			var loadchat = function(from, last) {
-				var request = {
-					"fromid" : from,
-					"gameid" : "${gid}",
-					"lastseen" : last
-				};
-				//alert(JSON.stringify(request));
-				$.ajax("JSONmessages", {
-					data : JSON.stringify(request),
-					contentType : 'application/json',
-					type : 'POST',
-					success : function(msg) {
-						console.log(msg);
-						for (i = 0; i < msg.length; i++) {
-							var chatclass = "";
-							if (msg[i][2] == ${me_id}){
-								chatclass = "chat-me";
-							}
-							$("#chatlog-" + from).append(
-									"<p class='chatcontainer "+chatclass+"'>" + msg[i][1] + "</p>");
-							last_seen[from] = msg[i][0];
+		var last_seen = {};
+		var loadchat = function(from, last) {
+		var request = {
+			"fromid" : from,
+			"gameid" : "${gid}",
+			"lastseen" : last
+		};
+		//alert(JSON.stringify(request));
+			$.ajax("JSONmessages", {
+				data : JSON.stringify(request),
+				contentType : 'application/json',
+				type : 'POST',
+				success : function(msg) {
+					console.log(msg);
+					for (i = 0; i < msg.length; i++) {
+						var chatclass = "";
+						if (msg[i][2] == ${me_id}){
+							chatclass = "chat-me";
 						}
+						$("#chatlog-" + from).append("<p class='chatcontainer "+chatclass+"'>" + msg[i][1] + "</p>");
+						last_seen[from] = msg[i][0];
 					}
-				});
-			};
-			$("#chat-tabs > li").click(
-					function() {
-						loadchat($(this).attr("chatid"), last_seen[$(this)
-								.attr("chatid")]);
-					});
-			loadchat($("#chat-tabs > li:first-child").attr("chatid"), 0);
-			$(".dipchat-submit").click(
-					function() {
-						var this_user = $(this).attr("userid");
-						var chat = {
-							"gameid" : "${gid}",
-							"to" : this_user,
-							"message" : $("#chat-" + this_user).val()
-						};
-						console.log(chat);
-						$.ajax("JSONchat", {
-							data : JSON.stringify(chat),
-							contentType : 'application/json',
-							type : 'POST',
-							success : function(msg) {
-								setTimeout(loadchat(this_user,
-										last_seen[this_user]), 500);
-								//alert(this_user);	
-							}
-						});
-					});
-			<c:if test="${started}">
-			var from = 0;
-			var order = {};
-			$("#MouseLayer").children().hover(
-					function() {
-						$("#bottom-bar").html("<p>Hovering Over " + $(this).attr("id") + " </p>");
-					}, function() {
-						$("#bottom-bar").html("");
-					});
-			$("#order-type > *").click(function() {
-				$("#order-type > *").removeClass("active");
-				$(this).addClass("active");
-				order = {
-					"type" : $(this).attr("id")
-				};
-				from = 0;
+				}
 			});
-			$("#MouseLayer > *").click(function() {
-								var send = function() {
-									$.ajax("${gid}/JSONorder",
-											{
-												data : JSON.stringify(order),
-												contentType : 'application/json',
-												type : 'POST',
-												success : function(msg) {
-													for ( var layer in msg["orders"]) {
-														var $element = document
-																.importNode(
-																		new DOMParser()
-																				.parseFromString(msg["orders"][layer],"image/svg+xml").documentElement,true);
-														$("#"+$element.id).remove();
-														$("#Layer1 > #" + layer).append($element);
-													}
-													if (msg["error"] !== undefined){
-														for (var i = 0;i < msg["error"].length;i++) {
-															alert(msg["error"][i]);
-														}
-													}
-													console.log(msg);
-												}
-											});
-								};
-								if (!order.hasOwnProperty("type")) {
-									return;
-								}
-								if (!order.hasOwnProperty("loc")) {
-									order["loc"] = $(this).attr("id");
-									if (order["type"] == "order-hold" || order["type"] == "order-builda" || order["type"] == "order-buildf" || order["type"] == "order-destroy" || order["type"] == "order-disband") {
-										send();
-										order = {
-											"type" : order["type"]
-										};
-									}
-								} else {
-									if (!order.hasOwnProperty("loc1")) {
-										order["loc1"] = $(this).attr("id");
-										if (order["type"] == "order-shold" || order["type"] == "order-move" || order["type"] == "order-retreat") {
-											send();
-											order = {
-												"type" : order["type"]
-											};
-										}
-									} else {
-										order["loc2"] = $(this).attr("id");
-										send();
-										order = {
-											"type" : order["type"]
-										};
-									}
-								}
-							});
-
-			$('button#ready-button').click(function() {
-				var ready = $(this).hasClass("active");
-				$.ajax("${gid}/JSONready", {
-					success : function(msg) {
-						if (msg["ready"] != ready) {
-							$('button#ready-button').toggleClass("active");
-						}
-					}
-				});
-
-			});
-			</c:if></c:if>
-
+		};
+		$("#chat-tabs > li").click(function() {
+			loadchat($(this).attr("chatid"), last_seen[$(this).attr("chatid")]);
 		});
+		loadchat($("#chat-tabs > li:first-child").attr("chatid"), 0);
+		$(".dipchat-submit").click(function() {
+			var this_user = $(this).attr("userid");
+			var chat = {
+				"gameid" : "${gid}",
+				"to" : this_user,
+				"message" : $("#chat-" + this_user).val()
+			};
+			console.log(chat);
+			$.ajax("JSONchat", {
+				data : JSON.stringify(chat),
+				contentType : 'application/json',
+				type : 'POST',
+				success : function(msg) {
+					setTimeout(loadchat(this_user,last_seen[this_user]), 500);
+					//alert(this_user);	
+				}
+			});
+		});
+<c:if test="${started}">
+		var from = 0;
+		var order = {};
+		$("#MouseLayer").children().hover(function() {
+			$("#bottom-bar").html("<p>" + provinces[$(this).attr("id")] + "</p>");
+		}, function() {
+			$("#bottom-bar").html("");
+		});
+		$("#order-type > *").click(function() {
+			$("#order-type > *").removeClass("active");
+			$(this).addClass("active");
+			order = {
+				"type" : $(this).attr("id")
+			};
+			from = 0;
+		});
+		$("#MouseLayer > *").click(function() {
+			var send = function() {
+				$.ajax("${gid}/JSONorder",
+					{
+						data : JSON.stringify(order),
+						contentType : 'application/json',
+						type : 'POST',
+						success : function(msg) {
+							for ( var layer in msg["orders"]) {
+								var $element = document.importNode(new DOMParser().parseFromString(msg["orders"][layer],"image/svg+xml").documentElement,true);
+								$("#"+$element.id).remove();
+								$("#Layer1 > #" + layer).append($element);
+							}
+							if (msg["error"] !== undefined){
+								for (var i = 0;i < msg["error"].length;i++) {
+									alert(msg["error"][i]);
+								}
+							}
+							console.log(msg);
+						}
+					});
+			};
+			if (!order.hasOwnProperty("type")) {
+				return;
+			}
+			if (!order.hasOwnProperty("loc")) {
+				order["loc"] = $(this).attr("id");
+				if (order["type"] == "order-hold" || order["type"] == "order-builda" || order["type"] == "order-buildf" || order["type"] == "order-destroy" || order["type"] == "order-disband") {
+					send();
+					order = {
+						"type" : order["type"]
+					};
+				}
+			} else {
+				if (!order.hasOwnProperty("loc1")) {
+					order["loc1"] = $(this).attr("id");
+					if (order["type"] == "order-shold" || order["type"] == "order-move" || order["type"] == "order-retreat") {
+						send();
+						order = {
+							"type" : order["type"]
+						};
+					}
+				} else {
+					order["loc2"] = $(this).attr("id");
+					send();
+					order = {
+						"type" : order["type"]
+					};
+				}
+			}
+		});
+		$('button#ready-button').click(function() {
+			var ready = $(this).hasClass("active");
+			$.ajax("${gid}/JSONready", {
+				success : function(msg) {
+					if (msg["ready"] != ready) {
+						$('button#ready-button').toggleClass("active");
+						$('img#ready-img').toggleClass("intangible");
+					}
+				}
+			});
+		});
+		var provinces = {
+<c:forEach items="${provinces}" var="province">
+			"${province.key}" : "${province.value}",</c:forEach>
+		};
+</c:if></c:if>
+	});
 	//]]>
-	</script>
+</script>
 
 <%@include file="tail.jsp"%>

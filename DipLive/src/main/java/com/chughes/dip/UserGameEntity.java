@@ -23,6 +23,7 @@ public class UserGameEntity {
 	private String power;
 	private int id;
 	private boolean ready;
+	private float victory_share = -1;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -66,6 +67,12 @@ public class UserGameEntity {
 	public void setReady(boolean ready) {
 		this.ready = ready;
 	}	
+	public float getVictory_share() {
+		return victory_share;
+	}
+	public void setVictory_share(float victory_share) {
+		this.victory_share = victory_share;
+	}
 	@Override
 	public int hashCode() {
 		final int prime = 31;

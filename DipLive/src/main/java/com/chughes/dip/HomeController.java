@@ -3,6 +3,7 @@ package com.chughes.dip;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGElement;
@@ -48,6 +48,7 @@ import dip.order.OrderException;
 import dip.order.Orderable;
 import dip.order.ValidationOptions;
 import dip.world.Power;
+import dip.world.Province;
 import dip.world.Unit;
 import dip.world.World;
 import dip.world.variant.VariantManager;
@@ -93,11 +94,8 @@ public class HomeController {
 			model.addAttribute("user",ue);
 			model.addAttribute("loggedin", true);
 
-			System.out.println(user.getUsername()+" is Logged In");
 			loggedin = true;
 		}
-		//response.setContentType("application/xhtml+xml");
-
 
 		GameEntity game = gameRepo.findById(id);
 
@@ -129,6 +127,7 @@ public class HomeController {
 		sw.flush();
 		sw.close();
 
+		//Create an SVG Document and start drawing the map
 		String parser = XMLResourceDescriptor.getXMLParserClassName();
 		SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
 		SVGDocument doc = f.createSVGDocument(VariantManager.getVariantPackageJarURL(variant).toString(), new StringReader(sw.toString()));
@@ -166,6 +165,12 @@ public class HomeController {
 				model.addAttribute("isready", uge.isReady());
 				model.addAttribute("phasetype", w.getLastTurnState().getPhase().getPhaseType().getBriefName());
 				if (game.getStage() == Stage.PLAYING){
+					Map<String,String> provinces = new HashMap<String,String>();
+					for (Province p:game.getW().getMap().getProvinces()){
+						provinces.put(p.getShortName(), p.getFullName());
+					}
+					model.addAttribute("provinces", provinces);
+					//Show orders just for the logged in user.
 					Power p1 = w.getMap().getPowerMatching(uge.getPower());
 					RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
 					mr.execRenderCommand(rc2);
@@ -183,7 +188,8 @@ public class HomeController {
 		//mr.execRenderCommand(rc5);
 		mr.execRenderCommand(rc3);
 		//ServletOutputStream os = response.getOutputStream();
-
+			
+		//Convert SVG Document to String
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer1 = tf.newTransformer();
 		transformer1.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -233,39 +239,27 @@ public class HomeController {
 		DefaultMapRenderer2 mr = gameRepo.getMr();
 
 		Order o = null;
-		switch (order.getType()) {
-		case "order-move":
+		
+		if (order.getType().equals("order-move")){
 			o = new GUIOrderFactory().createMove(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()));
-			break;
-		case "order-hold":
+		}else if (order.getType().equals("order-hold")){
 			o = new GUIOrderFactory().createHold(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED);
-			break;
-		case "order-shold":
+		}else if (order.getType().equals("order-shold")){
 			o = new GUIOrderFactory().createSupport(p, mr.getLocation(order.getLoc()),Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED);
-			break;
-		case "order-smove":
+		}else if (order.getType().equals("order-smove")){
 			o = new GUIOrderFactory().createSupport(p, mr.getLocation(order.getLoc()),Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED,mr.getLocation(order.getLoc2()));
-			break;
-		case "order-convoy":
+		}else if (order.getType().equals("order-convoy")){
 			o = new GUIOrderFactory().createConvoy(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()), w.getLastTurnState().getPosition().getUnit(w.getMap().getProvinceMatching(order.getLoc1())).getPower(), Unit.Type.UNDEFINED,mr.getLocation(order.getLoc2()));
-			break;
-		case "order-retreat":
+		}else if (order.getType().equals("order-retreat")){
 			o = new GUIOrderFactory().createRetreat(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()));
-			break;
-		case "order-disband":
+		}else if (order.getType().equals("order-disband")){
 			o = new GUIOrderFactory().createDisband(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED);
-			break;
-		case "order-builda":
+		}else if (order.getType().equals("order-builda")){
 			o = new GUIOrderFactory().createBuild(p, mr.getLocation(order.getLoc()), Unit.Type.ARMY);
-			break;
-		case "order-buildf":
+		}else if (order.getType().equals("order-buildf")){
 			o = new GUIOrderFactory().createBuild(p, mr.getLocation(order.getLoc()), Unit.Type.FLEET);
-			break;
-		case "order-destroy":
+		}else if (order.getType().equals("order-destroy")){
 			o = new GUIOrderFactory().createRemove(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED);
-			break;
-		default:
-			break;
 		}
 
 		ValidationOptions vo = new ValidationOptions();

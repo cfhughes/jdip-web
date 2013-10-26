@@ -840,6 +840,10 @@ public class Position implements java.io.Serializable, Cloneable
 	/** All mutable Power data is kept here */
 	private class PowerData implements java.io.Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 5042765689873295374L;
 		// instance variables
 		private boolean isEliminated = false;
 		
