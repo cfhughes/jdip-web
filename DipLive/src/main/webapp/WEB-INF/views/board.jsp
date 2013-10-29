@@ -160,6 +160,9 @@ svg:FIRST-CHILD{
 </c:if>
 <h4>${gamephase}</h4>
 <c:if test="${member_of_game}">
+	<div id="orders-panel">
+	<c:forEach items="${textorders}" var="order"><p id="${order.key}_text"><span class="label label-success">${order.value}</span> <button province_id="${order.key}" class="glyphicon glyphicon-trash"></button></p></c:forEach>
+	</div>
 	<div>
 		<ul id="chat-tabs" class="nav nav-tabs">
 		<li chatid="-1" class="active"><a href="#allchat" data-toggle="tab">All Players</a></li>
@@ -261,6 +264,7 @@ svg:FIRST-CHILD{
 		}, function() {
 			$("#bottom-bar").html("");
 		});
+		//Select Order Type
 		$("#order-type > *").click(function() {
 			$("#order-type > *").removeClass("active");
 			$(this).addClass("active");
@@ -269,6 +273,21 @@ svg:FIRST-CHILD{
 			};
 			from = 0;
 		});
+		//Remove Order
+		$("#orders-panel > p > button").click(function() {
+			var prov = $(this).attr("province_id");
+			$.ajax("${gid}/JSONorder-remove?prov="+prov,
+				{
+					success : function(msg) {
+						console.log(msg);
+						if (msg == "success"){
+							$("#order_"+prov).remove();
+							$("#"+prov+"_text").remove();
+						}
+					}
+				});
+		});
+		//Click On Map
 		$("#MouseLayer > *").click(function() {
 			var send = function() {
 				$.ajax("${gid}/JSONorder",
@@ -281,6 +300,10 @@ svg:FIRST-CHILD{
 								var $element = document.importNode(new DOMParser().parseFromString(msg["orders"][layer],"image/svg+xml").documentElement,true);
 								$("#"+$element.id).remove();
 								$("#Layer1 > #" + layer).append($element);
+							}
+							for ( var id in msg["orders_text"]) {
+								$("#"+id+"_text").remove();
+								$("#orders-panel").append("<p id='"+id+"_text'>"+msg["orders_text"][id]+"</p>");
 							}
 							if (msg["error"] !== undefined){
 								for (var i = 0;i < msg["error"].length;i++) {

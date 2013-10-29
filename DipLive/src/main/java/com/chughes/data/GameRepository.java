@@ -6,6 +6,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import dip.world.TurnState;
 import dip.world.World;
 
 @Repository
+@Scope(value="session")
 public class GameRepository {
 	protected @Autowired SessionFactory sessionFactory;
 	

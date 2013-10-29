@@ -27,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGElement;
@@ -167,7 +168,9 @@ public class HomeController {
 				if (game.getStage() == Stage.PLAYING){
 					Map<String,String> provinces = new HashMap<String,String>();
 					for (Province p:game.getW().getMap().getProvinces()){
-						provinces.put(p.getShortName(), p.getFullName());
+						for (String shortn :p.getShortNames()){
+							provinces.put(shortn, p.getFullName());
+						}
 					}
 					model.addAttribute("provinces", provinces);
 					//Show orders just for the logged in user.
@@ -175,10 +178,13 @@ public class HomeController {
 					RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
 					mr.execRenderCommand(rc2);
 					List<GUIOrder> orders = w.getLastTurnState().getOrders(p1);
+					Map<String,String> textorders = new HashMap<String,String>();
 					for (GUIOrder o : orders) {
 						o.updateDOM(mr.new DMRMapInfo(w.getLastTurnState()));
 						System.out.println(o.toFullString());
+						textorders.put(o.getSource().toString(), o.toFullString());
 					}
+					model.addAttribute("textorders", textorders);
 				}
 			}
 		}
@@ -309,7 +315,43 @@ public class HomeController {
 
 		gameRepo.updateWorld(w);
 		String id1 = info.getPowerSVGGElement(p, 1).getId();
-		return Collections.singletonMap("orders",Collections.singletonMap(id1,sw1.toString()));
+		Map<String,Object> results = new HashMap<String,Object>();
+		results.put("orders",Collections.singletonMap(id1,sw1.toString()));
+		results.put("orders_text", Collections.singletonMap(o.getSource().toString(),o.toFullString()));
+		return results;
+	}
+	
+	@RequestMapping(value = "/game/{gameID}/JSONorder-remove")
+	public @ResponseBody String remove(@PathVariable(value="gameID") int id,@RequestParam(value="prov") String province) throws Exception {
+
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserDetailsImpl user = (UserDetailsImpl) auth.getPrincipal();
+		GameEntity game = gameRepo.findById(id);
+		World w = game.getW();
+		UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
+		
+		Power p = w.getMap().getPowerMatching(uge.getPower());
+		
+		DefaultMapRenderer2 mr = gameRepo.getMr();
+		
+		List<Orderable> orders = w.getLastTurnState().getOrders(p);
+		Iterator<Orderable> iter = orders.iterator();
+		//boolean isDuplicate = false;
+		while(iter.hasNext())
+		{
+			//System.out.println("Looping");
+			Orderable listOrder = iter.next();
+			if( listOrder.getSource().isProvinceEqual(mr.getLocation(province)) )
+			{
+				//System.out.println("Should be removed");
+				iter.remove();
+				gameRepo.updateWorld(w);
+				return "success";
+			}
+		}
+		
+		return "fail";
+
 	}
 	
 	@RequestMapping(value = "/game/{gameID}/JSONready")
