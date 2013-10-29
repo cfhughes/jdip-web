@@ -1,5 +1,6 @@
 package com.chughes.data;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.hibernate.FlushMode;
@@ -19,7 +20,12 @@ import dip.world.World;
 
 @Repository
 @Scope(value="session")
-public class GameRepository {
+public class GameRepository implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4156517874604991540L;
+
 	protected @Autowired SessionFactory sessionFactory;
 	
 	private DefaultMapRenderer2 mr; 

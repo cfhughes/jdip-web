@@ -97,9 +97,10 @@ public abstract class MapRenderer2
 	//protected final MapPanel mapPanel;
 	//protected CFPropertyListener propListener = null;
 	//protected final JSVGCanvas svgCanvas;
-	protected final SVGDocument doc;
+	protected SVGDocument doc;
 	
 	
+	public MapRenderer2(){}
 	
 	/**
 	*	Default Constructor

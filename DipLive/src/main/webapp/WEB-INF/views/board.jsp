@@ -274,19 +274,20 @@ svg:FIRST-CHILD{
 			from = 0;
 		});
 		//Remove Order
-		$("#orders-panel > p > button").click(function() {
+		var removeorder = function() {
 			var prov = $(this).attr("province_id");
-			$.ajax("${gid}/JSONorder-remove?prov="+prov,
+			$.ajax("${gid}/JSONorder-remove?prov="+encodeURI(prov),
 				{
 					success : function(msg) {
 						console.log(msg);
 						if (msg == "success"){
-							$("#order_"+prov).remove();
-							$("#"+prov+"_text").remove();
+							$("#order_"+prov.replace("/","\\/")).remove();
+							$("#"+prov.replace("/","\\/")+"_text").remove();
 						}
 					}
 				});
-		});
+		};
+		$("#orders-panel > p > button").click(removeorder);
 		//Click On Map
 		$("#MouseLayer > *").click(function() {
 			var send = function() {
@@ -298,12 +299,13 @@ svg:FIRST-CHILD{
 						success : function(msg) {
 							for ( var layer in msg["orders"]) {
 								var $element = document.importNode(new DOMParser().parseFromString(msg["orders"][layer],"image/svg+xml").documentElement,true);
-								$("#"+$element.id).remove();
+								$("#"+$element.id.replace("/","\\/")).remove();
 								$("#Layer1 > #" + layer).append($element);
 							}
 							for ( var id in msg["orders_text"]) {
-								$("#"+id+"_text").remove();
-								$("#orders-panel").append("<p id='"+id+"_text'>"+msg["orders_text"][id]+"</p>");
+								$("#"+id.replace("/","\\/")+"_text").remove();
+								$("#orders-panel").append('<p id="'+id+'_text"><span class="label label-success">'+msg["orders_text"][id]+'</span> <button province_id="'+id+'" class="glyphicon glyphicon-trash"></button></p>');
+								$("#orders-panel > p > button").on('click',removeorder);
 							}
 							if (msg["error"] !== undefined){
 								for (var i = 0;i < msg["error"].length;i++) {

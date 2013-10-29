@@ -80,6 +80,10 @@ import org.apache.batik.css.engine.*;
 */
 public class DefaultMapRenderer2 extends MapRenderer2 implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5935826195444933214L;
 	// Symbol Names
 	//
 	/** Army symbol ID */
@@ -155,24 +159,24 @@ public class DefaultMapRenderer2 extends MapRenderer2 implements Serializable
 	protected static final String UNORDERED 	= "unordered";
 	
 	// instance variables
-	protected final Map trackerMap;			// for rendering units & dislodged units; keyed by Province
-	protected final HashMap layerMap;		// layers to which we render; keyed by LAYER; includes label layers
-	private final HashMap renderSettings;	// control rendering options.
-	private final HashMap locMap;			// maps multicoastal province ids -> Location objects for multicoastal provinces
-	private final HashMap[] powerOrderMap;
+	protected Map trackerMap;			// for rendering units & dislodged units; keyed by Province
+	protected HashMap layerMap;		// layers to which we render; keyed by LAYER; includes label layers
+	private HashMap renderSettings;	// control rendering options.
+	private HashMap locMap;			// maps multicoastal province ids -> Location objects for multicoastal provinces
+	private HashMap[] powerOrderMap;
 	private HashMap oldRenderSettings;		// old render settings
 	
-	private final dip.world.Map worldMap;	// World Map reference
+	private dip.world.Map worldMap;	// World Map reference
 	
 	private TurnState turnState = null;					// current TurnState
-	private final Province[] provinces;
-	private final Power[] powers;
+	private Province[] provinces;
+	private Power[] powers;
 	private Position position = null;					// current Position
 	private MapMetadata mapMeta = null;					
 	//private DOMUIEventListener domEventListener = null;	
 	private boolean isDislodgedPhase = false;			// true if we are in Phase.RETREAT 
 	private static final DMR2RenderCommandFactory rcf; 	// default render command factory instance.
-	private final SymbolPack symbolPack;
+	private SymbolPack symbolPack;
 	
 	static
 	{
@@ -181,6 +185,8 @@ public class DefaultMapRenderer2 extends MapRenderer2 implements Serializable
 	
 	/** Creates a DefaultMapRenderer object 
 	 * @throws InterruptedException */
+	public DefaultMapRenderer2(){}
+	
 	public DefaultMapRenderer2(SVGDocument doc, World w, SymbolPack sp)
 	throws MapException, InterruptedException
 	{

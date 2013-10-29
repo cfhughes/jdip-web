@@ -2,6 +2,7 @@ package com.chughes.dip;
 
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -113,7 +114,7 @@ public class HomeController {
 
 		}
 
-		SymbolInjector si = new SymbolInjector(variant, mg, VariantManager.getSymbolPacks()[1]);
+		SymbolInjector si = new SymbolInjector(variant, mg, VariantManager.getSymbolPacks()[2]);
 
 		si.inject();
 
@@ -133,7 +134,7 @@ public class HomeController {
 		SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
 		SVGDocument doc = f.createSVGDocument(VariantManager.getVariantPackageJarURL(variant).toString(), new StringReader(sw.toString()));
 
-		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[1]);
+		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[2]);
 
 		gameRepo.setMr(mr);
 
@@ -324,6 +325,10 @@ public class HomeController {
 	@RequestMapping(value = "/game/{gameID}/JSONorder-remove")
 	public @ResponseBody String remove(@PathVariable(value="gameID") int id,@RequestParam(value="prov") String province) throws Exception {
 
+		province = URLDecoder.decode( province, "UTF-8" );
+		
+		System.out.println("In:" + province);
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		UserDetailsImpl user = (UserDetailsImpl) auth.getPrincipal();
 		GameEntity game = gameRepo.findById(id);

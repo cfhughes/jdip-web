@@ -41,7 +41,7 @@ public class Startup{
 		try{
 			template.execute("create unique index UserConnectionRank on UserConnection(userId, providerId, rank)");
 		}catch(BadSqlGrammarException e){
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 
