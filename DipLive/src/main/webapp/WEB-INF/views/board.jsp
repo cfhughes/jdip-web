@@ -247,6 +247,7 @@ svg:FIRST-CHILD{
 				contentType : 'application/json',
 				type : 'POST',
 				success : function(msg) {
+					$("#chat-" + this_user).val('');
 					setTimeout(loadchat(this_user,last_seen[this_user]), 500);
 					//alert(this_user);	
 				}
