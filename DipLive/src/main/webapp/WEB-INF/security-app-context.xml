@@ -78,6 +78,8 @@
 				</beans:value>
 				<beans:value>dip.world.World
 				</beans:value>
+				<beans:value>com.chughes.dip.Post
+				</beans:value>
 			</beans:list>
 		</beans:property>
 

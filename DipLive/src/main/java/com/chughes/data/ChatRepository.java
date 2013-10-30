@@ -2,6 +2,7 @@ package com.chughes.data;
 
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
 
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
@@ -11,11 +12,29 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chughes.dip.Message;
+import com.chughes.dip.Post;
 import com.chughes.dip.UIChatRequest;
 
 @Repository
 public class ChatRepository {
 	protected @Autowired SessionFactory sessionFactory;
+	
+	@Transactional
+	public Post getTopic(int id){
+		return (Post) sessionFactory.getCurrentSession().get(Post.class, id);
+	}
+	
+	@Transactional
+	public List<Post> getTopics(){
+		Query q = sessionFactory.getCurrentSession().createQuery("from Post where toplevel = true order by timestamp desc");
+		q.setMaxResults(15);
+		return q.list();
+	}
+	
+	public void savePost(Post p){
+		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
+		sessionFactory.getCurrentSession().save(p);
+	}
 	
 	@Transactional
 	public void saveMessage(Message m){
