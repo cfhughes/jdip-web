@@ -263,8 +263,12 @@ public class MapMetadata implements Serializable
 	*	Rectangles are used; while the x,y position is most important, the width
 	*	and height information can be used to scale.
 	*/
-	public static class InfoEntry
+	public static class InfoEntry implements Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 8615206459571077626L;
 		private final Point2D.Float unit;
 		private final Point2D.Float dislodgedUnit;
 		private final Point2D.Float sc;
@@ -915,8 +919,12 @@ public class MapMetadata implements Serializable
 	/** 
 	*	Textual width/height of a symbol, as valid SVG dimensions. 
 	*/
-	public static class SymbolSize
+	public static class SymbolSize implements Serializable
 	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -8550000985756317593L;
 		private final String w;
 		private final String h;
 		private final String r;

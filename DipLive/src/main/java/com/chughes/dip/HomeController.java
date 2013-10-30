@@ -327,6 +327,8 @@ public class HomeController {
 
 		province = URLDecoder.decode( province, "UTF-8" );
 		
+		province = province.replace("/", "-");
+		
 		System.out.println("In:" + province);
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

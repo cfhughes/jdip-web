@@ -1,5 +1,6 @@
 package com.chughes.dip;
 
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +19,11 @@ import dip.world.TurnState;
 @Service
 public class Judge {
 	
-	@Autowired private GameRepository gameR;
+	protected @Autowired SessionFactory sessionFactory;
 
 	@Transactional
 	public void advanceGame(int game){
-		GameEntity ge = gameR.findById(game);
+		GameEntity ge = (GameEntity) sessionFactory.getCurrentSession().get(GameEntity.class, game);
 		//Adjudicate orders
 		StdAdjudicator stdJudge = new StdAdjudicator(new GUIOrderFactory(), ge.getW().getLastTurnState());
 		stdJudge.process();
@@ -42,11 +43,11 @@ public class Judge {
 				player.setVictory_share(((float)owned)/((float)total));
 			}
 		}
-		gameR.updateWorld(ge.getW());
+		sessionFactory.getCurrentSession().update(ge.getW());
 		for (UserGameEntity player : ge.getPlayers()) {
 			player.setReady(false);
 		}
-		gameR.saveGame(ge);
+		sessionFactory.getCurrentSession().saveOrUpdate(ge);
 	}
 
 }
