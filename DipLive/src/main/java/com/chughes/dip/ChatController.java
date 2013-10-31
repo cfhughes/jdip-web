@@ -42,16 +42,20 @@ public class ChatController {
 			UserEntity ue = us.getUserEntity(user.getId());
 
 			Post p = new Post();
-			if (chat.getTo() != -1){
-				Post parent = cr.getTopic(chat.getTo());
-				parent.getReplies().add(p);
-			}else{
-				p.setToplevel(true);
-			}
-
 			p.setAuthor(ue);
 			p.setText(chat.getMessage());
 			p.setTimestamp(new Date());
+			System.out.println(chat.getTo());
+			if (chat.getTo() != -1){
+				cr.savePost(p);
+				Post parent = cr.getTopic(chat.getTo());
+				parent.getReplies().add(p);
+				cr.savePost(parent);
+			}else{
+				p.setToplevel(true);
+				p.setSubject(chat.getSubject());
+				cr.savePost(p);
+			}
 
 			return "success";
 		}

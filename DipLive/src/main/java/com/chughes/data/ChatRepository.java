@@ -33,7 +33,8 @@ public class ChatRepository {
 	
 	public void savePost(Post p){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
-		sessionFactory.getCurrentSession().save(p);
+		sessionFactory.getCurrentSession().saveOrUpdate(p);
+		sessionFactory.getCurrentSession().flush();
 	}
 	
 	@Transactional

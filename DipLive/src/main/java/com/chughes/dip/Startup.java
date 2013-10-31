@@ -1,6 +1,7 @@
 package com.chughes.dip;
 
 import java.io.File;
+import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
@@ -43,6 +44,8 @@ public class Startup{
 		}catch(BadSqlGrammarException e){
 			//e.printStackTrace();
 		}
+		
+		System.setProperty("user.timezone", "UTC");
 	}
 
 //Trying to clean up connections so tomcat doesn't complain. Might have helped with some of the errors, not sure

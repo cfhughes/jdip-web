@@ -8,11 +8,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 
 import com.chughes.security.UserEntity;
 
 @Entity
-public class Post {
+public class Post implements Comparable<Post> {
 	
 	private int id;
 	private String text;
@@ -36,6 +41,7 @@ public class Post {
 	public void setText(String text) {
 		this.text = text;
 	}
+	@ManyToOne
 	public UserEntity getAuthor() {
 		return author;
 	}
@@ -54,6 +60,8 @@ public class Post {
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
+	@OneToMany
+	@Sort(type=SortType.NATURAL)
 	public SortedSet<Post> getReplies() {
 		return replies;
 	}
@@ -65,6 +73,10 @@ public class Post {
 	}
 	public void setToplevel(boolean toplevel) {
 		this.toplevel = toplevel;
+	}
+	@Override
+	public int compareTo(Post o) {
+		return this.timestamp.compareTo(o.timestamp);
 	}
 
 }

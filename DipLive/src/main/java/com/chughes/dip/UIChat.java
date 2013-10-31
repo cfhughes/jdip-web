@@ -2,6 +2,7 @@ package com.chughes.dip;
 
 public class UIChat {
 	private String message;
+	private String subject;
 	private int to;
 	private int gameid;
 	public String getMessage() {
@@ -21,5 +22,11 @@ public class UIChat {
 	}
 	public void setGameid(int gameid) {
 		this.gameid = gameid;
+	}
+	public String getSubject() {
+		return subject;
+	}
+	public void setSubject(String subject) {
+		this.subject = subject;
 	}
 }
