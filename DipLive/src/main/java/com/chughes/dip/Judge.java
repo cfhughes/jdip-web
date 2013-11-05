@@ -41,6 +41,12 @@ public class Judge {
 			for (UserGameEntity player : ge.getPlayers()) {
 				int owned = info.get(ge.getW().getMap().getPower(player.getPower())).getSupplyCenterCount();
 				player.setVictory_share(((float)owned)/((float)total));
+				if (owned > 0) {
+					player.getUser().setWins(player.getUser().getWins()+1);
+				}else {
+					player.getUser().setLosses(player.getUser().getLosses()+1);
+				}
+				sessionFactory.getCurrentSession().update(player.getUser());
 			}
 		}
 		sessionFactory.getCurrentSession().update(ge.getW());

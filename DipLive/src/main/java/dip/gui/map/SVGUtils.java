@@ -181,7 +181,7 @@ public class SVGUtils
 		
 		SVGUseElement useElement = (SVGUseElement) document.createElementNS(SVGDOMImplementation.SVG_NAMESPACE_URI, 
 																		SVGConstants.SVG_USE_TAG);
-		useElement.setAttributeNS(null, "xlink:href", symbolName);
+		useElement.setAttributeNS(SVGConstants.XLINK_NAMESPACE_URI, "xlink:href", symbolName);
 		useElement.setAttributeNS(null, SVGConstants.SVG_X_ATTRIBUTE, floatToString(x));
 		useElement.setAttributeNS(null, SVGConstants.SVG_Y_ATTRIBUTE, floatToString(y));
 			

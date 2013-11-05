@@ -1,5 +1,6 @@
 package com.chughes.dip;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URLDecoder;
@@ -9,17 +10,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.batik.dom.svg.SAXSVGDocumentFactory;
+import org.apache.batik.transcoder.TranscoderException;
+import org.apache.batik.transcoder.TranscoderInput;
+import org.apache.batik.transcoder.TranscoderOutput;
+import org.apache.batik.transcoder.image.JPEGTranscoder;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.w3c.dom.svg.SVGDocument;
 import org.w3c.dom.svg.SVGElement;
+import org.xml.sax.SAXException;
 
 import com.chughes.data.GameRepository;
 import com.chughes.dip.GameEntity.Stage;
@@ -40,6 +50,7 @@ import com.chughes.security.UserDetailsImpl;
 import com.chughes.security.UserEntity;
 
 import dip.gui.map.DefaultMapRenderer2;
+import dip.gui.map.MapException;
 import dip.gui.map.RenderCommandFactory.RenderCommand;
 import dip.gui.map.SymbolInjector;
 import dip.gui.order.GUIOrder;
@@ -49,8 +60,10 @@ import dip.order.Order;
 import dip.order.OrderException;
 import dip.order.Orderable;
 import dip.order.ValidationOptions;
+import dip.world.Phase;
 import dip.world.Power;
 import dip.world.Province;
+import dip.world.TurnState;
 import dip.world.Unit;
 import dip.world.World;
 import dip.world.variant.VariantManager;
@@ -103,6 +116,62 @@ public class HomeController {
 
 		World w = game.getW();
 
+		boolean member = false;
+		Power p1 = null;
+		if (loggedin){
+			model.addAttribute("private", game.getSecret() != null);
+			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
+			if (uge != null){
+				member = true;
+				model.addAttribute("me_id", uge.getId());
+				model.addAttribute("isready", uge.isReady());
+				model.addAttribute("phasetype", w.getLastTurnState().getPhase().getPhaseType().getBriefName());
+				if (game.getStage() == Stage.PLAYING){
+					Map<String,String> provinces = new HashMap<String,String>();
+					for (Province p:game.getW().getMap().getProvinces()){
+						for (String shortn :p.getShortNames()){
+							provinces.put(shortn, p.getFullName());
+						}
+					}
+					model.addAttribute("provinces", provinces);
+					//Show orders just for the logged in user.
+					p1 = w.getMap().getPowerMatching(uge.getPower());
+					List<GUIOrder> orders = w.getLastTurnState().getOrders(p1);
+					Map<String,String> textorders = new HashMap<String,String>();
+					for (GUIOrder o : orders) {
+						System.out.println(o.toFullString());
+						textorders.put(o.getSource().toString(), o.toFullString());
+					}
+					model.addAttribute("textorders", textorders);
+				}
+			}
+		}
+		
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer1 = tf.newTransformer();
+		transformer1.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		transformer1.setOutputProperty(OutputKeys.METHOD, "xml");
+		transformer1.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer1.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+		//ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		StringWriter sw1 = new StringWriter();
+
+		transformer1.transform(new DOMSource(renderSVG(w, p1, null)), new StreamResult(sw1));
+		
+		model.addAttribute("svg", sw1.toString());
+		model.addAttribute("gid", id);
+		
+		model.addAttribute("players", game.getPlayers());
+		model.addAttribute("member_of_game", member);
+		model.addAttribute("gamephase", game.getW().getLastTurnState().getPhase().toString());
+		model.addAttribute("started", game.getStage() == Stage.PLAYING);
+
+		return "board";
+	}
+	
+	private SVGDocument renderSVG(World w, Power p1, String phase) throws TransformerException, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException {
 		World.VariantInfo vi = w.getVariantInfo();
 		Variant variant = VariantManager.getVariant( vi.getVariantName(), vi.getVariantVersion() );
 		MapGraphic mg = variant.getMapGrapic( vi.getMapName() );
@@ -128,7 +197,6 @@ public class HomeController {
 				result);
 		sw.flush();
 		sw.close();
-
 		//Create an SVG Document and start drawing the map
 		String parser = XMLResourceDescriptor.getXMLParserClassName();
 		SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
@@ -137,95 +205,75 @@ public class HomeController {
 		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[2]);
 
 		gameRepo.setMr(mr);
-
-		//Testing Order View
-		//		Power p = w.getMap().getPowerMatching("England");
-		//		Order o = new GUIOrderFactory().createHold(p, new Location(w.getMap().getProvinceMatching("lon"),Coast.NONE), Unit.Type.UNDEFINED);
-		//		ArrayList<Order> al = new ArrayList<Order>();
-		//		al.add(o);
-		//		TurnState ts = w.getLastTurnState();
-		//		ValidationOptions vo = new ValidationOptions();
-		//		vo.setOption(ValidationOptions.KEY_GLOBAL_PARSING, ValidationOptions.VALUE_GLOBAL_PARSING_STRICT);
-		//		o.validate(ts, vo, null);
-		//		ts.setOrders(p, al);
-		//		w.setTurnState(ts);
-		//		mr.orderCreated((GUIHold)o);
-		//End of Order Test
-
-		RenderCommand rc = mr.getRenderCommandFactory().createRCSetTurnstate(mr, w.getLastTurnState());
+		
+		TurnState tState;
+		
+		if (phase != null) {
+			tState = w.getTurnState(Phase.parse(phase));
+		}else {
+			tState = w.getLastTurnState();
+		}
+		
+		RenderCommand rc = mr.getRenderCommandFactory().createRCSetTurnstate(mr, tState);
 
 		RenderCommand rc3 = mr.getRenderCommandFactory().createRCRenderAll(mr);
-		//RenderCommand rc4 = mr.getRenderCommandFactory().createRCSetDisplayUnits(mr, true);
-		//RenderCommand rc5 = mr.getRenderCommandFactory().createRCSetLabel(mr, MapRenderer2.VALUE_LABELS_BRIEF);
-		boolean member = false;
-		if (loggedin){
-			model.addAttribute("private", game.getSecret() != null);
-			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
-			if (uge != null){
-				member = true;
-				model.addAttribute("me_id", uge.getId());
-				model.addAttribute("isready", uge.isReady());
-				model.addAttribute("phasetype", w.getLastTurnState().getPhase().getPhaseType().getBriefName());
-				if (game.getStage() == Stage.PLAYING){
-					Map<String,String> provinces = new HashMap<String,String>();
-					for (Province p:game.getW().getMap().getProvinces()){
-						for (String shortn :p.getShortNames()){
-							provinces.put(shortn, p.getFullName());
-						}
-					}
-					model.addAttribute("provinces", provinces);
-					//Show orders just for the logged in user.
-					Power p1 = w.getMap().getPowerMatching(uge.getPower());
-					RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
-					mr.execRenderCommand(rc2);
-					List<GUIOrder> orders = w.getLastTurnState().getOrders(p1);
-					Map<String,String> textorders = new HashMap<String,String>();
-					for (GUIOrder o : orders) {
-						o.updateDOM(mr.new DMRMapInfo(w.getLastTurnState()));
-						System.out.println(o.toFullString());
-						textorders.put(o.getSource().toString(), o.toFullString());
-					}
-					model.addAttribute("textorders", textorders);
-				}
-			}
-		}
+		
 		mr.execRenderCommand(rc);
 
+		if (p1 != null) {
+			//Show orders just for the logged in user.
+			RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, new Power[]{p1});
+			mr.execRenderCommand(rc2);
+			List<GUIOrder> orders = tState.getOrders(p1);
+			for (GUIOrder o : orders) {
+				o.updateDOM(mr.new DMRMapInfo(tState));
+			}
+		}else if (tState != w.getLastTurnState()) {
+			RenderCommand rc2 = mr.getRenderCommandFactory().createRCSetPowerOrdersDisplayed(mr, w.getMap().getPowers());
+			mr.execRenderCommand(rc2);
+			List<GUIOrder> orders = tState.getAllOrders();
+			for (GUIOrder o : orders) {
+				o.updateDOM(mr.new DMRMapInfo(tState));
+			}
+		}
+		
 		//mr.execRenderCommand(rc4);
 		//mr.execRenderCommand(rc5);
 		mr.execRenderCommand(rc3);
-		//ServletOutputStream os = response.getOutputStream();
-			
 		//Convert SVG Document to String
-		TransformerFactory tf = TransformerFactory.newInstance();
-		Transformer transformer1 = tf.newTransformer();
-		transformer1.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		transformer1.setOutputProperty(OutputKeys.METHOD, "xml");
-		transformer1.setOutputProperty(OutputKeys.INDENT, "yes");
-		transformer1.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+		return doc;
 
-		//ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		StringWriter sw1 = new StringWriter();
-
-		transformer1.transform(new DOMSource(doc), new StreamResult(sw1));
-
-		//session.setAttribute("svg", doc);
-		
-		model.addAttribute("svg", sw1.toString());
-		model.addAttribute("gid", id);
-		
-//		model.addAttribute("position",game.getW().getLastTurnState().getPosition().getOwnedSupplyCenters());
-		
-		model.addAttribute("players", game.getPlayers());
-		model.addAttribute("member_of_game", member);
-		model.addAttribute("gamephase", game.getW().getLastTurnState().getPhase().toString());
-		model.addAttribute("started", game.getStage() == Stage.PLAYING);
-		//session.setAttribute("game", w);
-
-		return "board";
 	}
+	
+	@RequestMapping(value="/gameimage/{gameID}/{phase}")
+	public void rasterimage(@PathVariable(value="gameID") int id,@PathVariable(value="phase") String phase, HttpServletResponse response) throws TransformerException, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException, TranscoderException{
+		
+		response.setContentType("image/jpeg");
+		
+		GameEntity game = gameRepo.findById(id);
 
+		World w = game.getW();
+		
+		if (w.getLastTurnState().getPhase().compareTo(Phase.parse(phase)) == 0)throw new IllegalAccessError("Cannot Acccess Latest Turn");
+		
+		JPEGTranscoder t = new JPEGTranscoder();
+		t.addTranscodingHint(JPEGTranscoder.KEY_QUALITY, new Float(.9));
+		
+		SVGDocument svg = renderSVG(w, null, phase);
+		
+		
+		TranscoderInput input = new TranscoderInput(svg);
+		TranscoderOutput tOutput = new TranscoderOutput(response.getOutputStream());
+		
+		t.transcode(input, tOutput);
+		
+		response.getOutputStream().flush();
+		response.getOutputStream().close();
+		
+	}
+	
+
+	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value = "/game/{gameID}/JSONorder")
 	public @ResponseBody Map<String, ?> move(@PathVariable(value="gameID") int id,@RequestBody UIOrder order) throws Exception {
 

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,12 +29,14 @@ public class ChatController {
 	@Autowired ChatRepository cr;
 	@Autowired GameRepository gr;
 	
+	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value="/forum")
 	public String forum(Model m){
 		m.addAttribute("topics", cr.getTopics());
 		return "forum";
 	}
 
+	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value="/JSONchat")
 	public @ResponseBody String post(@RequestBody UIChat chat){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -43,7 +46,8 @@ public class ChatController {
 
 			Post p = new Post();
 			p.setAuthor(ue);
-			p.setText(chat.getMessage());
+			//strip html and save
+			p.setText(chat.getMessage().replaceAll("\\<.*?>",""));
 			p.setTimestamp(new Date());
 			System.out.println(chat.getTo());
 			if (chat.getTo() != -1){

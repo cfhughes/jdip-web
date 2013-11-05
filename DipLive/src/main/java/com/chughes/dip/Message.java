@@ -1,5 +1,6 @@
 package com.chughes.dip;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,7 +26,7 @@ public class Message {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+	@Column(length=500)
 	public String getText() {
 		return text;
 	}

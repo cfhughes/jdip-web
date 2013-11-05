@@ -7,8 +7,8 @@
 		<div class="panel panel-default">
 			<div class="panel-heading" style="height: 41px;">
 				<a data-toggle="collapse" data-parent="#accordion"
-					href="#collapse${topic.id}">T: ${topic.subject}</a> <span
-					class="pull-right">${topic.author.username} <i><span
+					href="#collapse${topic.id}">${topic.subject}</a> <span
+					class="pull-right"><b>${topic.author.username}</b> <i><span
 						data-localtime-format="dd MMM h:mm a"><fmt:formatDate
 								pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" value="${topic.timestamp}" /></span></i></span>
 			</div>
@@ -18,9 +18,12 @@
 
 				<div class="panel-collapse collapse" id="collapse${topic.id}">
 					<c:forEach items="${topic.replies}" var="reply">
-						<p>${reply.text}</p>
+						<div class="well">${reply.text}<span
+					class="pull-right"><b>${reply.author.username}</b> <i><span
+						data-localtime-format="dd MMM h:mm a"><fmt:formatDate
+								pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" value="${reply.timestamp}" /></span></i></span></div>
 					</c:forEach>
-					<textarea class="form-control"></textarea>
+					<textarea maxlength="999" class="form-control"></textarea>
 					<button topic_id="${topic.id}" class="btn btn-default new-submit">Post</button>
 
 				</div>

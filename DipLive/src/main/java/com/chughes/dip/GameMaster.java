@@ -49,7 +49,6 @@ public class GameMaster {
 		try{
 			for (UserGameEntity player : ge.getPlayers()) {
 				if (!player.isReady()){
-					System.out.println(":"+player.getPower()+" isn't ready");
 					return;
 				}
 			}

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -35,6 +36,7 @@ public class Post implements Comparable<Post> {
 	public void setId(int id) {
 		this.id = id;
 	}
+	@Column(length=1000)
 	public String getText() {
 		return text;
 	}

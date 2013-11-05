@@ -45,7 +45,7 @@ public class Startup{
 			//e.printStackTrace();
 		}
 		
-		System.setProperty("user.timezone", "UTC");
+		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}
 
 //Trying to clean up connections so tomcat doesn't complain. Might have helped with some of the errors, not sure

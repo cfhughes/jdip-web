@@ -51,7 +51,9 @@ margin-bottom: 30px;
 			</div>
 			<div class="collapse navbar-collapse navbar-ex1-collapse">
 				<ul class="nav navbar-nav">
+				<sec:authorize access="hasRole('PLAYER')">
 					<li><a href="<c:url value="/forum" />">Forum</a></li>
+					</sec:authorize>
 					<li><a href="<c:url value="/gamelist" />">All Games</a></li>
 					<sec:authorize access="hasRole('PLAYER')">
 						<li><a href="<c:url value="/newgame" />">New Game</a></li>
