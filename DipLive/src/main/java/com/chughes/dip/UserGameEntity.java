@@ -1,5 +1,6 @@
 package com.chughes.dip;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -15,8 +16,12 @@ import javax.persistence.OneToMany;
 import com.chughes.security.UserEntity;
 
 @Entity
-public class UserGameEntity {
+public class UserGameEntity implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8784807600063349365L;
 	private List<Message> messages;
 	private UserEntity user;
 	private GameEntity game;

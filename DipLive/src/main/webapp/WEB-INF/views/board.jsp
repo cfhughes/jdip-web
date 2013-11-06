@@ -48,8 +48,6 @@
     width:0;
 }
 
-
-
 /* Variant : left
 ------------------------------------------ */
 
@@ -131,6 +129,7 @@ svg:FIRST-CHILD{
 	</form>
 </c:if>
 <div id="svg-map">${svg}</div>
+<div id="jpeg-map"><img id="map-image" src="" style="display:none;"></img></div>
 <c:if test="${member_of_game and started}">
 	<div style="height: 20px" id="bottom-bar"></div>
 	<div id="order-type" class="btn-group">
@@ -158,7 +157,8 @@ svg:FIRST-CHILD{
 	<button id="ready-button"
 		class="btn btn-default<c:if test="${isready}"> active</c:if>">Ready</button><img id="ready-img" src="<c:url value="/resources/img/check.png"/>" <c:if test="${!isready}">class="intangible"</c:if>/>
 </c:if>
-<h4>${gamephase}</h4>
+
+<h4><span id="previous-phase" class="glyphicon glyphicon-backward"></span> <span id="phase-name">${gamephase}</span> <span id="next-phase" class="glyphicon glyphicon-forward"></span></h4>
 <c:if test="${member_of_game}">
 	<div id="orders-panel">
 	<c:forEach items="${textorders}" var="order"><p id="${order.key}_text"><span class="label label-success">${order.value}</span> <button province_id="${order.key}" class="glyphicon glyphicon-trash"></button></p></c:forEach>
@@ -206,6 +206,49 @@ svg:FIRST-CHILD{
 		if (!document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")){
 			$("#svg-map").html("<h3>Error: Your Browser doesn't support SVG, which is vital to this app.</h3>");
 		}
+		$("#previous-phase").click(function(){
+			$.ajax("phase/${gid}/previous", {
+				success : function(msg){
+					console.log(msg);
+					if (msg[0] == "empty"){
+						
+					}else{
+						$("#phase-name").html(msg[1]);
+						$("<img>", {
+						    src: '../gameimage/${gid}/'+msg[0],
+						    load: function() {
+						    	$("#jpeg-map").show();
+								$("#jpeg-map").html($(this));
+								$("#svg-map").hide();
+						    }
+						});
+					}
+				}
+			});
+		});
+		$("#next-phase").click(function(){
+			$.ajax("phase/${gid}/next", {
+				success : function(msg){
+					console.log(msg);
+					
+					if (msg[0] == "empty"){
+						
+					}else if (msg[0] == "current"){
+						$("#jpeg-map").hide();
+						$("#svg-map").show();
+						$("#phase-name").html(msg[1]);
+					}else{
+						$("#phase-name").html(msg[1]);
+						$("<img>", {
+						    src: '../gameimage/${gid}/'+msg[0],
+						    load: function() {
+								$("#jpeg-map").html($(this));
+						    }
+						});
+					}
+				}
+			});
+		});
 <c:if test="${member_of_game}">
 
 		var last_seen = {};

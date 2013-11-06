@@ -1,6 +1,7 @@
 package com.chughes.dip;
 
 
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +22,11 @@ import org.hibernate.annotations.CascadeType;
 import dip.world.World;
 
 @Entity
-public class GameEntity {
+public class GameEntity implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6485361960198906888L;
 	public enum Stage {PREGAME,PLAYING,ENDED};
 	
 	private Stage stage;

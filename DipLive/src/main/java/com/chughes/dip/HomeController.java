@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URLDecoder;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -158,7 +159,7 @@ public class HomeController {
 
 		StringWriter sw1 = new StringWriter();
 
-		transformer1.transform(new DOMSource(renderSVG(w, p1, null)), new StreamResult(sw1));
+		transformer1.transform(new DOMSource(renderSVG(id,w, p1, null)), new StreamResult(sw1));
 		
 		model.addAttribute("svg", sw1.toString());
 		model.addAttribute("gid", id);
@@ -171,7 +172,7 @@ public class HomeController {
 		return "board";
 	}
 	
-	private SVGDocument renderSVG(World w, Power p1, String phase) throws TransformerException, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException {
+	private SVGDocument renderSVG(int id, World w, Power p1, String phase) throws TransformerException, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException {
 		World.VariantInfo vi = w.getVariantInfo();
 		Variant variant = VariantManager.getVariant( vi.getVariantName(), vi.getVariantVersion() );
 		MapGraphic mg = variant.getMapGrapic( vi.getMapName() );
@@ -204,7 +205,7 @@ public class HomeController {
 
 		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[2]);
 
-		gameRepo.setMr(mr);
+		gameRepo.setMr(id,mr);
 		
 		TurnState tState;
 		
@@ -212,6 +213,7 @@ public class HomeController {
 			tState = w.getTurnState(Phase.parse(phase));
 		}else {
 			tState = w.getLastTurnState();
+			gameRepo.setPhase(id,tState.getPhase());
 		}
 		
 		RenderCommand rc = mr.getRenderCommandFactory().createRCSetTurnstate(mr, tState);
@@ -245,6 +247,45 @@ public class HomeController {
 
 	}
 	
+	@RequestMapping(value="/game/phase/{gameID}/{phase}")
+	public @ResponseBody List<String> phasechange(@PathVariable(value="gameID") int id,@PathVariable(value="phase") String phase){
+		
+		GameEntity game = gameRepo.findById(id);
+
+		World w = game.getW();
+		
+		String longname = null;
+		TurnState tState = w.getTurnState(gameRepo.getPhase(id));
+		if (phase.equals("previous")){
+			tState = w.getPreviousTurnState(tState);
+			if (tState == null){
+				phase = "empty";
+			}else {
+				gameRepo.setPhase(id,tState.getPhase());
+				phase = tState.getPhase().getBriefName();
+				longname = tState.getPhase().toString();
+			}
+		}else if (phase.equals("next")){
+			tState = w.getNextTurnState(tState);
+			if (tState == null){
+				phase = "empty";
+			}else {
+				gameRepo.setPhase(id,tState.getPhase());
+				phase = tState.getPhase().getBriefName();
+				longname = tState.getPhase().toString();
+				if (tState == w.getLastTurnState()){
+					phase = "current";
+				}
+			}
+		}
+		
+		ArrayList<String> result = new ArrayList<String>(2);
+		result.add(0, phase);
+		result.add(1,longname);
+		return result;
+	}
+	
+	
 	@RequestMapping(value="/gameimage/{gameID}/{phase}")
 	public void rasterimage(@PathVariable(value="gameID") int id,@PathVariable(value="phase") String phase, HttpServletResponse response) throws TransformerException, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException, TranscoderException{
 		
@@ -257,9 +298,9 @@ public class HomeController {
 		if (w.getLastTurnState().getPhase().compareTo(Phase.parse(phase)) == 0)throw new IllegalAccessError("Cannot Acccess Latest Turn");
 		
 		JPEGTranscoder t = new JPEGTranscoder();
-		t.addTranscodingHint(JPEGTranscoder.KEY_QUALITY, new Float(.9));
+		t.addTranscodingHint(JPEGTranscoder.KEY_QUALITY, .95f);
 		
-		SVGDocument svg = renderSVG(w, null, phase);
+		SVGDocument svg = renderSVG(id,w, null, phase);
 		
 		
 		TranscoderInput input = new TranscoderInput(svg);
@@ -278,8 +319,7 @@ public class HomeController {
 	public @ResponseBody Map<String, ?> move(@PathVariable(value="gameID") int id,@RequestBody UIOrder order) throws Exception {
 
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		UserDetails user1 = (UserDetails)auth.getPrincipal();
-		UserDetailsImpl user = (UserDetailsImpl) user1;
+		UserDetailsImpl user = (UserDetailsImpl) auth.getPrincipal();
 
 		UserEntity ue = us.getUserEntity(user.getId());
 
@@ -291,7 +331,7 @@ public class HomeController {
 
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 
-		DefaultMapRenderer2 mr = gameRepo.getMr();
+		DefaultMapRenderer2 mr = gameRepo.getMr(id);
 
 		Order o = null;
 		
@@ -387,7 +427,7 @@ public class HomeController {
 		
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 		
-		DefaultMapRenderer2 mr = gameRepo.getMr();
+		DefaultMapRenderer2 mr = gameRepo.getMr(id);
 		
 		List<Orderable> orders = w.getLastTurnState().getOrders(p);
 		Iterator<Orderable> iter = orders.iterator();
