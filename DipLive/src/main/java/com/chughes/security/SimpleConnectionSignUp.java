@@ -21,6 +21,7 @@ public class SimpleConnectionSignUp implements ConnectionSignUp {
 		UserProfile profile = conn.fetchUserProfile();
 		UserEntity newguy = new UserEntity();
 		newguy.setUsername(profile.getFirstName());
+		newguy.setEmail(profile.getEmail());
 		System.out.println(conn.getApi().getClass());
 		if (conn.getApi() instanceof Google){
 			System.out.println("in Google");

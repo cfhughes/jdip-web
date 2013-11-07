@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.swing.Spring;
 
 import com.chughes.dip.UserGameEntity;
 
@@ -17,6 +18,7 @@ public class UserEntity {
 	private int id;
 	private String username;
 	private String password;
+	private String email;
 	private Set<UserGameEntity> games = new HashSet<UserGameEntity>();
 	private int wins;
 	private int losses;
@@ -64,6 +66,12 @@ public class UserEntity {
 	
 	public void addGame(UserGameEntity g){
 		games.add(g);
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

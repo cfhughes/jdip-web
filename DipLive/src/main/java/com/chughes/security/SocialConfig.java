@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.encrypt.Encryptors;
@@ -23,13 +24,18 @@ import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.google.api.Google;
 import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.connect.GoogleConnectionFactory;
+import org.springframework.social.facebook.web.CanvasSignInController;
 
 @Configuration
 public class SocialConfig {
+	
+    @Inject
+    private Environment environment;
+	
 	@Bean
 	public ConnectionFactoryLocator connectionFactoryLocator() {
 	    ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
-	    registry.addConnectionFactory(new FacebookConnectionFactory("8583553497","f415251f2db9dcb661c5f8a79bd9681b"));
+	    registry.addConnectionFactory(new FacebookConnectionFactory(environment.getProperty("facebook.clientId"),environment.getProperty("facebook.clientSecret")));
         GoogleConnectionFactory google = new GoogleConnectionFactory(
                 "454990989619.apps.googleusercontent.com",
                 "jOhrbBz-kjvPl46AA134IuqO");
@@ -75,6 +81,11 @@ public class SocialConfig {
 	    return new ProviderSignInController(connectionFactoryLocator(), usersConnectionRepository(),
 	        new SimpleSignInAdapter(user));
 	}
+	
+    @Bean
+    public CanvasSignInController canvasSignInController() {
+            return new CanvasSignInController(connectionFactoryLocator(), usersConnectionRepository(), new SimpleSignInAdapter(user), environment.getProperty("facebook.clientId"), environment.getProperty("facebook.clientSecret"), environment.getProperty("facebook.canvasPage"));
+    }
 	
 	@Inject
 	private DataSource dataSource;

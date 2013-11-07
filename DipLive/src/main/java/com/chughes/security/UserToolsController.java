@@ -50,4 +50,10 @@ public class UserToolsController {
 	public String notfound(){
 		return "not-found";
 	}
+	
+	@RequestMapping(value="/account")
+	public String account(){
+		
+		return "account";
+	}
 }
