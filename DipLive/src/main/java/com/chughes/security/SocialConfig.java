@@ -6,6 +6,7 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.env.Environment;
@@ -27,9 +28,10 @@ import org.springframework.social.google.connect.GoogleConnectionFactory;
 import org.springframework.social.facebook.web.CanvasSignInController;
 
 @Configuration
+@PropertySource("application.properties")
 public class SocialConfig {
 	
-    @Inject
+    @Autowired
     private Environment environment;
 	
 	@Bean
