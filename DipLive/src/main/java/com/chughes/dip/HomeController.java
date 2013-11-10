@@ -287,7 +287,7 @@ public class HomeController {
 	
 	
 	@RequestMapping(value="/gameimage/{gameID}/{phase}")
-	public void rasterimage(@PathVariable(value="gameID") int id,@PathVariable(value="phase") String phase, HttpServletResponse response) throws TransformerException, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException, TranscoderException{
+	public void rasterimage(@PathVariable(value="gameID") int id,@PathVariable(value="phase") String phase, HttpServletResponse response) throws Exception, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException, TranscoderException{
 		
 		response.setContentType("image/jpeg");
 		

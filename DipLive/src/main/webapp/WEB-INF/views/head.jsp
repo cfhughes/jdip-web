@@ -13,7 +13,7 @@
 <meta name="description" content="" />
 <meta name="author" content="" />
 
-<script src="http://code.jquery.com/jquery-2.0.3.min.js"
+<script src="//code.jquery.com/jquery-2.0.3.min.js"
 	type="text/javascript"></script>
 <link
 	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
