@@ -159,7 +159,9 @@ svg:FIRST-CHILD{
 </c:if>
 
 <h4><span id="previous-phase" class="glyphicon glyphicon-backward"></span> <span id="phase-name">${gamephase}</span> <span id="next-phase" class="glyphicon glyphicon-forward"></span></h4>
+
 <c:if test="${member_of_game}">
+<h3>${me.power} - ${me.supply_centers}</h3>
 	<div id="orders-panel">
 	<c:forEach items="${textorders}" var="order"><p id="${order.key}_text"><span class="label label-success">${order.value}</span> <button province_id="${order.key}" class="glyphicon glyphicon-trash"></button></p></c:forEach>
 	</div>

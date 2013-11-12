@@ -133,12 +133,14 @@
 	<http use-expressions="true">
 		<intercept-url pattern="/**" access="permitAll" />
 
-		<form-login login-page="/login" authentication-failure-url="/loginfailed" />
+		<form-login login-page="/login" authentication-failure-url="/loginfailed" 
+			authentication-success-handler-ref="loginLogger"/>
 		<logout />
 		<remember-me />
 	</http>
 
-
+	<beans:bean id="loginLogger"
+        class="com.chughes.security.SessionLogger" />
 
 	<authentication-manager>
 		<authentication-provider user-service-ref="customUserService">

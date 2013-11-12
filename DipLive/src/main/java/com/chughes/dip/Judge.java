@@ -59,9 +59,13 @@ public class Judge {
 		for (UserGameEntity player : game.getPlayers()) {
 			mailer.newphase(player.getUser().getEmail(), game.getName());
 			int supply = game.getW().getLastTurnState().getPosition().getOwnedSupplyCenters(game.getW().getMap().getPower(player.getPower())).length;
+			System.out.println(game.getW().getMap().getPower(player.getPower()));
 			player.setSupply_centers(supply);
 			player.setReady(false);
+			
 		}
+		
+		
 
 	}
 

@@ -79,6 +79,11 @@ public class HomeController {
 	@Autowired private GameMaster gm;
 
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
+	
+	@RequestMapping("/help")
+	public String help() {
+		return "help";
+	}
 
 	@RequestMapping(value = "/")
 	public String dash(Model model){
@@ -125,6 +130,7 @@ public class HomeController {
 			if (uge != null){
 				member = true;
 				model.addAttribute("me_id", uge.getId());
+				model.addAttribute("me", uge);
 				model.addAttribute("isready", uge.isReady());
 				model.addAttribute("phasetype", w.getLastTurnState().getPhase().getPhaseType().getBriefName());
 				if (game.getStage() == Stage.PLAYING){

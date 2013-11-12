@@ -5,4 +5,5 @@
 <c:set var="game" value="${game.game}" />
 <%@include file="gamesummary.jsp" %>
 </c:forEach>
+<img style="display:block;max-width:100%;" src="resources/img/tank.jpg" />
 <%@include file="tail.jsp" %>

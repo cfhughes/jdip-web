@@ -467,7 +467,7 @@ public class Position implements java.io.Serializable, Cloneable
 		for(int i=0; i<provArray.length; i++)
 		{
 			ProvinceData pd = provArray[i];
-			if(pd != null && pd.getSCHomePower() == power)
+			if(pd != null && power.equals(pd.getSCHomePower()))
 			{
 				tmpProvArray[arrSize] = map.reverseIndex(i);
 				arrSize++;
@@ -490,7 +490,7 @@ public class Position implements java.io.Serializable, Cloneable
 		for(int i=0; i<provArray.length; i++)
 		{
 			ProvinceData pd = provArray[i];
-			if(pd != null && pd.getSCHomePower() == power && pd.getSCOwner() == power)
+			if(pd != null && pd.getSCHomePower().equals(power) && pd.getSCOwner().equals(power))
 			{
 				return true;
 			}
@@ -509,7 +509,7 @@ public class Position implements java.io.Serializable, Cloneable
 		for(int i=0; i<provArray.length; i++)
 		{
 			ProvinceData pd = provArray[i];
-			if(pd != null && pd.getSCOwner() == power)
+			if(pd != null && power.equals(pd.getSCOwner()))
 			{
 				tmpProvArray[arrSize] = map.reverseIndex(i);
 				arrSize++;
@@ -648,7 +648,7 @@ public class Position implements java.io.Serializable, Cloneable
 			if(pd != null)
 			{
 				Unit unit = pd.getUnit();
-				if(unit != null && unit.getPower() == power)
+				if(unit != null && unit.getPower().equals(power))
 				{
 					tmpProvArray[arrSize] = map.reverseIndex(i);
 					arrSize++;
@@ -677,7 +677,7 @@ public class Position implements java.io.Serializable, Cloneable
 			if(pd != null)
 			{
 				Unit unit = pd.getDislodgedUnit();
-				if(unit != null && unit.getPower() == power)
+				if(unit != null && unit.getPower().equals(power))
 				{
 					tmpProvArray[arrSize] = map.reverseIndex(i);
 					arrSize++;

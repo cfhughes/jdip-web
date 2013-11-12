@@ -18,7 +18,7 @@ public class Mailer {
 		msg.setTo(email);
 		msg.setSubject("New Phase in "+game);
 		msg.setText("Your game has advanced a phase, login soon to plan your next moves.");
-		mailSender.send(msg);
+		if (email != null)mailSender.send(msg);
 	}
 
 }
