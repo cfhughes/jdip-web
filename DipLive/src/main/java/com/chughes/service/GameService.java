@@ -27,7 +27,6 @@ public class GameService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
-	@Transactional
 	public void addUserToGame(GameEntity game, UserEntity user, String secret){
 		if (game.getStage() != Stage.PREGAME){
 			return;
@@ -52,6 +51,17 @@ public class GameService {
 		gameRepo.updateGame(game);
 		userRepo.updateUser(user);
 		//Apparently, hibernate does this already
+		gameRepo.saveInGameUser(uge);
+	}
+	
+	public void removeUserFromGame(GameEntity game, UserEntity user){
+		UserGameEntity uge = gameRepo.inGameUser(game.getId(), user.getId());
+		uge.setUser(UserEntity.NULL_USER);
+		user.getGames().remove(uge);
+		user.setRetreats(user.getRetreats()+1);
+		
+		userRepo.updateUser(UserEntity.NULL_USER);
+		userRepo.updateUser(user);
 		gameRepo.saveInGameUser(uge);
 	}
 

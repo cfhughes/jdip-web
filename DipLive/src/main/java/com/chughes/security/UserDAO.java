@@ -39,7 +39,7 @@ public class UserDAO{
 	@Transactional
 	public void updateUser(UserEntity user){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
-		sessionFactory.getCurrentSession().update(user);
+		sessionFactory.getCurrentSession().saveOrUpdate(user);
         //sessionFactory.getCurrentSession().flush();
 	}
 

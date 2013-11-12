@@ -15,6 +15,8 @@ import com.chughes.dip.UserGameEntity;
 
 @Entity
 public class UserEntity {
+	
+	public static UserEntity NULL_USER = new UserEntity();
 
 	private int id;
 	private String username;
@@ -24,6 +26,7 @@ public class UserEntity {
 	private Set<String> ips = new HashSet<String>();
 	private int wins;
 	private int losses;
+	private int retreats;
 	
 	
 	public int getWins() {
@@ -81,6 +84,12 @@ public class UserEntity {
 	}
 	public void setIps(Set<String> ips) {
 		this.ips = ips;
+	}
+	public int getRetreats() {
+		return retreats;
+	}
+	public void setRetreats(int retreats) {
+		this.retreats = retreats;
 	}
 
 }

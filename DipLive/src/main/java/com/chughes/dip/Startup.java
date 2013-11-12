@@ -15,6 +15,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chughes.security.UserEntity;
+
 import dip.world.variant.VariantManager;
 
 @Component
@@ -38,12 +40,14 @@ public class Startup{
 		VariantManager.init(new File[]{two}, false);
 		
 		JdbcTemplate template = new JdbcTemplate(dataSource);
-		template.execute("create table if not exists UserConnection (userId varchar(255) not null,	providerId varchar(255) not null,	providerUserId varchar(255),	rank int not null,	displayName varchar(255),	profileUrl varchar(512),	imageUrl varchar(512),	accessToken varchar(255) not null,					secret varchar(255),	refreshToken varchar(255),	expireTime bigint,	primary key (userId, providerId, providerUserId))");
+		template.execute("create table if not exists UserConnection (userId varchar(255) not null,	providerId varchar(255) not null,	providerUserId varchar(255),	rank int not null,	displayName varchar(255),	profileUrl varchar(512),	imageUrl varchar(512),	accessToken varchar(255) not null,					secret varchar(255),	refreshToken varchar(255),	expireTime bigint,	primary key (userId(100), providerId(50), providerUserId(150)))");
 		try{
 			template.execute("create unique index UserConnectionRank on UserConnection(userId, providerId, rank)");
 		}catch(BadSqlGrammarException e){
 			//e.printStackTrace();
 		}
+		
+		UserEntity.NULL_USER.setUsername("EMPTY");
 		
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}

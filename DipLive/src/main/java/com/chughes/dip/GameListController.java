@@ -34,7 +34,7 @@ public class GameListController {
 	@RequestMapping(value="/joingame/{gameID}")
 	public String join(Model model,@PathVariable(value="gameID") int id,@RequestParam(value="secret", required = false) String secret){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth.getPrincipal() instanceof UserDetails){
+		if (auth.getPrincipal() instanceof UserDetailsImpl){
 			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
 			UserEntity ue = userrepo.getUserEntity(user.getId());
 			GameEntity ge = gameService.getGame(id);
@@ -42,4 +42,17 @@ public class GameListController {
 		}
 		return "redirect:../game/"+id;
 	}
+	
+	@RequestMapping(value="/leavegame/{gameID}")
+	public String leave(Model model,@PathVariable(value="gameID") int id){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.getPrincipal() instanceof UserDetailsImpl){
+			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
+			UserEntity ue = userrepo.getUserEntity(user.getId());
+			GameEntity ge = gameService.getGame(id);
+			gameService.removeUserFromGame(ge, ue);
+		}
+		return "redirect:../game/"+id;
+	}
+	
 }

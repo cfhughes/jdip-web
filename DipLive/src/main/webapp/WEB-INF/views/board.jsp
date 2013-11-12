@@ -171,7 +171,7 @@ svg:FIRST-CHILD{
 			<c:forEach items="${players}" var="player">
 				<c:if test="${player.id != me_id}">
 					<li chatid="${player.id}"><a href="#tab-${player.id}"
-						data-toggle="tab">${player.user.username}(${player.power} ${player.supply_centers})</a></li>
+						data-toggle="tab">${player.user.username}(${player.power} ${player.supply_centers})</a><c:if test="${player.ready}"><img src="<c:url value="/resources/img/check.png"/>" /></c:if></li>
 				</c:if>
 			</c:forEach>
 		</ul>
@@ -200,6 +200,14 @@ svg:FIRST-CHILD{
 				</c:if>
 			</c:forEach>
 		</div>
+		
+	</div>
+	<div>
+		<p>
+			<a
+				onclick="confirm('Are you sure you want to leave? Retreating from battle is frowned upon.');"
+				href="../leavegame/${gid}">Leave This Game</a>
+		</p>
 	</div>
 </c:if>
 	<script type="text/javascript">
