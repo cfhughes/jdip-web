@@ -42,6 +42,7 @@ public class GameMaster {
 			int chosen = (int) Math.floor(Math.random()*powers.size());
 			player.setPower(powers.remove(chosen).getName());
 		}
+		j.updateInfo(game);
 	}
 
 	@Async

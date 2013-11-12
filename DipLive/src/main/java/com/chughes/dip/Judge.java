@@ -20,6 +20,7 @@ import dip.world.TurnState;
 public class Judge {
 	
 	protected @Autowired SessionFactory sessionFactory;
+	protected @Autowired Mailer mailer;
 
 	@Transactional
 	public void advanceGame(int game){
@@ -31,7 +32,6 @@ public class Judge {
 		if (ts != null){
 			ge.getW().setTurnState(ts);
 		}
-		ge.setPhase(ge.getW().getLastTurnState().getPhase().toString());
 		//End Game if Victory Occurs
 		if (ge.getW().getLastTurnState().isEnded()){
 			ge.setStage(Stage.ENDED);
@@ -50,10 +50,19 @@ public class Judge {
 			}
 		}
 		sessionFactory.getCurrentSession().update(ge.getW());
-		for (UserGameEntity player : ge.getPlayers()) {
+		updateInfo(ge);
+		sessionFactory.getCurrentSession().saveOrUpdate(ge);
+	}
+	
+	public void updateInfo(GameEntity game) {
+		game.setPhase(game.getW().getLastTurnState().getPhase().toString());
+		for (UserGameEntity player : game.getPlayers()) {
+			mailer.newphase(player.getUser().getEmail(), game.getName());
+			int supply = game.getW().getLastTurnState().getPosition().getOwnedSupplyCenters(game.getW().getMap().getPower(player.getPower())).length;
+			player.setSupply_centers(supply);
 			player.setReady(false);
 		}
-		sessionFactory.getCurrentSession().saveOrUpdate(ge);
+
 	}
 
 }

@@ -29,6 +29,7 @@ public class UserGameEntity implements Serializable {
 	private int id;
 	private boolean ready;
 	private float victory_share = -1;
+	private int supply_centers;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -109,6 +110,12 @@ public class UserGameEntity implements Serializable {
 		} else if (!power.equals(other.power))
 			return false;
 		return true;
+	}
+	public int getSupply_centers() {
+		return supply_centers;
+	}
+	public void setSupply_centers(int supply_centers) {
+		this.supply_centers = supply_centers;
 	}
 	
 }

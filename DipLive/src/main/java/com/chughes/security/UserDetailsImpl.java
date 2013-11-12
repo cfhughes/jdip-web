@@ -13,8 +13,13 @@ public class UserDetailsImpl implements UserDetails {
 	/**
 	 * 
 	 */
+	private static final long serialVersionUID = -1556832297202500775L;
+	/**
+	 * 
+	 */
 	private String username;
     private String password;
+    private String email;
     private int id;
 
 	public UserDetailsImpl(String uname, String pword) {
@@ -82,6 +87,14 @@ public class UserDetailsImpl implements UserDetails {
 
 	public void setId(int id) {
 		this.id = id;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.chughes.security;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -20,6 +21,7 @@ public class UserEntity {
 	private String password;
 	private String email;
 	private Set<UserGameEntity> games = new HashSet<UserGameEntity>();
+	private Set<String> ips = new HashSet<String>();
 	private int wins;
 	private int losses;
 	
@@ -72,6 +74,13 @@ public class UserEntity {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	@ElementCollection
+	public Set<String> getIps() {
+		return ips;
+	}
+	public void setIps(Set<String> ips) {
+		this.ips = ips;
 	}
 
 }

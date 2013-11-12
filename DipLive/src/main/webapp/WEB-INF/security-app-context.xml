@@ -56,7 +56,7 @@
 			<beans:value>${gmail.user}</beans:value>
 		</beans:property>
 		<beans:property name="subject">
-			<beans:value>Exception: Deal With It!</beans:value>
+			<beans:value>Mail from Adstutia</beans:value>
 		</beans:property>
 	</beans:bean>
 
