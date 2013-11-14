@@ -1,6 +1,7 @@
 package com.chughes.dip;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Vector;
 
 import org.slf4j.Logger;
@@ -28,14 +29,15 @@ public class GameMaster {
 
 	private static final Logger logger = LoggerFactory.getLogger(GameMaster.class);
 
-	//Every minute
+//	//Every minute
 //	@Scheduled(cron="0 * * * * ?")
 //	public void resolveGames(){
-//		System.out.println("Executed");
+//		j.cron();
 //	}
 
 	public void beginGame(GameEntity game){
 		game.setStage(Stage.PLAYING);
+		
 		Vector<Power> powers = new Vector<Power>(Arrays.asList(game.getW().getMap().getPowers()));
 		//Simple way to choose powers
 		for (UserGameEntity player : game.getPlayers()) {
@@ -54,7 +56,7 @@ public class GameMaster {
 				}
 			}
 
-		j.advanceGame(ge.getId());
+		j.advanceGame(ge);
 
 		}
 		catch(Exception e){

@@ -1,5 +1,7 @@
 package com.chughes.dip;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -7,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,7 +45,7 @@ public class NewGameController {
 	}
 	
 	@RequestMapping(value = "/savegame")
-	public String saveGame(Model model,@ModelAttribute("game")GameEntity game,@RequestParam(value="variant")String variant){
+	public String saveGame(Model model,@Valid GameEntity game,@RequestParam(value="variant")String variant){
 
 		//TODO: Are all variants version 1.0?
 		Variant vs = VariantManager.getVariant(variant, 1.0f);

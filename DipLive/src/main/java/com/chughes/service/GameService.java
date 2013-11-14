@@ -57,6 +57,8 @@ public class GameService {
 	public void removeUserFromGame(GameEntity game, UserEntity user){
 		UserGameEntity uge = gameRepo.inGameUser(game.getId(), user.getId());
 		uge.setUser(UserEntity.NULL_USER);
+		uge.setMissed(0);
+		uge.setReady(true);
 		user.getGames().remove(uge);
 		user.setRetreats(user.getRetreats()+1);
 		

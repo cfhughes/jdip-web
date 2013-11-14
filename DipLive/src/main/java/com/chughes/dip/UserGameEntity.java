@@ -30,6 +30,7 @@ public class UserGameEntity implements Serializable {
 	private boolean ready;
 	private float victory_share = -1;
 	private int supply_centers;
+	private int missed;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -116,6 +117,12 @@ public class UserGameEntity implements Serializable {
 	}
 	public void setSupply_centers(int supply_centers) {
 		this.supply_centers = supply_centers;
+	}
+	public int getMissed() {
+		return missed;
+	}
+	public void setMissed(int missed) {
+		this.missed = missed;
 	}
 	
 }

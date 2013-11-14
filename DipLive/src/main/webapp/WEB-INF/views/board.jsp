@@ -171,7 +171,7 @@ svg:FIRST-CHILD{
 			<c:forEach items="${players}" var="player">
 				<c:if test="${player.id != me_id}">
 					<li chatid="${player.id}"><a href="#tab-${player.id}"
-						data-toggle="tab">${player.user.username}(${player.power} ${player.supply_centers})</a><c:if test="${player.ready}"><img src="<c:url value="/resources/img/check.png"/>" /></c:if></li>
+						data-toggle="tab">${player.user.username}(${player.power} ${player.supply_centers})<c:if test="${player.ready}"><img src="<c:url value="/resources/img/check.png"/>" /></c:if></a></li>
 				</c:if>
 			</c:forEach>
 		</ul>

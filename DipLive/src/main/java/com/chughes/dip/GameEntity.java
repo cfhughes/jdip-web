@@ -2,6 +2,7 @@ package com.chughes.dip;
 
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,9 +16,12 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import dip.world.World;
 
@@ -33,11 +37,28 @@ public class GameEntity implements Serializable{
 	private Set<UserGameEntity> players = new HashSet<UserGameEntity>();
 	private World w;
 	private int id;
+	@NotEmpty
 	private String name;
 	private int maxplayers;
 	private String secret;
 	private String phase;
+	@Min(0)
+	@Max(336)
+	private int turnlength = 0;//hours
+	private Date turnend;
 	
+	public int getTurnlength() {
+		return turnlength;
+	}
+	public void setTurnlength(int turnlength) {
+		this.turnlength = turnlength;
+	}
+	public Date getTurnend() {
+		return turnend;
+	}
+	public void setTurnend(Date turnend) {
+		this.turnend = turnend;
+	}
 	//Fetching Eagerly to help Async Methods, but there is probably a better way
 	@OneToMany(fetch = FetchType.EAGER)
 	public Set<UserGameEntity> getPlayers() {
