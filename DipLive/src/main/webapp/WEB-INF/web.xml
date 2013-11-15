@@ -18,7 +18,7 @@
    </param-value>
 	</context-param>
 
-		<filter>
+	<filter>
 		<filter-name>hibernateFilter</filter-name>
 		<filter-class>org.springframework.orm.hibernate4.support.OpenSessionInViewFilter</filter-class>
 		<init-param>
@@ -33,7 +33,7 @@
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
-	
+
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>

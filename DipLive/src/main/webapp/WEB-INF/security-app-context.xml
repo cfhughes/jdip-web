@@ -75,8 +75,9 @@
 
 	<mvc:annotation-driven>
 		<mvc:argument-resolvers>
-			<beans:bean	class="org.springframework.social.facebook.web.SignedRequestArgumentResolver">
-				<beans:constructor-arg value="${facebook.clientSecret}" />    
+			<beans:bean
+				class="org.springframework.social.facebook.web.SignedRequestArgumentResolver">
+				<beans:constructor-arg value="${facebook.clientSecret}" />
 			</beans:bean>
 		</mvc:argument-resolvers>
 	</mvc:annotation-driven>
@@ -116,6 +117,9 @@
 				<beans:prop key="hibernate.hbm2ddl.auto">update</beans:prop>
 				<beans:prop key="hibernate.c3p0.min_size">5</beans:prop>
 				<beans:prop key="current_session_context_class">thread</beans:prop>
+				<beans:prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</beans:prop>
+				<beans:prop key="hibernate.cache.use_second_level_cache">true</beans:prop>
+				<beans:prop key="hibernate.cache.use_query_cache">true</beans:prop>
 			</beans:props>
 		</beans:property>
 	</beans:bean>
@@ -133,14 +137,13 @@
 	<http use-expressions="true">
 		<intercept-url pattern="/**" access="permitAll" />
 
-		<form-login login-page="/login" authentication-failure-url="/loginfailed" 
-			authentication-success-handler-ref="loginLogger"/>
+		<form-login login-page="/login" authentication-failure-url="/loginfailed"
+			authentication-success-handler-ref="loginLogger" />
 		<logout />
 		<remember-me />
 	</http>
 
-	<beans:bean id="loginLogger"
-        class="com.chughes.security.SessionLogger" />
+	<beans:bean id="loginLogger" class="com.chughes.security.SessionLogger" />
 
 	<authentication-manager>
 		<authentication-provider user-service-ref="customUserService">

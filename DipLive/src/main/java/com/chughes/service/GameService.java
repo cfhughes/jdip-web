@@ -48,10 +48,11 @@ public class GameService {
 		game.setPlayers(players);
 		user.addGame(uge);
 
+		gameRepo.saveInGameUser(uge);
+		
 		gameRepo.updateGame(game);
 		userRepo.updateUser(user);
-		//Apparently, hibernate does this already
-		gameRepo.saveInGameUser(uge);
+		
 	}
 	
 	public void removeUserFromGame(GameEntity game, UserEntity user){
@@ -60,6 +61,7 @@ public class GameService {
 		uge.setMissed(0);
 		uge.setReady(true);
 		user.getGames().remove(uge);
+		//Number of times user has left a game
 		user.setRetreats(user.getRetreats()+1);
 		
 		userRepo.updateUser(UserEntity.NULL_USER);

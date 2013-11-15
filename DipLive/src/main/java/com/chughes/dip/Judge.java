@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.chughes.data.GameRepository;
 import com.chughes.dip.GameEntity.Stage;
 import com.chughes.security.UserEntity;
 import com.chughes.service.GameService;
@@ -18,8 +17,6 @@ import dip.gui.order.GUIOrderFactory;
 import dip.process.Adjustment;
 import dip.process.Adjustment.AdjustmentInfoMap;
 import dip.process.StdAdjudicator;
-import dip.world.Position;
-import dip.world.Power;
 import dip.world.TurnState;
 
 @Service
@@ -91,6 +88,7 @@ public class Judge {
 
 	}
 
+	@Transactional
 	public void cron() {
 		Query q = sessionFactory.getCurrentSession().createQuery("from GameEntity where turnend > current_timestamp()");
 		List<GameEntity> list = q.list();

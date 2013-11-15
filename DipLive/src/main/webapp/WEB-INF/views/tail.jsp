@@ -1,10 +1,12 @@
 </div>
-</div> <!-- /container -->
+</div>
+<!-- /container -->
 
-    <!-- Le javascript
+<!-- Le javascript
     ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<!-- Placed at the end of the document so the pages load faster -->
+<script
+	src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 
-  </body>
+</body>
 </html>

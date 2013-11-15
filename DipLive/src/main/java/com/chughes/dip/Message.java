@@ -9,9 +9,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import com.chughes.security.UserEntity;
 
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Message {
 	private String text;
 	private int id;

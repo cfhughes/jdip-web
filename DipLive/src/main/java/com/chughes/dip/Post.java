@@ -12,12 +12,15 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Sort;
 import org.hibernate.annotations.SortType;
 
 import com.chughes.security.UserEntity;
 
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Post implements Comparable<Post> {
 	
 	private int id;

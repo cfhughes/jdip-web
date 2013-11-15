@@ -1,34 +1,36 @@
 <%@include file="head.jsp"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<script type="text/javascript"
+	src="<c:url value="/resources/jquery.localtime-0.8.0.min.js" />"></script>
 <style type="text/css">
-
 .chatcontainer {
-	position:relative;
-	padding:10px;
-	margin:1em 0 3em;
-	color:#000;
-	background:#f3961c; /* default background for browsers without gradient support */
+	position: relative;
+	padding: 10px;
+	margin: 1em 0 3em;
+	color: #000;
+	background: #f3961c;
+	/* default background for browsers without gradient support */
 	/* css3 */
-	background:-webkit-gradient(linear, 0 0, 0 100%, from(#f9d835), to(#f3961c));
-	background:-moz-linear-gradient(#f9d835, #f3961c);
-	background:-o-linear-gradient(#f9d835, #f3961c);
-	background:linear-gradient(#f9d835, #f3961c);
-	-webkit-border-radius:10px;
-	-moz-border-radius:10px;
-	border-radius:10px;
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(#f9d835),
+		to(#f3961c));
+	background: -moz-linear-gradient(#f9d835, #f3961c);
+	background: -o-linear-gradient(#f9d835, #f3961c);
+	background: linear-gradient(#f9d835, #f3961c);
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
 	max-width: 300px;
 }
 
 /* Variant : for left/right positioned triangle */
-
 .chatcontainer.chat-left {
-	margin-left:50px;
+	margin-left: 50px;
 }
 
 /* Variant : for right positioned triangle
 ------------------------------------------ */
-
 .chatcontainer.chat-right {
-	margin-right:50px;
+	margin-right: 50px;
 }
 
 /* THE TRIANGLE
@@ -36,52 +38,52 @@
 
 /* creates triangle */
 .chatcontainer:after {
-	content:"";
-	position:absolute;
-	bottom:-15px; /* value = - border-top-width - border-bottom-width */
-	left:50px; /* controls horizontal position */
-	border-width:15px 15px 0; /* vary these values to change the angle of the vertex */
-	border-style:solid;
-	border-color:#f3961c transparent;
-    /* reduce the damage in FF3.0 */
-    display:block; 
-    width:0;
+	content: "";
+	position: absolute;
+	bottom: -15px; /* value = - border-top-width - border-bottom-width */
+	left: 50px; /* controls horizontal position */
+	border-width: 15px 15px 0;
+	/* vary these values to change the angle of the vertex */
+	border-style: solid;
+	border-color: #f3961c transparent;
+	/* reduce the damage in FF3.0 */
+	display: block;
+	width: 0;
 }
 
 /* Variant : left
 ------------------------------------------ */
-
 .chatcontainer.chat-left:after {
-	top:16px; /* controls vertical position */
-	left:-50px; /* value = - border-left-width - border-right-width */
-	bottom:auto;
-	border-width:10px 50px 10px 0;
-	border-color:transparent #f3961c;
+	top: 16px; /* controls vertical position */
+	left: -50px; /* value = - border-left-width - border-right-width */
+	bottom: auto;
+	border-width: 10px 50px 10px 0;
+	border-color: transparent #f3961c;
 }
 
 /* Variant : right
 ------------------------------------------ */
-
 .chatcontainer.chat-right:after {
-	top:16px; /* controls vertical position */
-	right:-50px; /* value = - border-left-width - border-right-width */
-	bottom:auto;
-    left:auto;
-	border-width:10px 0 10px 50px;
-	border-color:transparent #f3961c;
+	top: 16px; /* controls vertical position */
+	right: -50px; /* value = - border-left-width - border-right-width */
+	bottom: auto;
+	left: auto;
+	border-width: 10px 0 10px 50px;
+	border-color: transparent #f3961c;
 }
 
 .chat-me:after {
-	border-color:#075698 transparent;
+	border-color: #075698 transparent;
 }
 
 .chat-me {
-	background:#075698;
+	background: #075698;
 	/* css3 */
-	background:-webkit-gradient(linear, 0 0, 0 100%, from(#2e88c4), to(#075698));
-	background:-moz-linear-gradient(#2e88c4, #075698);
-	background:-o-linear-gradient(#2e88c4, #075698);
-	background:linear-gradient(#2e88c4, #075698);
+	background: -webkit-gradient(linear, 0 0, 0 100%, from(#2e88c4),
+		to(#075698));
+	background: -moz-linear-gradient(#2e88c4, #075698);
+	background: -o-linear-gradient(#2e88c4, #075698);
+	background: linear-gradient(#2e88c4, #075698);
 }
 
 .chat-input {
@@ -102,19 +104,19 @@ use,symbol {
 	overflow: visible;
 }
 
-.invisible{
+.invisible {
 	visibility: visible;
 }
 
-.intangible{
+.intangible {
 	visibility: hidden;
 }
 
-svg:not(:root) {
-    overflow: visible;
+svg:not (:root ) {
+	overflow: visible;
 }
 
-svg:FIRST-CHILD{
+svg:FIRST-CHILD {
 	overflow: hidden;
 }
 </style>
@@ -129,7 +131,9 @@ svg:FIRST-CHILD{
 	</form>
 </c:if>
 <div id="svg-map">${svg}</div>
-<div id="jpeg-map"><img id="map-image" src="" style="display:none;"></img></div>
+<div id="jpeg-map">
+	<img id="map-image" src="" style="display: none;"></img>
+</div>
 <c:if test="${member_of_game and started}">
 	<div style="height: 20px" id="bottom-bar"></div>
 	<div id="order-type" class="btn-group">
@@ -138,8 +142,10 @@ svg:FIRST-CHILD{
 
 				<button id="order-move" class="btn btn-default">Move</button>
 				<button id="order-hold" class="btn btn-default">Hold</button>
-				<button id="order-shold" class="btn btn-default">Support Hold</button>
-				<button id="order-smove" class="btn btn-default">Support Move</button>
+				<button id="order-shold" class="btn btn-default">Support
+					Hold</button>
+				<button id="order-smove" class="btn btn-default">Support
+					Move</button>
 				<button id="order-convoy" class="btn btn-default">Convoy</button>
 
 			</c:when>
@@ -148,30 +154,55 @@ svg:FIRST-CHILD{
 				<button id="order-disband" class="btn btn-default">Disband</button>
 			</c:when>
 			<c:when test="${phasetype == 'B'}">
-				<button id="order-builda" class="btn btn-default">Build Army</button>
-				<button id="order-buildf" class="btn btn-default">Build Fleet</button>
+				<button id="order-builda" class="btn btn-default">Build
+					Army</button>
+				<button id="order-buildf" class="btn btn-default">Build
+					Fleet</button>
 				<button id="order-destroy" class="btn btn-default">Disband</button>
 			</c:when>
 		</c:choose>
 	</div>
 	<button id="ready-button"
-		class="btn btn-default<c:if test="${isready}"> active</c:if>">Ready</button><img id="ready-img" src="<c:url value="/resources/img/check.png"/>" <c:if test="${!isready}">class="intangible"</c:if>/>
+		class="btn btn-default<c:if test="${isready}"> active</c:if>">Ready</button>
+	<img id="ready-img" src="<c:url value="/resources/img/check.png"/>"
+		<c:if test="${!isready}">class="intangible"</c:if> />
+	<h5>${me.power}
+		- ${me.supply_centers}
+		<c:if test="${not empty next}"> - Next Turn: <span
+				data-localtime-format="dd MMM h:mm a"><fmt:formatDate
+					pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" value="${next}" /></span>
+		</c:if>
+	</h5>
 </c:if>
 
-<h4><span id="previous-phase" class="glyphicon glyphicon-backward"></span> <span id="phase-name">${gamephase}</span> <span id="next-phase" class="glyphicon glyphicon-forward"></span></h4>
+<h4>
+	<span id="previous-phase" class="glyphicon glyphicon-backward"></span>
+	<span id="phase-name">${gamephase}</span> <span id="next-phase"
+		class="glyphicon glyphicon-forward"></span>
+</h4>
 
 <c:if test="${member_of_game}">
-<h3>${me.power} - ${me.supply_centers}</h3>
+
 	<div id="orders-panel">
-	<c:forEach items="${textorders}" var="order"><p id="${order.key}_text"><span class="label label-success">${order.value}</span> <button province_id="${order.key}" class="glyphicon glyphicon-trash"></button></p></c:forEach>
+		<c:forEach items="${textorders}" var="order">
+			<p id="${order.key}_text">
+				<span class="label label-success">${order.value}</span>
+				<button province_id="${order.key}" class="glyphicon glyphicon-trash"></button>
+			</p>
+		</c:forEach>
 	</div>
-	<div>
+	<div class="row">
 		<ul id="chat-tabs" class="nav nav-tabs">
-		<li chatid="-1" class="active"><a href="#allchat" data-toggle="tab">All Players</a></li>
+			<li chatid="-1" class="active"><a href="#allchat"
+				data-toggle="tab">All Players</a></li>
 			<c:forEach items="${players}" var="player">
 				<c:if test="${player.id != me_id}">
 					<li chatid="${player.id}"><a href="#tab-${player.id}"
-						data-toggle="tab">${player.user.username}(${player.power} ${player.supply_centers})<c:if test="${player.ready}"><img src="<c:url value="/resources/img/check.png"/>" /></c:if></a></li>
+						data-toggle="tab">${player.user.username}(${player.power}
+							${player.supply_centers})<c:if test="${player.ready}">
+								<img src="<c:url value="/resources/img/check.png"/>" />
+							</c:if>
+					</a></li>
 				</c:if>
 			</c:forEach>
 		</ul>
@@ -179,9 +210,9 @@ svg:FIRST-CHILD{
 			<div class="tab-pane active" id="allchat">
 				<div id="chatlog--1" class="chat-messages"></div>
 				<textarea id="chat--1" name="-1"
-							class="chat-input span4 form-control" cols="" rows="3"></textarea>
-				<button class="dipchat-submit btn btn-default"
-							type="btn" userid="-1" >Send</button>
+					class="chat-input span4 form-control" cols="" rows="3"></textarea>
+				<button class="dipchat-submit btn btn-default" type="btn"
+					userid="-1">Send</button>
 
 				<h4 class="pull-right">All Players</h4>
 			</div>
@@ -191,26 +222,30 @@ svg:FIRST-CHILD{
 						<div id="chatlog-${player.id}" class="chat-messages"></div>
 						<textarea id="chat-${player.id}" name="${player.id}"
 							class="chat-input form-control span4" rows="3" cols=""></textarea>
-						<button userid="${player.id}" class="dipchat-submit btn btn-default"
-							type="btn">Send</button>
+						<button userid="${player.id}"
+							class="dipchat-submit btn btn-default" type="btn">Send</button>
 						<div class="pull-right">
-						<p><span style="font-weight: bold;">${player.user.username}</span> ${player.power}</p>
+							<p>
+								<span style="font-weight: bold;">${player.user.username}</span>
+								${player.power}
+							</p>
 						</div>
 					</div>
 				</c:if>
 			</c:forEach>
 		</div>
-		
+
 	</div>
 	<div>
 		<p>
 			<a
 				onclick="confirm('Are you sure you want to leave? Retreating from battle is frowned upon.');"
-				href="../leavegame/${gid}">Leave This Game</a>
+				href="../leavegame/${gid}"><span
+				class="glyphicon glyphicon-remove-circle"></span> Leave This Game</a>
 		</p>
 	</div>
 </c:if>
-	<script type="text/javascript">
+<script type="text/javascript">
 	//<![CDATA[
 	$(function() {
 		if (!document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#BasicStructure", "1.1")){

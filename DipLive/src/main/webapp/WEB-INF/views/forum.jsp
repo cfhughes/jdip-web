@@ -1,7 +1,8 @@
-<%@include file="head.jsp" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<script type="text/javascript" src="resources/jquery.localtime-0.8.0.min.js"></script>
+<%@include file="head.jsp"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<script type="text/javascript"
+	src="resources/jquery.localtime-0.8.0.min.js"></script>
 <div class="panel-group" id="accordion">
 	<c:forEach items="${topics}" var="topic">
 		<div class="panel panel-default">
@@ -18,10 +19,10 @@
 
 				<div class="panel-collapse collapse" id="collapse${topic.id}">
 					<c:forEach items="${topic.replies}" var="reply">
-						<div class="well">${reply.text}<span
-					class="pull-right"><b>${reply.author.username}</b> <i><span
-						data-localtime-format="dd MMM h:mm a"><fmt:formatDate
-								pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" value="${reply.timestamp}" /></span></i></span></div>
+						<div class="well">${reply.text}<span class="pull-right"><b>${reply.author.username}</b>
+								<i><span data-localtime-format="dd MMM h:mm a"><fmt:formatDate
+											pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" value="${reply.timestamp}" /></span></i></span>
+						</div>
 					</c:forEach>
 					<textarea maxlength="999" class="form-control"></textarea>
 					<button topic_id="${topic.id}" class="btn btn-default new-submit">Post</button>
@@ -63,4 +64,4 @@ $(function(){
 	});	
 });
 </script>
-<%@include file="tail.jsp" %>
+<%@include file="tail.jsp"%>

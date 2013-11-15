@@ -45,6 +45,7 @@ import org.w3c.dom.svg.SVGElement;
 import org.xml.sax.SAXException;
 
 import com.chughes.data.GameRepository;
+import com.chughes.data.MapHolder;
 import com.chughes.dip.GameEntity.Stage;
 import com.chughes.security.UserDAO;
 import com.chughes.security.UserDetailsImpl;
@@ -76,6 +77,7 @@ public class HomeController {
 
 	@Autowired UserDAO us;
 	@Autowired private GameRepository gameRepo;
+	@Autowired private MapHolder mh;
 	@Autowired private GameMaster gm;
 
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
@@ -174,6 +176,7 @@ public class HomeController {
 		model.addAttribute("member_of_game", member);
 		model.addAttribute("gamephase", game.getW().getLastTurnState().getPhase().toString());
 		model.addAttribute("started", game.getStage() == Stage.PLAYING);
+		model.addAttribute("next", game.getTurnend());
 
 		return "board";
 	}
@@ -211,7 +214,7 @@ public class HomeController {
 
 		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[2]);
 
-		gameRepo.setMr(id,mr);
+		mh.setMr(id,mr);
 		
 		TurnState tState;
 		
@@ -219,7 +222,7 @@ public class HomeController {
 			tState = w.getTurnState(Phase.parse(phase));
 		}else {
 			tState = w.getLastTurnState();
-			gameRepo.setPhase(id,tState.getPhase());
+			mh.setPhase(id,tState.getPhase());
 		}
 		
 		RenderCommand rc = mr.getRenderCommandFactory().createRCSetTurnstate(mr, tState);
@@ -261,13 +264,13 @@ public class HomeController {
 		World w = game.getW();
 		
 		String longname = null;
-		TurnState tState = w.getTurnState(gameRepo.getPhase(id));
+		TurnState tState = w.getTurnState(mh.getPhase(id));
 		if (phase.equals("previous")){
 			tState = w.getPreviousTurnState(tState);
 			if (tState == null){
 				phase = "empty";
 			}else {
-				gameRepo.setPhase(id,tState.getPhase());
+				mh.setPhase(id,tState.getPhase());
 				phase = tState.getPhase().getBriefName();
 				longname = tState.getPhase().toString();
 			}
@@ -276,7 +279,7 @@ public class HomeController {
 			if (tState == null){
 				phase = "empty";
 			}else {
-				gameRepo.setPhase(id,tState.getPhase());
+				mh.setPhase(id,tState.getPhase());
 				phase = tState.getPhase().getBriefName();
 				longname = tState.getPhase().toString();
 				if (tState == w.getLastTurnState()){
@@ -337,7 +340,7 @@ public class HomeController {
 
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 
-		DefaultMapRenderer2 mr = gameRepo.getMr(id);
+		DefaultMapRenderer2 mr = mh.getMr(id);
 
 		Order o = null;
 		
@@ -433,7 +436,7 @@ public class HomeController {
 		
 		Power p = w.getMap().getPowerMatching(uge.getPower());
 		
-		DefaultMapRenderer2 mr = gameRepo.getMr(id);
+		DefaultMapRenderer2 mr = mh.getMr(id);
 		
 		List<Orderable> orders = w.getLastTurnState().getOrders(p);
 		Iterator<Orderable> iter = orders.iterator();

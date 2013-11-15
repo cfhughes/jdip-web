@@ -19,18 +19,19 @@ import com.chughes.dip.UIChatRequest;
 public class ChatRepository {
 	protected @Autowired SessionFactory sessionFactory;
 	
-	@Transactional
+	@Transactional(readOnly=true)
 	public Post getTopic(int id){
 		return (Post) sessionFactory.getCurrentSession().get(Post.class, id);
 	}
 	
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<Post> getTopics(){
 		Query q = sessionFactory.getCurrentSession().createQuery("from Post where toplevel = true order by timestamp desc");
 		q.setMaxResults(15);
 		return q.list();
 	}
 	
+	@Transactional
 	public void savePost(Post p){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
 		sessionFactory.getCurrentSession().saveOrUpdate(p);
@@ -43,7 +44,7 @@ public class ChatRepository {
 		sessionFactory.getCurrentSession().saveOrUpdate(m);
 	}
 	
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<Object> getMessages(int user, UIChatRequest req){
 		if (req.getFromid() == -1){
 			Query q = sessionFactory.getCurrentSession().createQuery("select m.id,m.text,m.from.id,m.to.id from UserGameEntity u join u.messages m where u.game.id = :g and m.id > :l and m.to.id is null");

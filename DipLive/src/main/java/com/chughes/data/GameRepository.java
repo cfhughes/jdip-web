@@ -1,9 +1,6 @@
 package com.chughes.data;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
@@ -17,24 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 import com.chughes.dip.GameEntity;
 import com.chughes.dip.UserGameEntity;
 
-import dip.gui.map.DefaultMapRenderer2;
-import dip.world.Phase;
-import dip.world.TurnState;
 import dip.world.World;
 
 @Repository
-@Scope(value="session")
-public class GameRepository implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4156517874604991541L;
+@Scope
+public class GameRepository {
 
 	protected @Autowired SessionFactory sessionFactory;
 	
-	private Map<Integer,GameCache> games = new HashMap<Integer,GameCache>();
-	
-	@Transactional
+	@Transactional(readOnly=true)
 	public GameEntity findById(int id){
 		GameEntity ge = (GameEntity) sessionFactory.getCurrentSession().get(GameEntity.class, id);
 		return ge;
@@ -82,61 +70,10 @@ public class GameRepository implements Serializable {
 	}
 	
 	@SuppressWarnings("unchecked")
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<GameEntity> queryGames(){
 		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity");
 		return query.list();
-	}
-	
-	private class GameCache implements Serializable {
-		
-		private static final long serialVersionUID = -7088059463120248898L;
-
-		public DefaultMapRenderer2 getMr() {
-			return mr;
-		}
-		public void setMr(DefaultMapRenderer2 mr) {
-			this.mr = mr;
-		}
-		public Phase getPhase() {
-			return phase;
-		}
-		public void setPhase(Phase phase) {
-			this.phase = phase;
-		}
-//		public GameEntity getGame() {
-//			return game;
-//		}
-//		public void setGame(GameEntity game) {
-//			this.game = game;
-//		}
-		private DefaultMapRenderer2 mr; 
-		private Phase phase;
-		//private GameEntity game;
-	}
-
-	public void setMr(int id, DefaultMapRenderer2 mr) {
-		if (!games.containsKey(id)){
-			games.put(id, new GameCache());
-		}
-		games.get(id).setMr(mr);
-		
-	}
-
-	public void setPhase(int id, Phase phase) {
-		if (!games.containsKey(id)){
-			games.put(id, new GameCache());
-		}
-		games.get(id).setPhase(phase);
-		
-	}
-
-	public Phase getPhase(int id) {
-		return games.get(id).getPhase();
-	}
-
-	public DefaultMapRenderer2 getMr(int id) {
-		return games.get(id).getMr();
 	}
 	
 }

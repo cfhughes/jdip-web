@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="application/xhtml+xml; charset=ISO-8859-1"
+<%@ page language="java"
+	contentType="application/xhtml+xml; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="sec"
@@ -19,61 +20,72 @@
 	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
 	rel="stylesheet" />
 <style type="text/css">
-
 .container {
-padding: 30px;
+	padding: 20px;
+	background-color: white;
 }
 
-.navbar {
-margin-bottom: 30px;
+.header-background {
+	background-color: #6F9065;
 }
 
+body {
+	background-image: url("<c:url value="/ resources/ img/ compass.png " />");
+	background-repeat: no-repeat;
+	background-color: lightgrey;
+	opacity: .90;
+}
 </style>
 
 </head>
 
 <body>
 
-	<div class="container"
-		style="background-color: #E3F2E3; padding-left: 10px; padding-right: 10px;">
 
 
+	<div class="header-background container">
 
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
-					data-target=".navbar-ex1-collapse">
-					<span class="sr-only">Toggle navigation</span> <span
-						class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="<c:url value="/" />">Diplomacy</a>
-			</div>
-			<div class="collapse navbar-collapse navbar-ex1-collapse">
-				<ul class="nav navbar-nav">
+		<nav class="navbar navbar-inverse" role="navigation">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse"
+				data-target=".navbar-ex1-collapse">
+				<span class="sr-only">Toggle navigation</span> <span
+					class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="<c:url value="/" />">Diplomacy</a>
+		</div>
+		<div class="collapse navbar-collapse navbar-ex1-collapse">
+			<ul class="nav navbar-nav">
 				<sec:authorize access="hasRole('PLAYER')">
 					<li><a href="<c:url value="/forum" />">Forum</a></li>
-					</sec:authorize>
-					<li><a href="<c:url value="/gamelist" />">All Games</a></li>
-					<sec:authorize access="hasRole('PLAYER')">
-						<li><a href="<c:url value="/newgame" />">New Game</a></li>
-					</sec:authorize>
-					<li><a href="<c:url value="/help" />">Help</a></li>
-				</ul>
-				<div class="pull-right">
-					<sec:authorize access="isAuthenticated()"> 
+				</sec:authorize>
+				<li><a href="<c:url value="/gamelist" />">All Games</a></li>
+				<sec:authorize access="hasRole('PLAYER')">
+					<li><a href="<c:url value="/newgame" />">New Game</a></li>
+				</sec:authorize>
+				<li><a href="<c:url value="/help" />">Help</a></li>
+			</ul>
+			<div class="pull-right">
+				<sec:authorize access="isAuthenticated()">
 					<p class="navbar-text">
-				User: <sec:authentication property="principal.username" /></p>
-						<a href="<c:url value="/j_spring_security_logout" />"><button class="btn btn-default navbar-btn">Logout</button></a>
-					</sec:authorize>
+						User:
+						<sec:authentication property="principal.username" />
+					</p>
+					<a href="<c:url value="/j_spring_security_logout" />"><button
+							class="btn btn-default navbar-btn">Logout</button></a>
+				</sec:authorize>
 
-					<sec:authorize access="!isAuthenticated()">
-						<a href="<c:url value="/login" />"><button class="btn btn-default navbar-btn">Login</button></a>
-						<a href="<c:url value="/newuser" />"><button class="btn btn-default navbar-btn">Register</button></a>
-					</sec:authorize>
-				</div>
+				<sec:authorize access="!isAuthenticated()">
+					<a href="<c:url value="/login" />"><button
+							class="btn btn-default navbar-btn">Login</button></a>
+					<a href="<c:url value="/newuser" />"><button
+							class="btn btn-default navbar-btn">Register</button></a>
+				</sec:authorize>
 			</div>
+		</div>
 		</nav>
-		<!-- /.navbar -->
-
+	</div>
+	<!-- /.navbar -->
+	<div class="container">
 		<div class="row-fluid">

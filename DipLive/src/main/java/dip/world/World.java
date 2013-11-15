@@ -49,6 +49,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.Sort;
@@ -70,6 +72,7 @@ import org.hibernate.annotations.SortType;
 *
 */
 @Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class World implements Serializable
 {
 	/**
