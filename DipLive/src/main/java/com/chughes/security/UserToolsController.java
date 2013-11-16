@@ -43,7 +43,7 @@ public class UserToolsController {
 	public String saveUser(@ModelAttribute("user") UserDetailsImpl user){
 
 		us.saveUser(user);
-		return "newuser";
+		return "saveuser";
 	}
 	
 	@RequestMapping(value="/not-found")
