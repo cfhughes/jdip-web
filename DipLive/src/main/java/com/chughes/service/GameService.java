@@ -56,6 +56,7 @@ public class GameService {
 	}
 	
 	public void removeUserFromGame(GameEntity game, UserEntity user){
+		if (user.getId() == UserEntity.NULL_USER.getId())return;//Can't remove null user
 		UserGameEntity uge = gameRepo.inGameUser(game.getId(), user.getId());
 		uge.setUser(UserEntity.NULL_USER);
 		uge.setMissed(0);

@@ -90,7 +90,7 @@ public class Judge {
 
 	@Transactional
 	public void cron() {
-		Query q = sessionFactory.getCurrentSession().createQuery("from GameEntity where turnend > current_timestamp()");
+		Query q = sessionFactory.getCurrentSession().createQuery("from GameEntity where turnend < current_timestamp() and stage= 'PLAYING'");
 		List<GameEntity> list = q.list();
 		for (GameEntity ge : list){
 			advanceGame(ge);

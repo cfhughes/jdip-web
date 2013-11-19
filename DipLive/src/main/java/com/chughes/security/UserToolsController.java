@@ -40,7 +40,7 @@ public class UserToolsController {
 	}
 
 	@RequestMapping(value="/saveuser")
-	public String saveUser(@ModelAttribute("user") UserDetailsImpl user){
+	public String saveUser(@ModelAttribute("user") UserDetailsImpl user) throws Exception{
 
 		us.saveUser(user);
 		return "saveuser";

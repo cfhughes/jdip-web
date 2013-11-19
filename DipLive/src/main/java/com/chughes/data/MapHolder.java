@@ -12,8 +12,12 @@ import dip.world.Phase;
 
 @Repository
 @Scope(value="session")
-public class MapHolder {
+public class MapHolder implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1838207806369428656L;
 	private Map<Integer,GameCache> games = new HashMap<Integer,GameCache>();
 	
 	public void setMr(int id, DefaultMapRenderer2 mr) {

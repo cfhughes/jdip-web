@@ -20,10 +20,13 @@ public class UserDAO{
 	private SessionFactory sessionFactory;
 
 	@Transactional
-	public void saveUser(UserDetailsImpl user){
+	public void saveUser(UserDetailsImpl user) throws Exception{
 		
 		Session session = sessionFactory.getCurrentSession();
 		UserEntity ue = new UserEntity();
+		if (getUserByName(user.getUsername()) != null){
+			throw new Exception("Username Taken");
+		}
 		ue.setUsername(user.getUsername());
 		ue.setPassword(user.getPassword());
 		session.save(ue);

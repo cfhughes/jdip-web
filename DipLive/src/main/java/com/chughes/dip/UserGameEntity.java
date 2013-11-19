@@ -1,8 +1,11 @@
 package com.chughes.dip;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,6 +28,7 @@ public class UserGameEntity implements Serializable {
 	 */
 	private static final long serialVersionUID = 8784807600063349365L;
 	private List<Message> messages;
+	private Map<Integer,Long> readlog = new HashMap<Integer,Long>();
 	private UserEntity user;
 	private GameEntity game;
 	private String power;
@@ -125,6 +129,13 @@ public class UserGameEntity implements Serializable {
 	}
 	public void setMissed(int missed) {
 		this.missed = missed;
+	}
+	@ElementCollection
+	public Map<Integer, Long> getReadlog() {
+		return readlog;
+	}
+	public void setReadlog(Map<Integer, Long> readlog) {
+		this.readlog = readlog;
 	}
 	
 }

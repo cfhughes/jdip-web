@@ -1,9 +1,14 @@
 package com.chughes.dip;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,7 +33,7 @@ public class ChatController {
 	@Autowired UserDAO us;
 	@Autowired ChatRepository cr;
 	@Autowired GameRepository gr;
-	
+
 	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value="/forum")
 	public String forum(Model m){
@@ -88,7 +93,7 @@ public class ChatController {
 				if (uge.getGame().getPlayers().contains(gu) || chat.getTo() == -1){
 					Message m = new Message();
 					m.setText(chat.getMessage());
-
+					m.setTimestamp(new Date());
 					m.setFrom(uge);
 					uge.getMessages().add(m);
 
@@ -108,14 +113,38 @@ public class ChatController {
 	}
 
 	@RequestMapping(value="/game/JSONmessages")
-	public @ResponseBody List<Object> retreiveChat(@RequestBody UIChatRequest request){
+	public @ResponseBody List<SortedMap<String, String>> retreiveChat(@RequestBody UIChatRequest request){
 		UserDetailsImpl user = null;
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getPrincipal() instanceof UserDetails){
 			UserDetails user1 = (UserDetails)auth.getPrincipal();
 			user = (UserDetailsImpl) user1;
-			if (gr.inGameUser(request.getGameid(), user.getId()) != null){
-				return cr.getMessages(user.getId(), request);
+			UserGameEntity uge = gr.inGameUser(request.getGameid(), user.getId());
+			if (uge != null){
+				List<SortedMap<String,String>> result = new ArrayList<SortedMap<String,String>>();
+				List<Object[]> re = cr.getMessages(user.getId(), request);
+				Map<Integer, Long> read = uge.getReadlog();
+				for (Object[] m : re) {
+					if (m.length == 5){
+						SortedMap<String,String> mess = new TreeMap<String,String>();
+						mess.put("id", ((Integer) m[0]).toString());
+						mess.put("text", (String) m[1]);
+						mess.put("fromid", ((Integer) m[2]).toString());
+						mess.put("fromuser", (String) m[3]);
+						if (m[4] != null){
+							if (read.get(request.getFromid()) == null || ((Date) m[4]).getTime() > read.get(request.getFromid()))mess.put("new", "true");
+							else mess.put("new", "false");
+							mess.put("timestamp", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format((Date) m[4]));
+						}else{
+							mess.put("timestamp", new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(new Date(959212800l)));
+						}
+						result.add(mess);
+					}
+				}
+				read.remove(request.getFromid());
+				read.put(request.getFromid(), new Date().getTime());
+				gr.saveInGameUser(uge);
+				return result;
 			}
 		}
 		return null;

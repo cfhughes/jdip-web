@@ -19,7 +19,7 @@
 	-webkit-border-radius: 10px;
 	-moz-border-radius: 10px;
 	border-radius: 10px;
-	max-width: 300px;
+	max-width: 500px;
 }
 
 /* Variant : for left/right positioned triangle */
@@ -197,7 +197,7 @@ svg:FIRST-CHILD {
 				data-toggle="tab">All Players</a></li>
 			<c:forEach items="${players}" var="player">
 				<c:if test="${player.id != me_id}">
-					<li chatid="${player.id}"><a href="#tab-${player.id}"
+					<li chatid="${player.id}"><a id="a-${player.id}" href="#tab-${player.id}"
 						data-toggle="tab">${player.user.username}(${player.power}
 							${player.supply_centers})<c:if test="${player.ready}">
 								<img src="<c:url value="/resources/img/check.png"/>" />
@@ -298,33 +298,45 @@ svg:FIRST-CHILD {
 
 		var last_seen = {};
 		var loadchat = function(from, last) {
-		var request = {
+		    var request = {
 			"fromid" : from,
 			"gameid" : "${gid}",
 			"lastseen" : last
-		};
-		//alert(JSON.stringify(request));
+		    };
+		    //alert(JSON.stringify(request));
 			$.ajax("JSONmessages", {
 				data : JSON.stringify(request),
 				contentType : 'application/json',
 				type : 'POST',
 				success : function(msg) {
 					console.log(msg);
+					var arenew = false;
 					for (i = 0; i < msg.length; i++) {
 						var chatclass = "";
-						if (msg[i][2] == ${me_id}){
+						if (msg[i]["fromid"] == ${me_id}){
 							chatclass = "chat-me";
 						}
-						$("#chatlog-" + from).append("<p class='chatcontainer "+chatclass+"'>" + msg[i][1] + "</p>");
-						last_seen[from] = msg[i][0];
+						$("#chatlog-" + from).append("<div class='chatcontainer "+chatclass+"'>" + msg[i]["text"] + "<span class='pull-right'><b>"+msg[i]["fromuser"]+"</b> "+$.localtime.toLocalTime(msg[i]["timestamp"], 'dd MMM h:mm a')+"</span><hr style='clear:both;visibility:hidden;margin:0px 0px 0px 0px'/></div>");
+						$("#chatlog-" + from).scrollTop($("#chatlog-" + from)[0].scrollHeight);
+						last_seen[from] = msg[i]["id"];
+						if (msg[i]["new"] == "true"){
+							arenew=true;
+						}
 					}
+					if (arenew){
+						$("#a-"+from).css("background-color","gold");	
+					}
+					
 				}
 			});
 		};
 		$("#chat-tabs > li").click(function() {
 			loadchat($(this).attr("chatid"), last_seen[$(this).attr("chatid")]);
+			$("#a-"+$(this).attr("chatid")).css("background-color","transparent");
 		});
-		loadchat($("#chat-tabs > li:first-child").attr("chatid"), 0);
+		$("#chat-tabs").children().each(function(){
+			loadchat($(this).attr("chatid"), 0);
+		});
 		$(".dipchat-submit").click(function() {
 			var this_user = $(this).attr("userid");
 			var chat = {

@@ -1,5 +1,7 @@
 package com.chughes.dip;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,6 +23,7 @@ public class Message {
 	private int id;
 	private UserGameEntity from;
 	private UserGameEntity to;
+	private Date timestamp;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -52,6 +55,12 @@ public class Message {
 	}
 	public void setTo(UserGameEntity to) {
 		this.to = to;
+	}
+	public Date getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(Date timestamp) {
+		this.timestamp = timestamp;
 	}
 	
 
