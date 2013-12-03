@@ -2,12 +2,26 @@ package com.chughes.dip;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.social.connect.Connection;
+import org.springframework.social.connect.ConnectionFactory;
+import org.springframework.social.connect.ConnectionFactoryLocator;
+import org.springframework.social.connect.ConnectionRepository;
+import org.springframework.social.connect.UsersConnectionRepository;
+import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.GraphApi;
+import org.springframework.social.facebook.api.OpenGraphOperations;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
+import org.springframework.social.facebook.connect.FacebookAdapter;
+import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.chughes.dip.GameEntity.Stage;
 import com.chughes.security.UserEntity;
@@ -27,6 +41,8 @@ public class Judge {
 	private @Autowired GameService gs;
 	protected @Autowired SessionFactory sessionFactory;
 	protected @Autowired Mailer mailer;
+	private @Autowired Facebook facebookApp;
+	private @Autowired UsersConnectionRepository ucr;
 
 	@Transactional
 	public void advanceGame(GameEntity ge){
@@ -72,9 +88,22 @@ public class Judge {
 			int supply = game.getW().getLastTurnState().getPosition().getOwnedSupplyCenters(game.getW().getMap().getPower(player.getPower())).length;
 			System.out.println(game.getW().getMap().getPower(player.getPower()));
 			player.setSupply_centers(supply);
+			
 			if (player.getUser().getId() != UserEntity.NULL_USER.getId()){
 				player.setReady(false);
 				mailer.newphase(player.getUser().getEmail(), game.getName());
+				ConnectionRepository cr = ucr.createConnectionRepository(player.getUser().getId()+"");
+				List<Connection<Facebook>> fb = cr.findConnections(Facebook.class);
+				if (fb.size() == 1){
+					MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+					map.set("href", "/game/"+game.getId());
+					map.set("template", "Your game titled '"+game.getName()+"' has advanced to the next phase.");
+					String uri = GraphApi.GRAPH_API_URL + fb.get(0).getKey().getProviderUserId() + "/notifications";
+					Map<String, Object> result = facebookApp.restOperations().postForObject(uri, map, Map.class);
+					if (!result.containsKey("success")){
+						System.out.println("Facebook returned: "+result.get("message"));
+					}
+				}
 			}
 			if (game.getTurnlength() != 0){
 				long milis = new Date().getTime() + (60L * 60L * 1000L * game.getTurnlength());

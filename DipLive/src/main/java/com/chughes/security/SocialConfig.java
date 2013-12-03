@@ -22,11 +22,13 @@ import org.springframework.social.connect.support.ConnectionFactoryRegistry;
 import org.springframework.social.connect.web.ProviderSignInController;
 import org.springframework.social.connect.web.SignInAdapter;
 import org.springframework.social.facebook.api.Facebook;
+import org.springframework.social.facebook.api.impl.FacebookTemplate;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.google.api.Google;
 import org.springframework.social.google.api.impl.GoogleTemplate;
 import org.springframework.social.google.connect.GoogleConnectionFactory;
 import org.springframework.social.facebook.web.CanvasSignInController;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 @PropertySource("application.properties")
@@ -69,6 +71,16 @@ public class SocialConfig {
 	@Scope(value="request", proxyMode=ScopedProxyMode.INTERFACES)	
 	public Facebook facebook() {
 	    return connectionRepository().getPrimaryConnection(Facebook.class).getApi();
+	}
+	
+	@Bean
+	public Facebook facebookApp() {
+		// retrieve app access token
+		RestTemplate restTemplate = new RestTemplate();
+		String result = restTemplate.getForObject("https://graph.facebook.com/oauth/access_token?grant_type=client_credentials&client_id="+environment.getProperty("facebook.clientId")+"&client_secret="+environment.getProperty("facebook.clientSecret"),  String.class);
+		String appAccessToken = result.replaceAll("access_token=", "");
+		FacebookTemplate fbt = new FacebookTemplate(appAccessToken);
+		return fbt;
 	}
 	
 	@Bean

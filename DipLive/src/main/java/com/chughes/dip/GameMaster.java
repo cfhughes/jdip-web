@@ -39,7 +39,6 @@ public class GameMaster {
 		j.updateInfo(game);
 	}
 
-	@Async
 	public void processGame(GameEntity ge){
 		try{
 			for (UserGameEntity player : ge.getPlayers()) {
