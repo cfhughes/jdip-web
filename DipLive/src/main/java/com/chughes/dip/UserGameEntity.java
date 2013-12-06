@@ -34,6 +34,7 @@ public class UserGameEntity implements Serializable {
 	private String power;
 	private int id;
 	private boolean ready;
+	private boolean orderable;
 	private float victory_share = -1;
 	private int supply_centers;
 	private int missed;
@@ -136,6 +137,12 @@ public class UserGameEntity implements Serializable {
 	}
 	public void setReadlog(Map<Integer, Long> readlog) {
 		this.readlog = readlog;
+	}
+	public boolean isOrderable() {
+		return orderable;
+	}
+	public void setOrderable(boolean orderable) {
+		this.orderable = orderable;
 	}
 	
 }

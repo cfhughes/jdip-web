@@ -465,9 +465,11 @@ public class HomeController {
 		UserDetailsImpl user = (UserDetailsImpl) user1;
 		UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
 		boolean ready = uge.isReady();
-		uge.setReady(!ready);
-		gameRepo.saveInGameUser(uge);
-		gm.processGame(uge.getGame());
-		return Collections.singletonMap("ready", !ready);
+		if (ready && uge.isOrderable()){
+			uge.setReady(!ready);
+			gameRepo.saveInGameUser(uge);
+			gm.processGame(uge.getGame());
+		}
+		return Collections.singletonMap("ready", uge.isReady());
 	}
 }

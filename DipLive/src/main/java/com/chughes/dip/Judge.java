@@ -31,6 +31,8 @@ import dip.gui.order.GUIOrderFactory;
 import dip.process.Adjustment;
 import dip.process.Adjustment.AdjustmentInfoMap;
 import dip.process.StdAdjudicator;
+import dip.world.Phase.PhaseType;
+import dip.world.Power;
 import dip.world.TurnState;
 
 @Service
@@ -79,14 +81,17 @@ public class Judge {
 	public void updateInfo(GameEntity game) {
 		game.setPhase(game.getW().getLastTurnState().getPhase().toString());
 		for (UserGameEntity player : game.getPlayers()) {
+			player.setOrderable(true);
 			if (!player.isReady()){
 				player.setMissed(player.getMissed()+1);
 				if (player.getMissed() > ACCEPTABLE_MISSES){
 					gs.removeUserFromGame(game, player.getUser());
 				}
 			}
-			int supply = game.getW().getLastTurnState().getPosition().getOwnedSupplyCenters(game.getW().getMap().getPower(player.getPower())).length;
-			System.out.println(game.getW().getMap().getPower(player.getPower()));
+			Power power = game.getW().getMap().getPower(player.getPower());
+			int supply = game.getW().getLastTurnState().getPosition().getOwnedSupplyCenters(power).length;
+
+			//System.out.println(game.getW().getMap().getPower(player.getPower()));
 			player.setSupply_centers(supply);
 			
 			if (player.getUser().getId() != UserEntity.NULL_USER.getId()){
@@ -103,6 +108,16 @@ public class Judge {
 					if (!result.containsKey("success")){
 						System.out.println("Facebook returned: "+result.get("message"));
 					}
+				}
+				if (supply == 0){
+					player.setOrderable(false);
+					player.setReady(true);
+				}else if (game.getW().getLastTurnState().getPhase().getPhaseType() == PhaseType.ADJUSTMENT && supply == game.getW().getLastTurnState().getPosition().getUnitProvinces(power).length){
+					player.setOrderable(false);
+					player.setReady(true);
+				}else if (game.getW().getLastTurnState().getPhase().getPhaseType() == PhaseType.RETREAT && game.getW().getLastTurnState().getPosition().getDislodgedUnitProvinces(power).length == 0){
+					player.setOrderable(false);
+					player.setReady(true);
 				}
 			}
 			if (game.getTurnlength() != 0){
