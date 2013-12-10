@@ -112,7 +112,7 @@ use,symbol {
 	visibility: hidden;
 }
 
-svg:not (:root ) {
+svg:not(:root ) {
 	overflow: visible;
 }
 
