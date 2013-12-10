@@ -98,8 +98,8 @@ public class SocialConfig {
 	}
 	
     @Bean
-    public CanvasSignInController canvasSignInController() {
-            return new CanvasSignInController(connectionFactoryLocator(), usersConnectionRepository(), new SimpleSignInAdapter(user), environment.getProperty("facebook.clientId"), environment.getProperty("facebook.clientSecret"), environment.getProperty("facebook.canvasPage"));
+    public CanvasSignInFix canvasSignInControllerFix() {
+            return new CanvasSignInFix(connectionFactoryLocator(), usersConnectionRepository(), new SimpleSignInAdapter(user), environment.getProperty("facebook.clientId"), environment.getProperty("facebook.clientSecret"), environment.getProperty("facebook.canvasPage"));
     }
 	
 	@Inject
