@@ -465,7 +465,7 @@ public class HomeController {
 		UserDetailsImpl user = (UserDetailsImpl) user1;
 		UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
 		boolean ready = uge.isReady();
-		if (ready && uge.isOrderable()){
+		if (uge.isOrderable()){
 			uge.setReady(!ready);
 			gameRepo.saveInGameUser(uge);
 			gm.processGame(uge.getGame());

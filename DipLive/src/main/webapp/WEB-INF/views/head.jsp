@@ -89,5 +89,5 @@ body {
 	<!-- /.navbar -->
 	<div class="container">
 		<div class="row-fluid">
-		<div class="alert alert-info">This is a work in progress. If you find a bug or want to request a feature submit it at <a href="https://github.com/cfhughes/jdip-web/issues">GitHub (https://github.com/cfhughes/jdip-web/issues)</a></div>
+		<div class="alert alert-info">This is a work in progress. If you find a bug or want to request a feature submit it at <a target="_blank" href="https://github.com/cfhughes/jdip-web/issues">GitHub (https://github.com/cfhughes/jdip-web/issues)</a></div>
 		
