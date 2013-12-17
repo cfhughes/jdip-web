@@ -24,10 +24,11 @@ public class GameListController {
 	@Autowired private UserDAO userrepo;
 
 	@RequestMapping(value="/gamelist")
-	public String listGames(Model model){
-		
-		model.addAttribute("games", gameService.searchGames());
-		
+	public String listGames(Model model,@RequestParam(value="p", required = false) Integer p){
+		if (p == null)p = 1;
+		int offset = (p-1)*10;
+		model.addAttribute("games", gameService.searchGames(offset,10));
+		model.addAttribute("page", p);
 		return "gamelist";
 	}
 	

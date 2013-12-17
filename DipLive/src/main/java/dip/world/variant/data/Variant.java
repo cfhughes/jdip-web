@@ -36,6 +36,35 @@ A Variant.
 */
 public class Variant implements Cloneable, Comparable
 {
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + Float.floatToIntBits(version);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!(obj instanceof Variant))
+			return false;
+		Variant other = (Variant) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		if (Float.floatToIntBits(version) != Float
+				.floatToIntBits(other.version))
+			return false;
+		return true;
+	}
+
 	// the arrays in general should not be null. They are defined as null initially
 	// to make it more apparent should a field not be initialized properly.
 	// 
@@ -357,51 +386,52 @@ public class Variant implements Cloneable, Comparable
 	/** For debugging only! */
 	public String toString()
 	{
-		StringBuffer sb = new StringBuffer(256);
-		sb.append(this.getClass().getName());
-		sb.append('[');
-		sb.append("name=");
-		sb.append(name);
-		sb.append(",isDefault=");
-		sb.append(isDefault);
-		sb.append("powers=");
-		for(int i=0; i<powers.length; i++)
-		{
-			sb.append(powers[i]);
-			sb.append(',');
-		}
-		sb.append(",phase=");
-		sb.append(phase);
-		sb.append(",istate=");
-		for(int i=0; i<istate.length; i++)
-		{
-			System.out.println(istate[i]);
-		}
-		sb.append(",supplyCenters=");
-		for(int i=0; i<supplyCenters.length; i++)
-		{
-			System.out.println(supplyCenters[i]);
-		}
-		sb.append(",provinceData=");
-		for(int i=0; i<provinceData.length; i++)
-		{
-			System.out.println(provinceData[i]);
-		}
-		sb.append("mapGraphics=");
-		for(int i=0; i<mapGraphics.length; i++)
-		{
-			System.out.println(mapGraphics[i]);
-		}
-		sb.append(",vcNumSCForVictory=");
-		sb.append(vcNumSCForVictory);
-		sb.append(",vcMaxGameTimeYears=");
-		sb.append(vcMaxGameTimeYears);
-		sb.append(",vcMaxYearsNoSCChange=");
-		sb.append(vcMaxYearsNoSCChange);
-		sb.append(",version=");
-		sb.append(version);
-		sb.append(']');
-		return sb.toString();
+	return Integer.toString(hashCode());
+//		StringBuffer sb = new StringBuffer(256);
+//		sb.append(this.getClass().getName());
+//		sb.append('[');
+//		sb.append("name=");
+//		sb.append(name);
+//		sb.append(",isDefault=");
+//		sb.append(isDefault);
+//		sb.append("powers=");
+//		for(int i=0; i<powers.length; i++)
+//		{
+//			sb.append(powers[i]);
+//			sb.append(',');
+//		}
+//		sb.append(",phase=");
+//		sb.append(phase);
+//		sb.append(",istate=");
+//		for(int i=0; i<istate.length; i++)
+//		{
+//			System.out.println(istate[i]);
+//		}
+//		sb.append(",supplyCenters=");
+//		for(int i=0; i<supplyCenters.length; i++)
+//		{
+//			System.out.println(supplyCenters[i]);
+//		}
+//		sb.append(",provinceData=");
+//		for(int i=0; i<provinceData.length; i++)
+//		{
+//			System.out.println(provinceData[i]);
+//		}
+//		sb.append("mapGraphics=");
+//		for(int i=0; i<mapGraphics.length; i++)
+//		{
+//			System.out.println(mapGraphics[i]);
+//		}
+//		sb.append(",vcNumSCForVictory=");
+//		sb.append(vcNumSCForVictory);
+//		sb.append(",vcMaxGameTimeYears=");
+//		sb.append(vcMaxGameTimeYears);
+//		sb.append(",vcMaxYearsNoSCChange=");
+//		sb.append(vcMaxYearsNoSCChange);
+//		sb.append(",version=");
+//		sb.append(version);
+//		sb.append(']');
+//		return sb.toString();
 	}// toString()
 }// class Variant
 

@@ -71,8 +71,8 @@ public class GameRepository {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<GameEntity> queryGames(){
-		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity");
+	public List<GameEntity> queryGames(int p,int max){
+		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity").setFirstResult(p).setMaxResults(max);
 		return query.list();
 	}
 	

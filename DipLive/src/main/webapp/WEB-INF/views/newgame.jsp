@@ -1,5 +1,6 @@
 <%@include file="head.jsp"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <form:form action="savegame" commandName="game" class="form-horizontal"
 	role="form">
 	<div class="form-group">
@@ -8,20 +9,7 @@
 			<form:input path="name" id="name" type="text" class="form-control" />
 		</div>
 	</div>
-	<div class="form-group">
-		<label for="variant" class="control-label col-lg-2">Variant</label>
-		<div class="col-lg-5">
-			<select id="variant" name="variant" class="form-control">
-				<c:forEach items="${variants}" var="variant">
-					<option value="${variant.name}">${variant.name}(
-						<c:forEach items="${variant.powers}" var="power">
-							${power.name}
-						</c:forEach>)
-					</option>
-				</c:forEach>
-			</select>
-		</div>
-	</div>
+
 	<div class="form-group">
 		<label for="turnlength" class="control-label col-lg-2">Turn
 			Length (0-336 hours, 0 = Unconstrained)</label>
@@ -40,10 +28,32 @@
 				class="form-control" />
 		</div>
 	</div>
+	<div class="col-lg-2" style="height: 300px; overflow: auto;">
+		<ul class="nav nav-pills nav-stacked" id="choose-variant">
+			<c:forEach items="${variants}" var="variant">
+				<li><a id="${variant.name}"
+					href="#${variant}" data-toggle="tab" >${variant.name}</a></li>
+
+			</c:forEach>
+		</ul>
+	</div>
+	<input type="hidden" id="variant" name="variant" value="Standard" />
+	<div class="tab-content" class="col-lg-5" style="height: 300px; overflow: auto;">
+		<c:forEach items="${variants}" var="variant">
+			<div class="tab-pane panel panel-default" id="${variant}"><div class="panel-body">${variant.description}</div></div>
+		</c:forEach>
+	</div>
 	<div class="form-group">
 		<div class="col-lg-offset-2 col-lg-5">
 			<button class="btn btn-default" type="submit">Create!</button>
 		</div>
 	</div>
 </form:form>
+<script type="text/javascript">
+$(function(){
+$("#choose-variant a").click(function(){
+	$('#variant').val($(this).attr('id'));	
+});
+});
+</script>
 <%@include file="tail.jsp"%>

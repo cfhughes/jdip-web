@@ -212,7 +212,7 @@ public class HomeController {
 		SAXSVGDocumentFactory f = new SAXSVGDocumentFactory(parser);
 		SVGDocument doc = f.createSVGDocument(VariantManager.getVariantPackageJarURL(variant).toString(), new StringReader(sw.toString()));
 
-		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[2]);
+		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[3]);
 
 		mh.setMr(id,mr);
 		
@@ -419,6 +419,7 @@ public class HomeController {
 		return results;
 	}
 	
+	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value = "/game/{gameID}/JSONorder-remove")
 	public @ResponseBody String remove(@PathVariable(value="gameID") int id,@RequestParam(value="prov") String province) throws Exception {
 
@@ -458,6 +459,7 @@ public class HomeController {
 
 	}
 	
+	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value = "/game/{gameID}/JSONready")
 	public @ResponseBody Map<String, ?> setReady(@PathVariable(value="gameID") int id){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

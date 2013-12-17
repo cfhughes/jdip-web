@@ -74,8 +74,8 @@ public class GameService {
 		gameRepo.saveGame(ge);
 	}
 
-	public List<GameEntity> searchGames(){
-		return gameRepo.queryGames();
+	public List<GameEntity> searchGames(int p,int max){
+		return gameRepo.queryGames(p,max);
 	}
 
 	public GameEntity getGame(int id){
