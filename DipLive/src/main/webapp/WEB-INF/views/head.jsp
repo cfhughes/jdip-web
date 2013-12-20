@@ -63,6 +63,9 @@ body {
 				<sec:authorize access="hasRole('PLAYER')">
 					<li><a href="<c:url value="/newgame" />">New Game</a></li>
 				</sec:authorize>
+				<sec:authorize access="hasRole('MODERATOR')">
+					<li><a href="<c:url value="/admin" />">Admin</a></li>
+				</sec:authorize>
 				<li><a href="<c:url value="/help" />">Help</a></li>
 			</ul>
 			<div class="pull-right">

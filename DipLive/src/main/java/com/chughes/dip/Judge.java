@@ -58,23 +58,29 @@ public class Judge {
 		}
 		//End Game if Victory Occurs
 		if (ge.getW().getLastTurnState().isEnded()){
-			ge.setStage(Stage.ENDED);
-			ge.setPhase("Ended");
-			AdjustmentInfoMap info = Adjustment.getAdjustmentInfo(ge.getW().getLastTurnState(), ge.getW().getRuleOptions(), ge.getW().getMap().getPowers());
-			int total = ge.getW().getLastTurnState().getPosition().getOwnedSupplyCenters().length;
-			for (UserGameEntity player : ge.getPlayers()) {
-				int owned = info.get(ge.getW().getMap().getPower(player.getPower())).getSupplyCenterCount();
-				player.setVictory_share(((float)owned)/((float)total));
-				if (owned > 0) {
-					player.getUser().setWins(player.getUser().getWins()+1);
-				}else {
-					player.getUser().setLosses(player.getUser().getLosses()+1);
-				}
-				sessionFactory.getCurrentSession().update(player.getUser());
-			}
+			endGame(ge);
+		}else{
+			updateInfo(ge);
 		}
 		sessionFactory.getCurrentSession().update(ge.getW());
-		updateInfo(ge);
+
+	}
+	
+	public void endGame(GameEntity ge){
+		ge.setStage(Stage.ENDED);
+		ge.setPhase("Ended");
+		AdjustmentInfoMap info = Adjustment.getAdjustmentInfo(ge.getW().getLastTurnState(), ge.getW().getRuleOptions(), ge.getW().getMap().getPowers());
+		int total = ge.getW().getLastTurnState().getPosition().getOwnedSupplyCenters().length;
+		for (UserGameEntity player : ge.getPlayers()) {
+			int owned = info.get(ge.getW().getMap().getPower(player.getPower())).getSupplyCenterCount();
+			player.setVictory_share(((float)owned)/((float)total));
+			if (owned > 0) {
+				player.getUser().setWins(player.getUser().getWins()+1);
+			}else {
+				player.getUser().setLosses(player.getUser().getLosses()+1);
+			}
+			sessionFactory.getCurrentSession().update(player.getUser());
+		}
 		sessionFactory.getCurrentSession().saveOrUpdate(ge);
 	}
 
@@ -94,9 +100,11 @@ public class Judge {
 			//System.out.println(game.getW().getMap().getPower(player.getPower()));
 			player.setSupply_centers(supply);
 			
-			if (player.getUser().getId() != UserEntity.NULL_USER.getId()){
+			if (!player.getUser().getUsername().equals("EMPTY")){
 				player.setReady(false);
+				//Email Notify
 				mailer.newphase(player.getUser().getEmail(), game.getName());
+				//Facebook Notify
 				ConnectionRepository cr = ucr.createConnectionRepository(player.getUser().getId()+"");
 				List<Connection<Facebook>> fb = cr.findConnections(Facebook.class);
 				if (fb.size() == 1){
@@ -109,7 +117,8 @@ public class Judge {
 						System.out.println("Facebook returned: "+result.get("message"));
 					}
 				}
-				if (supply == 0){
+				//Determine players that have no Orders to give
+				if (game.getW().getLastTurnState().getPosition().getUnitProvinces(power).length == 0 && game.getW().getLastTurnState().getPhase().getPhaseType() == PhaseType.MOVEMENT){
 					player.setOrderable(false);
 					player.setReady(true);
 				}else if (game.getW().getLastTurnState().getPhase().getPhaseType() == PhaseType.ADJUSTMENT && supply == game.getW().getLastTurnState().getPosition().getUnitProvinces(power).length){
@@ -120,15 +129,15 @@ public class Judge {
 					player.setReady(true);
 				}
 			}
+			//Determine next phase end
 			if (game.getTurnlength() != 0){
 				long milis = new Date().getTime() + (60L * 60L * 1000L * game.getTurnlength());
 				Date end = new Date(milis);
 				game.setTurnend(end);
 			}
-
+			
 		}
-
-
+		sessionFactory.getCurrentSession().saveOrUpdate(game);
 
 	}
 
