@@ -146,9 +146,12 @@
 	</http>
 
 	<beans:bean id="loginLogger" class="com.chughes.security.SessionLogger" />
+	
+	<beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
 	<authentication-manager>
 		<authentication-provider user-service-ref="customUserService">
+		    <password-encoder ref="encoder"/>
 		</authentication-provider>
 	</authentication-manager>
 

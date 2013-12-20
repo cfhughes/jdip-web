@@ -10,14 +10,15 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class UserDAO{
 
-	@Autowired
-	private SessionFactory sessionFactory;
+	@Autowired private SessionFactory sessionFactory;
+	@Autowired private BCryptPasswordEncoder encoder;
 
 	@Transactional
 	public void saveUser(UserDetailsImpl user) throws Exception{
@@ -28,7 +29,7 @@ public class UserDAO{
 			throw new Exception("Username Taken");
 		}
 		ue.setUsername(user.getUsername());
-		ue.setPassword(user.getPassword());
+		ue.setPassword(encoder.encode(user.getPassword()));
 		session.save(ue);
 
 	}
