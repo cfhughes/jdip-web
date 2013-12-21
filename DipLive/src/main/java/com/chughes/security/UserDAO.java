@@ -25,7 +25,11 @@ public class UserDAO{
 		
 		Session session = sessionFactory.getCurrentSession();
 		UserEntity ue = new UserEntity();
-		if (getUserByName(user.getUsername()) != null){
+		if (user.getUsername().length() < 2){
+			throw new Exception("Username must be at least 2 characters");
+		}else if (user.getPassword().length() < 5){
+			throw new Exception("Password must be at least 5 characters");
+		}else if (getUserByName(user.getUsername()) != null){
 			throw new Exception("Username Taken");
 		}
 		ue.setUsername(user.getUsername());
