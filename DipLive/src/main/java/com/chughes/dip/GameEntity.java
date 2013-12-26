@@ -38,6 +38,7 @@ public class GameEntity implements Serializable{
 	private Stage stage;
 	private Set<UserGameEntity> players = new HashSet<UserGameEntity>();
 	private World w;
+	private boolean crashed = false;
 	private int id;
 	@NotEmpty
 	private String name;
@@ -136,6 +137,12 @@ public class GameEntity implements Serializable{
 		if (id != other.id)
 			return false;
 		return true;
+	}
+	public boolean isCrashed() {
+		return crashed;
+	}
+	public void setCrashed(boolean crashed) {
+		this.crashed = crashed;
 	}
 	
 }

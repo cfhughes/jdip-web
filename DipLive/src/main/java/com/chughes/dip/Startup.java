@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chughes.security.UserDAO;
 import com.chughes.security.UserEntity;
 
 import dip.world.variant.VariantManager;
@@ -26,6 +27,7 @@ public class Startup{
 	ServletContext context;
 	
 	protected @Autowired DataSource dataSource;
+	protected @Autowired UserDAO us;
 
 	@PostConstruct
 	@Transactional
@@ -47,7 +49,13 @@ public class Startup{
 			//e.printStackTrace();
 		}
 		
-		UserEntity.NULL_USER.setUsername("EMPTY");
+		UserEntity.NULL_USER = us.getUserEntity(126);
+		
+		if (UserEntity.NULL_USER == null){
+			UserEntity.NULL_USER = new UserEntity();
+			UserEntity.NULL_USER.setId(126);
+			UserEntity.NULL_USER.setUsername("EMPTY");
+		}
 		
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	}

@@ -47,7 +47,8 @@ public class UserDAO{
 	@Transactional
 	public void updateUser(UserEntity user){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
-		sessionFactory.getCurrentSession().saveOrUpdate(user);
+		//merge is only necessary for detached NULL_USER, are there disadvantages to using merge()?
+		sessionFactory.getCurrentSession().merge(user);
         //sessionFactory.getCurrentSession().flush();
 	}
 

@@ -16,7 +16,7 @@ import com.chughes.dip.UserGameEntity;
 @Entity
 public class UserEntity {
 	
-	public static UserEntity NULL_USER = new UserEntity();
+	public static UserEntity NULL_USER;
 
 	private int id;
 	private String username;

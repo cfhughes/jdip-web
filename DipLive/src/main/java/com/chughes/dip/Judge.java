@@ -37,9 +37,9 @@ import dip.world.TurnState;
 
 @Service
 public class Judge {
-	
+
 	private static final int ACCEPTABLE_MISSES = 3;
-	
+
 	private @Autowired GameService gs;
 	protected @Autowired SessionFactory sessionFactory;
 	protected @Autowired Mailer mailer;
@@ -48,24 +48,30 @@ public class Judge {
 
 	@Transactional
 	public void advanceGame(GameEntity ge){
-		
-		//Adjudicate orders
-		StdAdjudicator stdJudge = new StdAdjudicator(new GUIOrderFactory(), ge.getW().getLastTurnState());
-		stdJudge.process();
-		TurnState ts = stdJudge.getNextTurnState();
-		if (ts != null){
-			ge.getW().setTurnState(ts);
+		if (!ge.isCrashed()){
+			try{
+				//Adjudicate orders
+				StdAdjudicator stdJudge = new StdAdjudicator(new GUIOrderFactory(), ge.getW().getLastTurnState());
+				stdJudge.process();
+				TurnState ts = stdJudge.getNextTurnState();
+				if (ts != null){
+					ge.getW().setTurnState(ts);
+				}
+				//End Game if Victory Occurs
+				if (ge.getW().getLastTurnState().isEnded()){
+					endGame(ge);
+				}else{
+					updateInfo(ge);
+				}
+				sessionFactory.getCurrentSession().update(ge.getW());
+			}catch(Exception e){
+				ge.setCrashed(true);
+				e.printStackTrace();
+			}
 		}
-		//End Game if Victory Occurs
-		if (ge.getW().getLastTurnState().isEnded()){
-			endGame(ge);
-		}else{
-			updateInfo(ge);
-		}
-		sessionFactory.getCurrentSession().update(ge.getW());
 
 	}
-	
+
 	public void endGame(GameEntity ge){
 		ge.setStage(Stage.ENDED);
 		ge.setPhase("Ended");
@@ -99,23 +105,27 @@ public class Judge {
 
 			//System.out.println(game.getW().getMap().getPower(player.getPower()));
 			player.setSupply_centers(supply);
-			
+
 			if (!player.getUser().getUsername().equals("EMPTY")){
 				player.setReady(false);
-				//Email Notify
-				mailer.newphase(player.getUser().getEmail(), game.getName());
-				//Facebook Notify
-				ConnectionRepository cr = ucr.createConnectionRepository(player.getUser().getId()+"");
-				List<Connection<Facebook>> fb = cr.findConnections(Facebook.class);
-				if (fb.size() == 1){
-					MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-					map.set("href", "/game/"+game.getId());
-					map.set("template", "Your game titled '"+game.getName()+"' has advanced to the next phase.");
-					String uri = GraphApi.GRAPH_API_URL + fb.get(0).getKey().getProviderUserId() + "/notifications";
-					Map<String, Object> result = facebookApp.restOperations().postForObject(uri, map, Map.class);
-					if (!result.containsKey("success")){
-						System.out.println("Facebook returned: "+result.get("message"));
+				try{
+					//Email Notify
+					mailer.newphase(player.getUser().getEmail(), game.getName());
+					//Facebook Notify
+					ConnectionRepository cr = ucr.createConnectionRepository(player.getUser().getId()+"");
+					List<Connection<Facebook>> fb = cr.findConnections(Facebook.class);
+					if (fb.size() == 1){
+						MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
+						map.set("href", "/game/"+game.getId());
+						map.set("template", "Your game titled '"+game.getName()+"' has advanced to the next phase.");
+						String uri = GraphApi.GRAPH_API_URL + fb.get(0).getKey().getProviderUserId() + "/notifications";
+						Map<String, Object> result = facebookApp.restOperations().postForObject(uri, map, Map.class);
+						if (!result.containsKey("success")){
+							System.out.println("Facebook returned: "+result.get("message"));
+						}
 					}
+				}catch (Exception e){
+					e.printStackTrace();
 				}
 				//Determine players that have no Orders to give
 				if (game.getW().getLastTurnState().getPosition().getUnitProvinces(power).length == 0 && game.getW().getLastTurnState().getPhase().getPhaseType() == PhaseType.MOVEMENT){
@@ -135,7 +145,7 @@ public class Judge {
 				Date end = new Date(milis);
 				game.setTurnend(end);
 			}
-			
+
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(game);
 
@@ -146,9 +156,12 @@ public class Judge {
 		Query q = sessionFactory.getCurrentSession().createQuery("from GameEntity where turnend < current_timestamp() and stage= 'PLAYING'");
 		List<GameEntity> list = q.list();
 		for (GameEntity ge : list){
+
 			advanceGame(ge);
+
 		}
-		
+
+
 	}
 
 }
