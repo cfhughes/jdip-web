@@ -13,6 +13,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -38,6 +39,7 @@ public class UserGameEntity implements Serializable {
 	private float victory_share = -1;
 	private int supply_centers;
 	private int missed;
+	private String color;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
@@ -143,6 +145,13 @@ public class UserGameEntity implements Serializable {
 	}
 	public void setOrderable(boolean orderable) {
 		this.orderable = orderable;
+	}
+	@Transient
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
 	}
 	
 }

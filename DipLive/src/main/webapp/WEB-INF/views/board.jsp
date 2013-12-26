@@ -166,7 +166,7 @@ svg:FIRST-CHILD {
 		class="btn btn-default<c:if test="${isready}"> active</c:if>">Ready</button>
 	<img id="ready-img" src="<c:url value="/resources/img/check.png"/>"
 		<c:if test="${!isready}">class="intangible"</c:if> />
-	<h5>${me.power}
+	<h5><div style="margin-top:2px;margin-right:3px;float:left;height:10px;width:10px;background-color:${me.color}"></div>${me.power}
 		- ${me.supply_centers}
 		<c:if test="${not empty next}"> - Next Turn: <span
 				data-localtime-format="dd MMM h:mm a"><fmt:formatDate
@@ -198,7 +198,7 @@ svg:FIRST-CHILD {
 			<c:forEach items="${players}" var="player">
 				<c:if test="${player.id != me_id}">
 					<li chatid="${player.id}"><a id="a-${player.id}" href="#tab-${player.id}"
-						data-toggle="tab">${player.user.username}(${player.power}
+						data-toggle="tab"><div style="margin-top:5px;margin-right:3px;float:left;height:10px;width:10px;background-color:${player.color}"></div>${player.user.username}(${player.power}
 							${player.supply_centers})<c:if test="${player.ready}">
 								<img src="<c:url value="/resources/img/check.png"/>" />
 							</c:if>

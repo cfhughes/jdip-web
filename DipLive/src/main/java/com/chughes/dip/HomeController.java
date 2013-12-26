@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.parsers.ParserConfigurationException;
@@ -81,7 +82,7 @@ public class HomeController {
 	@Autowired private GameMaster gm;
 
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-	
+
 	@RequestMapping("/help")
 	public String help() {
 		return "help";
@@ -133,6 +134,7 @@ public class HomeController {
 				member = true;
 				model.addAttribute("me_id", uge.getId());
 				model.addAttribute("me", uge);
+
 				model.addAttribute("isready", uge.isReady());
 				model.addAttribute("phasetype", w.getLastTurnState().getPhase().getPhaseType().getBriefName());
 				if (game.getStage() == Stage.PLAYING){
@@ -155,7 +157,7 @@ public class HomeController {
 				}
 			}
 		}
-		
+
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer1 = tf.newTransformer();
 		transformer1.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -168,11 +170,17 @@ public class HomeController {
 		StringWriter sw1 = new StringWriter();
 
 		transformer1.transform(new DOMSource(renderSVG(id,w, p1, null)), new StreamResult(sw1));
-		
+
 		model.addAttribute("svg", sw1.toString());
 		model.addAttribute("gid", id);
-		
-		model.addAttribute("players", game.getPlayers());
+		DefaultMapRenderer2 mr = mh.getMr(id);
+		Set<UserGameEntity> players = game.getPlayers();
+		if (game.getStage() == Stage.PLAYING){
+			for (UserGameEntity player : players) {
+				player.setColor(mr.getMapMetadata().getPowerColor(w.getMap().getPowerMatching(player.getPower())));
+			}
+		}
+		model.addAttribute("players", players);
 		model.addAttribute("member_of_game", member);
 		model.addAttribute("gamephase", game.getW().getLastTurnState().getPhase().toString());
 		model.addAttribute("started", game.getStage() == Stage.PLAYING);
@@ -180,7 +188,7 @@ public class HomeController {
 
 		return "board";
 	}
-	
+
 	private SVGDocument renderSVG(int id, World w, Power p1, String phase) throws TransformerException, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException {
 		World.VariantInfo vi = w.getVariantInfo();
 		Variant variant = VariantManager.getVariant( vi.getVariantName(), vi.getVariantVersion() );
@@ -215,20 +223,20 @@ public class HomeController {
 		DefaultMapRenderer2 mr = new DefaultMapRenderer2(doc, w, VariantManager.getSymbolPacks()[3]);
 
 		mh.setMr(id,mr);
-		
+
 		TurnState tState;
-		
+
 		if (phase != null) {
 			tState = w.getTurnState(Phase.parse(phase));
 		}else {
 			tState = w.getLastTurnState();
 			mh.setPhase(id,tState.getPhase());
 		}
-		
+
 		RenderCommand rc = mr.getRenderCommandFactory().createRCSetTurnstate(mr, tState);
 
 		RenderCommand rc3 = mr.getRenderCommandFactory().createRCRenderAll(mr);
-		
+
 		mr.execRenderCommand(rc);
 
 		if (p1 != null) {
@@ -247,7 +255,7 @@ public class HomeController {
 				o.updateDOM(mr.new DMRMapInfo(tState));
 			}
 		}
-		
+
 		//mr.execRenderCommand(rc4);
 		//mr.execRenderCommand(rc5);
 		mr.execRenderCommand(rc3);
@@ -255,14 +263,14 @@ public class HomeController {
 		return doc;
 
 	}
-	
+
 	@RequestMapping(value="/game/phase/{gameID}/{phase}")
 	public @ResponseBody List<String> phasechange(@PathVariable(value="gameID") int id,@PathVariable(value="phase") String phase){
-		
+
 		GameEntity game = gameRepo.findById(id);
 
 		World w = game.getW();
-		
+
 		String longname = null;
 		TurnState tState = w.getTurnState(mh.getPhase(id));
 		if (phase.equals("previous")){
@@ -287,41 +295,41 @@ public class HomeController {
 				}
 			}
 		}
-		
+
 		ArrayList<String> result = new ArrayList<String>(2);
 		result.add(0, phase);
 		result.add(1,longname);
 		return result;
 	}
-	
-	
+
+
 	@RequestMapping(value="/gameimage/{gameID}/{phase}")
 	public void rasterimage(@PathVariable(value="gameID") int id,@PathVariable(value="phase") String phase, HttpServletResponse response) throws Exception, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException, TranscoderException{
-		
+
 		response.setContentType("image/jpeg");
-		
+
 		GameEntity game = gameRepo.findById(id);
 
 		World w = game.getW();
-		
+
 		if (w.getLastTurnState().getPhase().compareTo(Phase.parse(phase)) == 0)throw new IllegalAccessError("Cannot Acccess Latest Turn");
-		
+
 		JPEGTranscoder t = new JPEGTranscoder();
 		t.addTranscodingHint(JPEGTranscoder.KEY_QUALITY, .95f);
-		
+
 		SVGDocument svg = renderSVG(id,w, null, phase);
-		
-		
+
+
 		TranscoderInput input = new TranscoderInput(svg);
 		TranscoderOutput tOutput = new TranscoderOutput(response.getOutputStream());
-		
+
 		t.transcode(input, tOutput);
-		
+
 		response.getOutputStream().flush();
 		response.getOutputStream().close();
-		
+
 	}
-	
+
 
 	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value = "/game/{gameID}/JSONorder")
@@ -343,7 +351,7 @@ public class HomeController {
 		DefaultMapRenderer2 mr = mh.getMr(id);
 
 		Order o = null;
-		
+
 		if (order.getType().equals("order-move")){
 			o = new GUIOrderFactory().createMove(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED, mr.getLocation(order.getLoc1()));
 		}else if (order.getType().equals("order-hold")){
@@ -377,8 +385,8 @@ public class HomeController {
 
 		MapInfo info = mr.new DMRMapInfo(w.getLastTurnState());
 		SVGElement element = ((GUIOrder)o).orderSVG(info);
-		
-		
+
+
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer1 = tf.newTransformer();
 		transformer1.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
@@ -392,7 +400,7 @@ public class HomeController {
 
 
 		transformer1.transform(new DOMSource(element), new StreamResult(sw1));
-		
+
 		//Preventing two orders for same unit
 		List<Orderable> orders = w.getLastTurnState().getOrders(p);
 		Iterator<Orderable> iter = orders.iterator();
@@ -408,7 +416,7 @@ public class HomeController {
 			}
 		}
 		orders.add(o);
-		
+
 		//model.addAttribute("success", 1);
 
 		gameRepo.updateWorld(w);
@@ -418,27 +426,27 @@ public class HomeController {
 		results.put("orders_text", Collections.singletonMap(o.getSource().toString(),o.toFullString()));
 		return results;
 	}
-	
+
 	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value = "/game/{gameID}/JSONorder-remove")
 	public @ResponseBody String remove(@PathVariable(value="gameID") int id,@RequestParam(value="prov") String province) throws Exception {
 
 		province = URLDecoder.decode( province, "UTF-8" );
-		
+
 		province = province.replace("/", "-");
-		
+
 		System.out.println("In:" + province);
-		
+
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		UserDetailsImpl user = (UserDetailsImpl) auth.getPrincipal();
 		GameEntity game = gameRepo.findById(id);
 		World w = game.getW();
 		UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
-		
+
 		Power p = w.getMap().getPowerMatching(uge.getPower());
-		
+
 		DefaultMapRenderer2 mr = mh.getMr(id);
-		
+
 		List<Orderable> orders = w.getLastTurnState().getOrders(p);
 		Iterator<Orderable> iter = orders.iterator();
 		//boolean isDuplicate = false;
@@ -454,11 +462,11 @@ public class HomeController {
 				return "success";
 			}
 		}
-		
+
 		return "fail";
 
 	}
-	
+
 	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value = "/game/{gameID}/JSONready")
 	public @ResponseBody Map<String, ?> setReady(@PathVariable(value="gameID") int id){
