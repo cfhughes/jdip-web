@@ -76,7 +76,7 @@ import dip.world.variant.data.Variant;
 @Controller
 public class HomeController {
 
-	@Autowired UserDAO us;
+	@Autowired private UserDAO us;
 	@Autowired private GameRepository gameRepo;
 	@Autowired private MapHolder mh;
 	@Autowired private GameMaster gm;
