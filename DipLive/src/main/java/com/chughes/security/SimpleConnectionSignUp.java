@@ -20,7 +20,7 @@ public class SimpleConnectionSignUp implements ConnectionSignUp {
 	public String execute(Connection<?> conn) {
 		UserProfile profile = conn.fetchUserProfile();
 		UserEntity newguy = new UserEntity();
-		newguy.setUsername(profile.getFirstName());
+		newguy.setUsername(profile.getUsername());
 		newguy.setEmail(profile.getEmail());
 		System.out.println(conn.getApi().getClass());
 		if (conn.getApi() instanceof Google){

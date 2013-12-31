@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,8 +21,12 @@ public class UserDetailsImpl implements UserDetails {
 	/**
 	 * 
 	 */
+	@Size(min=2,message="Username must be at least 2 characters")
 	private String username;
+	@Size(min=5,message="Password must be at least 5 characters")
     private String password;
+    @Email(message="Please provide a valid email address")
+    @NotBlank
     private String email;
     private int id;
 
