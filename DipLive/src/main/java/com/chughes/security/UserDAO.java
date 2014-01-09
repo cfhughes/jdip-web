@@ -51,6 +51,13 @@ public class UserDAO{
 		sessionFactory.getCurrentSession().merge(user);
         //sessionFactory.getCurrentSession().flush();
 	}
+	
+	@Transactional
+	public void editUser(UserEntity user){
+
+		sessionFactory.getCurrentSession().update(user);
+
+	}
 
 	@Transactional(readOnly=true)
 	public UserDetailsImpl getUserByName(String name){

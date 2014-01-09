@@ -1,13 +1,12 @@
 <%@include file="head.jsp"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<form:form class="form" action="saveuser" commandName="user">
-	<label for="uname">User Name:</label>
+<form:form class="form" action="updateuser" modelAttribute="user">
+	<label for="username">User Name:</label>
 	<form:input class="form-control" path="username" id="uname" type="text" />
 	<br />
-	<label for="pword">Password:</label>
-	<form:input class="form-control" path="password" id="pword"
-		type="password" />
+	<label for="pass">Password:</label>
+	<input class="form-control" id="pass" name="pass" type="password" />
 	<br />
 	<label for="email">Email:</label>
 	<form:input class="form-control" path="email" id="email" type="text" />

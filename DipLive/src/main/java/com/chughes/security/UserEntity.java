@@ -10,6 +10,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.swing.Spring;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotBlank;
 
 import com.chughes.dip.UserGameEntity;
 
@@ -19,8 +23,11 @@ public class UserEntity {
 	public static UserEntity NULL_USER;
 
 	private int id;
+	@Size(min=2,message="Username must be at least 2 characters")
 	private String username;
 	private String password;
+    @Email(message="Please provide a valid email address")
+    @NotBlank
 	private String email;
 	private Set<UserGameEntity> games = new HashSet<UserGameEntity>();
 	private Set<String> ips = new HashSet<String>();
