@@ -20,11 +20,16 @@ public class GameMaster {
 	@Autowired private Judge j;
 
 	private static final Logger logger = LoggerFactory.getLogger(GameMaster.class);
+	private static volatile boolean busy = false;
 
 	//Every minute
 	@Scheduled(cron="0 * * * * ?")
 	public void resolveGames(){
-		j.cron();
+		if (!busy){
+			busy = true;
+			j.cron();
+			busy = false;
+		}
 	}
 
 	public void beginGame(GameEntity game){
@@ -40,6 +45,9 @@ public class GameMaster {
 	}
 
 	public void processGame(GameEntity ge){
+		if (busy){
+			return;
+		}
 		try{
 			for (UserGameEntity player : ge.getPlayers()) {
 				if (!player.isReady()){

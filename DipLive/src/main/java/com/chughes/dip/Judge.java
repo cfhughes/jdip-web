@@ -64,6 +64,9 @@ public class Judge {
 					updateInfo(ge);
 				}
 				sessionFactory.getCurrentSession().update(ge.getW());
+				//Fixed a problem with too much memory being used. 
+				sessionFactory.getCurrentSession().flush();
+				sessionFactory.getCurrentSession().clear();
 			}catch(Exception e){
 				ge.setCrashed(true);
 				e.printStackTrace();

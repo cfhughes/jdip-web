@@ -99,6 +99,7 @@ public class World implements Serializable
 	private int id;
 
 	@ElementCollection
+	@MapKeyColumn
 	@Sort(type = SortType.NATURAL)
 	@Lob
 	public SortedMap<Integer, TurnState> getTurnStates() {
@@ -108,6 +109,7 @@ public class World implements Serializable
 		this.turnStates = turnStates;
 	}
 	@ElementCollection
+	@MapKeyColumn
 	@Lob
 	public Map<String, Serializable> getNonTurnData() {
 		return nonTurnData;
