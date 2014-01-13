@@ -119,7 +119,7 @@ public class Judge {
 					List<Connection<Facebook>> fb = cr.findConnections(Facebook.class);
 					if (fb.size() == 1){
 						MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
-						map.set("href", "/game/"+game.getId());
+						map.set("href", "game/"+game.getId());
 						map.set("template", "Your game titled '"+game.getName()+"' has advanced to the next phase.");
 						String uri = GraphApi.GRAPH_API_URL + fb.get(0).getKey().getProviderUserId() + "/notifications";
 						Map<String, Object> result = facebookApp.restOperations().postForObject(uri, map, Map.class);

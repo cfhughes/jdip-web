@@ -27,7 +27,6 @@ public class UserEntity {
 	private String username;
 	private String password;
     @Email(message="Please provide a valid email address")
-    @NotBlank
 	private String email;
 	private Set<UserGameEntity> games = new HashSet<UserGameEntity>();
 	private Set<String> ips = new HashSet<String>();

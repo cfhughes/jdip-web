@@ -26,6 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.UsersConnectionRepository;
@@ -52,21 +55,23 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author Craig Walls
  */
 @Controller
+@PropertySource("application.properties")
 public class CanvasSignInFix {
+	
+    @Autowired
+    private Environment environment;
 	
 	private final static Log logger = LogFactory.getLog(CanvasSignInFix.class);
 
-	private final String clientId;
-	
-	private final String canvasPage;
-
-	private final ConnectionFactoryLocator connectionFactoryLocator;
-
-	private final UsersConnectionRepository usersConnectionRepository;
-
-	private final SignInAdapter signInAdapter;
-	
-	private final SignedRequestDecoder signedRequestDecoder;
+//	private final String clientId;
+//
+//	private final ConnectionFactoryLocator connectionFactoryLocator;
+//
+//	private final UsersConnectionRepository usersConnectionRepository;
+//
+//	private final SignInAdapter signInAdapter;
+//	
+//	private final SignedRequestDecoder signedRequestDecoder;
 	
 	private String postSignInUrl = "/";
 	
@@ -74,15 +79,15 @@ public class CanvasSignInFix {
 
 	private String scope;
 
-	@Inject
-	public CanvasSignInFix(ConnectionFactoryLocator connectionFactoryLocator, UsersConnectionRepository usersConnectionRepository, SignInAdapter signInAdapter, String clientId, String clientSecret, String canvasPage) {
-		this.usersConnectionRepository = usersConnectionRepository;
-		this.signInAdapter = signInAdapter;
-		this.clientId = clientId;
-		this.canvasPage = canvasPage;
-		this.connectionFactoryLocator = connectionFactoryLocator;
-		this.signedRequestDecoder = new SignedRequestDecoder(clientSecret);
-	}
+//	@Inject
+//	public CanvasSignInFix(ConnectionFactoryLocator connectionFactoryLocator, UsersConnectionRepository usersConnectionRepository, SignInAdapter signInAdapter, String clientId, String clientSecret, String canvasPage) {
+//		this.usersConnectionRepository = usersConnectionRepository;
+//		this.signInAdapter = signInAdapter;
+//		this.clientId = clientId;
+//		//this.canvasPage = canvasPage;
+//		this.connectionFactoryLocator = connectionFactoryLocator;
+//		this.signedRequestDecoder = new SignedRequestDecoder(clientSecret);
+//	}
 	
 	/**
 	 * The URL or path to redirect to after successful canvas authorization.
@@ -110,53 +115,69 @@ public class CanvasSignInFix {
 		this.scope = scope;
 	}
 
-	@RequestMapping(value="/fbcanvas", method={ RequestMethod.POST, RequestMethod.GET }, params={"signed_request", "!error"})
-	public View signMeIn(Model model, NativeWebRequest request) throws SignedRequestException {
-		String signedRequest = request.getParameter("signed_request");
-		if (signedRequest == null) {
-			debug("Expected a signed_request parameter, but none given. Redirecting to the application's Canvas Page: " + canvasPage);
-			return new RedirectView(canvasPage, false);
-		}
-		
-		Map<String, ?> decodedSignedRequest = signedRequestDecoder.decodeSignedRequest(signedRequest);
-		String accessToken = (String) decodedSignedRequest.get("oauth_token");
-		if (accessToken == null) {
-			debug("No access token in the signed_request parameter. Redirecting to the authorization dialog.");
-			model.addAttribute("clientId", clientId);
-			model.addAttribute("canvasPage", canvasPage);
-			if (scope != null) {
-				model.addAttribute("scope", scope);
+//	@RequestMapping(value="/fbcanvas", method={ RequestMethod.POST, RequestMethod.GET }, params={"signed_request", "!error"})
+//	public View signMeIn(Model model, NativeWebRequest request) throws SignedRequestException {
+//		String signedRequest = request.getParameter("signed_request");
+//		if (signedRequest == null) {
+//			debug("Expected a signed_request parameter, but none given. Redirecting to the application's Canvas Page: " + canvasPage);
+//			return new RedirectView(canvasPage, false);
+//		}
+//		
+//		Map<String, ?> decodedSignedRequest = signedRequestDecoder.decodeSignedRequest(signedRequest);
+//		String accessToken = (String) decodedSignedRequest.get("oauth_token");
+//		if (accessToken == null) {
+//			debug("No access token in the signed_request parameter. Redirecting to the authorization dialog.");
+//			model.addAttribute("clientId", clientId);
+//			model.addAttribute("canvasPage", canvasPage);
+//			if (scope != null) {
+//				model.addAttribute("scope", scope);
+//			}
+//			return new TopLevelWindowRedirect() {
+//				@Override
+//				protected String getRedirectUrl(Map<String, ?> model) {
+//					String clientId = (String) model.get("clientId");
+//					String canvasPage = (String) model.get("canvasPage");
+//					String scope = (String) model.get("scope");
+//					String redirectUrl = "https://www.facebook.com/dialog/oauth?client_id=" + clientId + "&redirect_uri=" + canvasPage;
+//					if (scope != null) {
+//						redirectUrl += "&scope=" + formEncode(scope);
+//					}
+//					return redirectUrl;
+//				}
+//			};
+//		}
+//
+//		debug("Access token available in signed_request parameter. Creating connection and signing in.");
+//		OAuth2ConnectionFactory<Facebook> connectionFactory = (OAuth2ConnectionFactory<Facebook>) connectionFactoryLocator.getConnectionFactory(Facebook.class);
+//		AccessGrant accessGrant = new AccessGrant(accessToken);
+//		// TODO: Maybe should create via ConnectionData instead?
+//		Connection<Facebook> connection = connectionFactory.createConnection(accessGrant);
+//		handleSignIn(connection, request);
+//		debug("Signed in. Redirecting to post-signin page.");
+//		return new RedirectView(postSignInUrl, true); 
+//	}
+//
+//	@RequestMapping(value="/fbcanvas", method={ RequestMethod.POST, RequestMethod.GET }, params="error")
+//	public View errorMe(@RequestParam("error") String error, @RequestParam("error_description") String errorDescription) {
+//		String string = "User declined authorization: '" + errorDescription + "'. Redirecting to " + postDeclineUrl;
+//		debug(string);
+//		return postDeclineView();
+//	}
+	
+	@RequestMapping(value="/fbauth")
+	public View authorize(){
+		return new TopLevelWindowRedirect() {
+			@Override
+			protected String getRedirectUrl(Map<String, ?> model) {
+				String clientId = environment.getProperty("facebook.clientId");
+				String canvasPage = environment.getProperty("facebook.canvasPage");
+				String redirectUrl = "https://www.facebook.com/dialog/oauth?client_id=" + clientId + "&redirect_uri=" + canvasPage;
+//				if (scope != null) {
+//					redirectUrl += "&scope=" + formEncode(scope);
+//				}
+				return redirectUrl;
 			}
-			return new TopLevelWindowRedirect() {
-				@Override
-				protected String getRedirectUrl(Map<String, ?> model) {
-					String clientId = (String) model.get("clientId");
-					String canvasPage = (String) model.get("canvasPage");
-					String scope = (String) model.get("scope");
-					String redirectUrl = "https://www.facebook.com/dialog/oauth?client_id=" + clientId + "&redirect_uri=" + canvasPage;
-					if (scope != null) {
-						redirectUrl += "&scope=" + formEncode(scope);
-					}
-					return redirectUrl;
-				}
-			};
-		}
-
-		debug("Access token available in signed_request parameter. Creating connection and signing in.");
-		OAuth2ConnectionFactory<Facebook> connectionFactory = (OAuth2ConnectionFactory<Facebook>) connectionFactoryLocator.getConnectionFactory(Facebook.class);
-		AccessGrant accessGrant = new AccessGrant(accessToken);
-		// TODO: Maybe should create via ConnectionData instead?
-		Connection<Facebook> connection = connectionFactory.createConnection(accessGrant);
-		handleSignIn(connection, request);
-		debug("Signed in. Redirecting to post-signin page.");
-		return new RedirectView(postSignInUrl, true); 
-	}
-
-	@RequestMapping(value="/fbcanvas", method={ RequestMethod.POST, RequestMethod.GET }, params="error")
-	public View errorMe(@RequestParam("error") String error, @RequestParam("error_description") String errorDescription) {
-		String string = "User declined authorization: '" + errorDescription + "'. Redirecting to " + postDeclineUrl;
-		debug(string);
-		return postDeclineView();
+		};
 	}
 
 	/**
@@ -178,16 +199,16 @@ public class CanvasSignInFix {
 		}
 	}
 
-	private void handleSignIn(Connection<Facebook> connection, NativeWebRequest request) {
-		List<String> userIds = usersConnectionRepository.findUserIdsWithConnection(connection);
-		if (userIds.size() == 1) {
-			usersConnectionRepository.createConnectionRepository(userIds.get(0)).updateConnection(connection);
-			signInAdapter.signIn(userIds.get(0), connection, request);
-		} else {
-			// TODO: This should never happen, but need to figure out what to do if it does happen. 
-			logger.error("Expected exactly 1 matching user. Got " + userIds.size() + " metching users.");
-		}
-	}
+//	private void handleSignIn(Connection<Facebook> connection, NativeWebRequest request) {
+//		List<String> userIds = usersConnectionRepository.findUserIdsWithConnection(connection);
+//		if (userIds.size() == 1) {
+//			usersConnectionRepository.createConnectionRepository(userIds.get(0)).updateConnection(connection);
+//			signInAdapter.signIn(userIds.get(0), connection, request);
+//		} else {
+//			// TODO: This should never happen, but need to figure out what to do if it does happen. 
+//			logger.error("Expected exactly 1 matching user. Got " + userIds.size() + " metching users.");
+//		}
+//	}
 	
 	private static abstract class TopLevelWindowRedirect extends AbstractView {
 		

@@ -26,7 +26,6 @@ public class UserDetailsImpl implements UserDetails {
 	@Size(min=5,message="Password must be at least 5 characters")
     private String password;
     @Email(message="Please provide a valid email address")
-    @NotBlank
     private String email;
     private int id;
 

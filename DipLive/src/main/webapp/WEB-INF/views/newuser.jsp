@@ -27,7 +27,7 @@
 	<form:input class="form-control" path="password" id="pword"
 		type="password" />
 	<br />
-	<label for="email">Email (Required, but never displayed):</label>
+	<label for="email">Email (Required to reset password):</label>
 	<form:input class="form-control" path="email" id="email" type="text" />
 	<br />
 	<button type="submit">Submit</button>

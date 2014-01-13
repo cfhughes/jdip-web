@@ -86,8 +86,10 @@ body {
 						User:
 						<sec:authentication property="principal.username" />
 					</p>
+
 					<a href="<c:url value="/j_spring_security_logout" />"><button
 							class="btn btn-default navbar-btn">Logout</button></a>
+
 					<a href="<c:url value="/account" />"><button
 							class="btn btn-default navbar-btn">Settings</button></a>
 				</sec:authorize>

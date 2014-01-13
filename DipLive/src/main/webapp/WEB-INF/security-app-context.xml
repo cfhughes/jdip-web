@@ -22,6 +22,11 @@
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
+	
+	<mvc:interceptors>
+	    <beans:bean class="com.chughes.dip.FBCanvasInterceptor" />
+	    
+	</mvc:interceptors>
 
 	<context:property-placeholder location="classpath:application.properties" />
 
