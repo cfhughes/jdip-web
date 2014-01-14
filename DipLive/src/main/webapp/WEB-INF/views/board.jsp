@@ -244,6 +244,17 @@ svg:FIRST-CHILD {
 				class="glyphicon glyphicon-remove-circle"></span> Leave This Game</a>
 		</p>
 	</div>
+</c:if><c:if test="${!member_of_game}">
+<div class="well well-small">
+<%-- 	<h4>${game.name} - ${game.phase}</h4> --%>
+<%-- 	<p>${game.w.nonTurnData['_variant_info_'].variantName}</p> --%>
+	<c:forEach items="${players}" var="player">
+		<p style="color: blue">
+			<a href="<c:url value="/player/${player.user.id}" />">${player.user.username}</a>
+			${player.power}
+		</p>
+	</c:forEach>
+</div>
 </c:if>
 <script type="text/javascript">
 	//<![CDATA[

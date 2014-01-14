@@ -3,6 +3,7 @@ package com.chughes.dip;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -36,6 +37,7 @@ public class NewGameController {
 	@Autowired
     UserDAO us;
 	
+	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value="/newgame")
 	public String newGame(Model model){
 		GameEntity ge = new GameEntity();
@@ -44,6 +46,7 @@ public class NewGameController {
 		return "newgame";
 	}
 	
+	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value = "/savegame")
 	public String saveGame(Model model,@Valid GameEntity game,@RequestParam(value="variant")String variant){
 

@@ -69,6 +69,19 @@ public class GameService {
 		userRepo.updateUser(user);
 		gameRepo.saveInGameUser(uge);
 	}
+	
+	public void replaceUserInGame(GameEntity ge, UserEntity olduser, UserEntity newuser){
+		UserGameEntity uge = gameRepo.inGameUser(ge.getId(), olduser.getId());
+		uge.setUser(newuser);
+		uge.setMissed(0);
+		if (uge.isOrderable())uge.setReady(false);
+		olduser.getGames().remove(uge);
+		newuser.getGames().add(uge);
+		
+		userRepo.updateUser(olduser);
+		userRepo.updateUser(newuser);
+		gameRepo.saveInGameUser(uge);
+	}
 
 	public void saveGame(GameEntity ge){
 		gameRepo.saveGame(ge);
