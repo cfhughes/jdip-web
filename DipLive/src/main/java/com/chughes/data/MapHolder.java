@@ -18,9 +18,12 @@ public class MapHolder implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 1838207806369428656L;
-	private Map<Integer,GameCache> games = new HashMap<Integer,GameCache>();
+	private transient Map<Integer,GameCache> games = new HashMap<Integer,GameCache>();
 	
 	public void setMr(int id, DefaultMapRenderer2 mr) {
+		if (games == null){
+			games = new HashMap<Integer,GameCache>();
+		}
 		if (!games.containsKey(id)){
 			games.put(id, new GameCache());
 		}
@@ -29,6 +32,9 @@ public class MapHolder implements Serializable{
 	}
 
 	public void setPhase(int id, Phase phase) {
+		if (games == null){
+			games = new HashMap<Integer,GameCache>();
+		}
 		if (!games.containsKey(id)){
 			games.put(id, new GameCache());
 		}
@@ -37,10 +43,16 @@ public class MapHolder implements Serializable{
 	}
 
 	public Phase getPhase(int id) {
+		if (games == null){
+			games = new HashMap<Integer,GameCache>();
+		}
 		return games.get(id).getPhase();
 	}
 
 	public DefaultMapRenderer2 getMr(int id) {
+		if (games == null){
+			games = new HashMap<Integer,GameCache>();
+		}
 		return games.get(id).getMr();
 	}
 
