@@ -242,12 +242,25 @@ public class WorldFactory
 			map = new dip.world.Map(	
 					variant.getPowers(), 
 					(Province[]) provinces.toArray(new Province[provinces.size()]) );
+
+			SupplyCenter[] supplyCenters = variant.getSupplyCenters();
+			for(int i=0; i<supplyCenters.length; i++)
+			{
+				Province province = map.getProvince(supplyCenters[i].getProvinceName());
+				if(province == null)
+				{
+					throw new InvalidWorldException(Utils.getLocalString(WF_BAD_SC_PROVINCE, supplyCenters[i].getProvinceName()));
+				}
+
+				province.setSupplyCenter(true);
+			}
+
 			mapscache.put(variant, map);
 		}
-		
+
 		return map;
 	}
-	
+
 	/** Generates a World given the supplied Variant information */
 	public World createWorld(Variant variant)
 			throws InvalidWorldException
@@ -258,7 +271,7 @@ public class WorldFactory
 		}
 
 		Map map = createMap(variant);
-		
+
 		// create the World object as well, now that we have the Map
 		World world = new World(map);
 
@@ -288,8 +301,6 @@ public class WorldFactory
 			{
 				throw new InvalidWorldException(Utils.getLocalString(WF_BAD_SC_PROVINCE, supplyCenters[i].getProvinceName()));
 			}
-
-			province.setSupplyCenter(true);
 
 			String hpName = supplyCenters[i].getHomePowerName();
 			if(!"none".equalsIgnoreCase(hpName))
