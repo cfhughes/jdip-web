@@ -26,6 +26,7 @@ import dip.world.metadata.PlayerMetadata;
 import dip.world.metadata.GameMetadata;
 //import dip.gui.undo.UndoRedoManager;
 
+import dip.world.variant.VariantManager;
 import dip.net.message.PressStore;
 import dip.net.message.DefaultPressStore;
 
@@ -95,7 +96,7 @@ public class World implements Serializable
 	
 	private Map<String, Serializable> 					nonTurnData = null;			// non-turn data (misc data & per-player data)
 	
-	private dip.world.Map		map;						// the actual map (constant)
+	private dip.world.Map		map = null;						// the actual map (constant)
 	private int id;
 
 	@ElementCollection
@@ -217,9 +218,17 @@ public class World implements Serializable
 	
 	
 	/** Returns the Map (dip.world.Map) associated with this World. */
-	@Lob
+	@Transient
 	public dip.world.Map getMap()
 	{
+		if (map == null){
+			try {
+				map = WorldFactory.getInstance().createMap(VariantManager.getVariant(getVariantInfo().getVariantName(), getVariantInfo().getVariantVersion()));
+			} catch (InvalidWorldException e) {
+				//What happened here?/!
+				e.printStackTrace();
+			}
+		}
 		return map;
 	}// getMap()
 	
