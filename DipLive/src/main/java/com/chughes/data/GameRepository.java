@@ -63,6 +63,11 @@ public class GameRepository {
 	}
 	
 	@Transactional
+	public void deleteInGameUser(UserGameEntity uge){
+		sessionFactory.getCurrentSession().delete(uge);
+	}
+	
+	@Transactional
 	public void saveGame(GameEntity ge){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
 		sessionFactory.getCurrentSession().saveOrUpdate(ge);

@@ -55,6 +55,7 @@ public class Startup{
 			UserEntity.NULL_USER = new UserEntity();
 			UserEntity.NULL_USER.setId(126);
 			UserEntity.NULL_USER.setUsername("EMPTY");
+			us.saveUser(UserEntity.NULL_USER);
 		}
 		
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));

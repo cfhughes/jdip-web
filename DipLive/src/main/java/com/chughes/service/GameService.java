@@ -3,6 +3,8 @@ package com.chughes.service;
 import java.util.List;
 import java.util.Set;
 
+import javax.activity.InvalidActivityException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +59,22 @@ public class GameService {
 	
 	public void removeUserFromGame(GameEntity game, UserEntity user){
 		if (user.getUsername().equals("EMPTY"))return;//Can't remove null user
+		if (game.getStage() == Stage.ENDED){
+			throw new RuntimeException("Can't Remove User From Ended Game");
+		}
 		UserGameEntity uge = gameRepo.inGameUser(game.getId(), user.getId());
+		user.getGames().remove(uge);
+		if (game.getStage() == Stage.PREGAME){
+			userRepo.updateUser(user);
+			game.getPlayers().remove(uge);
+			gameRepo.updateGame(game);
+			gameRepo.deleteInGameUser(uge);
+			return;
+		}
 		uge.setUser(UserEntity.NULL_USER);
 		uge.setMissed(0);
 		uge.setReady(true);
-		user.getGames().remove(uge);
+
 		//Number of times user has left a game
 		user.setRetreats(user.getRetreats()+1);
 		
