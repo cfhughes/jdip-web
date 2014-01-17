@@ -251,7 +251,7 @@ svg:FIRST-CHILD {
 	<c:forEach items="${players}" var="player">
 		<p style="color: blue">
 			<a href="<c:url value="/player/${player.user.id}" />">${player.user.username}</a>
-			${player.power}
+			${player.power} <c:if test="${player.user.username == 'EMPTY'}"><a href="<c:url value="/joingame/${gid}?r=${player.id}" />">[Take Over]</a></c:if>
 		</p>
 	</c:forEach>
 </div>

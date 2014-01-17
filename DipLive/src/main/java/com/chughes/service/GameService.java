@@ -70,15 +70,20 @@ public class GameService {
 		gameRepo.saveInGameUser(uge);
 	}
 	
-	public void replaceUserInGame(GameEntity ge, UserEntity olduser, UserEntity newuser){
-		UserGameEntity uge = gameRepo.inGameUser(ge.getId(), olduser.getId());
+	public void replaceUserInGame(GameEntity ge, Integer r, UserEntity newuser){
+		UserGameEntity uge = gameRepo.inGameUser(r);
+		UserEntity replace = uge.getUser();
+		if (gameRepo.inGameUser(ge.getId(), newuser.getId()) != null)return;
+		if (!replace.getUsername().equals("EMPTY"))return; //For now can only replace empty users
+		if (ge.getSecret() != null && ge.getSecret().length() > 0)return; 
+		if (!ge.getPlayers().contains(uge))return;
 		uge.setUser(newuser);
 		uge.setMissed(0);
 		if (uge.isOrderable())uge.setReady(false);
-		olduser.getGames().remove(uge);
+		replace.getGames().remove(uge);
 		newuser.getGames().add(uge);
 		
-		userRepo.updateUser(olduser);
+		userRepo.updateUser(replace);
 		userRepo.updateUser(newuser);
 		gameRepo.saveInGameUser(uge);
 	}

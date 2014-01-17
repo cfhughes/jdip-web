@@ -31,13 +31,17 @@ public class GameListController {
 	}
 	
 	@RequestMapping(value="/joingame/{gameID}")
-	public String join(Model model,@PathVariable(value="gameID") int id,@RequestParam(value="secret", required = false) String secret){
+	public String join(Model model,@PathVariable(value="gameID") int id,@RequestParam(value="secret", required = false) String secret,@RequestParam(value="r", required = false) Integer replace){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getPrincipal() instanceof UserDetailsImpl){
 			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
 			UserEntity ue = userrepo.getUserEntity(user.getId());
 			GameEntity ge = gameService.getGame(id);
-			gameService.addUserToGame(ge, ue, secret);
+			if (replace != null){
+				gameService.replaceUserInGame(ge, replace, ue);
+			}else{
+				gameService.addUserToGame(ge, ue, secret);
+			}
 		}
 		return "redirect:../game/"+id;
 	}
