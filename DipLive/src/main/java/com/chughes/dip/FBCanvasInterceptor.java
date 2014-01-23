@@ -54,7 +54,9 @@ public class FBCanvasInterceptor extends HandlerInterceptorAdapter {
 			Map<String, ?> decodedSignedRequest = signedRequestDecoder.decodeSignedRequest(signedRequest);
 			accessToken = (String) decodedSignedRequest.get("oauth_token");
 			if (accessToken == null) {
-				return true;
+				//Redirect to authorize page
+				response.sendRedirect("fbauth");
+				return false;
 			}
 
 
@@ -63,7 +65,8 @@ public class FBCanvasInterceptor extends HandlerInterceptorAdapter {
 			// TODO: Maybe should create via ConnectionData instead?
 			Connection<Facebook> connection = connectionFactory.createConnection(accessGrant);
 			List<String> userIds = usersConnectionRepository.findUserIdsWithConnection(connection);
-			if (userIds.size() == 1) {
+			
+			if (userIds.size() <= 1) {
 				usersConnectionRepository.createConnectionRepository(userIds.get(0)).updateConnection(connection);
 				SimpleSignInAdapter signInAdapter = new SimpleSignInAdapter(user);
 				signInAdapter.signIn(userIds.get(0), connection, null);
