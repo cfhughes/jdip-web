@@ -7,6 +7,7 @@ import java.util.Map;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionFactory;
 import org.springframework.social.connect.ConnectionFactoryLocator;
@@ -45,7 +46,7 @@ public class Judge {
 	protected @Autowired Mailer mailer;
 	private @Autowired Facebook facebookApp;
 	private @Autowired UsersConnectionRepository ucr;
-
+	
 	@Transactional
 	public void advanceGame(GameEntity ge){
 		if (!ge.isCrashed()){
@@ -75,6 +76,7 @@ public class Judge {
 
 	}
 
+	@Transactional
 	public void endGame(GameEntity ge){
 		ge.setStage(Stage.ENDED);
 		ge.setPhase("Ended");
@@ -93,6 +95,7 @@ public class Judge {
 		sessionFactory.getCurrentSession().saveOrUpdate(ge);
 	}
 
+	@Transactional
 	public void updateInfo(GameEntity game) {
 		game.setPhase(game.getW().getLastTurnState().getPhase().toString());
 		for (UserGameEntity player : game.getPlayers()) {

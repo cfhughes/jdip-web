@@ -25,7 +25,6 @@ public class GameService {
 
 	@Autowired private GameRepository gameRepo;
 	@Autowired private UserDAO userRepo;
-	@Autowired private GameMaster gm;
 	
 	private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
@@ -44,9 +43,6 @@ public class GameService {
 		uge.setUser(user);		
 		Set<UserGameEntity> players = game.getPlayers();
 		players.add(uge);
-		if (players.size() == game.getMaxplayers()){
-			gm.beginGame(game);
-		}
 		game.setPlayers(players);
 		user.addGame(uge);
 

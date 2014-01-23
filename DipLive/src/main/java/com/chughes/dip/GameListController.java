@@ -19,6 +19,7 @@ public class GameListController {
 
 	@Autowired private GameService gameService;
 	@Autowired private UserDAO userrepo;
+	@Autowired private GameMaster gm;
 
 
 	@RequestMapping(value="/gamelist")
@@ -41,6 +42,9 @@ public class GameListController {
 				gameService.replaceUserInGame(ge, replace, ue);
 			}else{
 				gameService.addUserToGame(ge, ue, secret);
+				if (ge.getPlayers().size() == ge.getMaxplayers()){
+					gm.beginGame(ge);
+				}
 			}
 		}
 		return "redirect:../game/"+id;

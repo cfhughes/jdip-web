@@ -34,7 +34,7 @@ public class GameMaster {
 
 	public void beginGame(GameEntity game){
 		game.setStage(Stage.PLAYING);
-		
+
 		Vector<Power> powers = new Vector<Power>(Arrays.asList(game.getW().getMap().getPowers()));
 		//Simple way to choose powers
 		for (UserGameEntity player : game.getPlayers()) {
@@ -43,6 +43,7 @@ public class GameMaster {
 		}
 		j.updateInfo(game);
 	}
+
 
 	public void processGame(GameEntity ge){
 		if (busy){
@@ -55,7 +56,7 @@ public class GameMaster {
 				}
 			}
 
-		j.advanceGame(ge);
+			j.advanceGame(ge);
 
 		}
 		catch(Exception e){
