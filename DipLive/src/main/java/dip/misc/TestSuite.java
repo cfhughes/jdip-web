@@ -24,7 +24,6 @@ package dip.misc;
 
 import dip.order.*;
 import dip.order.result.*;
-
 import dip.world.Unit;
 import dip.world.Province;
 import dip.world.Power;
@@ -35,10 +34,8 @@ import dip.world.World;
 import dip.world.WorldFactory;
 import dip.world.variant.VariantManager;
 import dip.world.variant.data.*;
-
 import dip.world.TurnState;
 import dip.world.Position;
-
 import dip.process.*;
 
 import java.util.*;
@@ -46,6 +43,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Serializable;
 
 
 
@@ -970,7 +968,7 @@ public final class TestSuite
 					List postDislodgedList, List orderResultList)
 		{
 			this.name = name;
-			List temp = new ArrayList(50);
+			List<Serializable> temp = new ArrayList<Serializable>(50);
 			Iterator iter = null;
 			of = OrderParser.getInstance();
 			
@@ -1141,7 +1139,7 @@ public final class TestSuite
 				this.results = (OrderResult[]) temp.toArray(new OrderResult[temp.size()]);
 				
 				// add results to previous turnstate
-				previousTS.setResultList(new ArrayList(temp));
+				previousTS.setResultList(new ArrayList<Serializable>(temp));
 				
 				// add positions/ownership/orders to current turnstate
 				//

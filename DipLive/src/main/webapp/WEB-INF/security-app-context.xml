@@ -109,6 +109,8 @@
 				</beans:value>
 				<beans:value>dip.world.World
 				</beans:value>
+				<beans:value>dip.world.TurnState
+				</beans:value>
 				<beans:value>com.chughes.dip.Post
 				</beans:value>
 				<beans:value>com.chughes.security.UserEntity
