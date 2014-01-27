@@ -99,7 +99,7 @@ public class World implements Serializable
 	private dip.world.Map		map = null;						// the actual map (constant)
 	private int id;
 
-	@ElementCollection
+	@OneToMany
 	@MapKeyColumn
 	@Sort(type = SortType.NATURAL)
 	@Lob

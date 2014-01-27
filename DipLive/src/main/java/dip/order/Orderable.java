@@ -23,6 +23,8 @@
 
 package dip.order;
 
+import java.io.Serializable;
+
 import dip.world.Location;
 import dip.world.Unit;
 import dip.world.TurnState;
@@ -43,7 +45,7 @@ import dip.process.Adjudicator;
  *
  *
  */
-public interface Orderable 
+public interface Orderable extends Serializable
 {
 	// 
 	// Basic Order Information

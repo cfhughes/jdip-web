@@ -35,6 +35,22 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import javax.persistence.Basic;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Lob;
+import javax.persistence.MapKeyColumn;
+import javax.persistence.Transient;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
+
+import dip.order.Order;
 import dip.order.Orderable;
 import dip.order.result.OrderResult;
 
@@ -61,22 +77,33 @@ import dip.order.result.OrderResult;
 *	non-power orders 'snuck in' for a given power)
 *
 */
+@Entity
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class TurnState implements Serializable
 {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -507830632257884049L;
+	@Id
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	private int id;
 	// instance variables (we serialize all of this)
 	private Phase 		phase = null;				
-	private List     	resultList = null; 				// order results, post-adjudication
-	private Map			orderMap = null;				// Map of power=>orders
+	@ElementCollection
+	private List<Serializable>     	resultList = null; 	// order results, post-adjudication
+	@ElementCollection
+	@MapKeyColumn
+	@Lob
+	private Map<String, List<?>>			orderMap = null;				// Map of power=>orders
 	private boolean 	isSCOwnerChanged = false;		// 'true' if any supply centers changed ownership
 	private	Position	position = null;				// Position data (majority of game state)
+	@Transient
 	private transient 	World world = null;				// makes it easier when we just pass a turnstate
 	private boolean 	isEnded = false;				// true if game over (won, draw, etc.)
-	private boolean 	isResolved = false;				// true if phase has been adjudicated
-	private transient 	HashMap resultMap = null;		// transient result map
+	private boolean 	isResolved = false;	// true if phase has been adjudicated
+	@Transient
+	private transient 	HashMap<Orderable, Boolean> resultMap = null;		// transient result map
 	
 	
 	/** Creates a TurnState object. */
@@ -157,14 +184,14 @@ public class TurnState implements Serializable
 	
 	
 	/** Returns the result list */
-	public List getResultList()
+	public List<Serializable> getResultList()
 	{
 		return resultList;
 	}// getResultList()
 	
 	
 	/** Sets the Result list, erasing any previously existing result list. */
-	public void setResultList(List list)
+	public void setResultList(List<Serializable> list)
 	{
 		if(list == null)
 		{
@@ -250,7 +277,7 @@ public class TurnState implements Serializable
 		if(orderList == null)
 		{
 			orderList = new ArrayList(15);
-			orderMap.put(power, orderList);
+			orderMap.put(power.getName(), orderList);
 		}
 		
 		return orderList;
@@ -264,7 +291,7 @@ public class TurnState implements Serializable
 			throw new IllegalArgumentException("power or list null");
 		}
 		
-		orderMap.put(power, list);
+		orderMap.put(power.getName(), list);
 	}// setOrders()
 	
 	/** Set if game has ended for any reason */
@@ -318,5 +345,15 @@ public class TurnState implements Serializable
 		
 		return false;
 	}// isFailedOrder()
+
+
+	public int getId() {
+		return id;
+	}
+
+
+	public void setId(int id) {
+		this.id = id;
+	}
 	
 }// class TurnState
