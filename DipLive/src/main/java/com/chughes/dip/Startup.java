@@ -1,23 +1,37 @@
 package com.chughes.dip;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 import javax.sql.DataSource;
 
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.chughes.security.UserDAO;
 import com.chughes.security.UserEntity;
 
+import dip.world.TurnState;
+import dip.world.World;
 import dip.world.variant.VariantManager;
 
 @Component
@@ -28,6 +42,7 @@ public class Startup{
 	
 	protected @Autowired DataSource dataSource;
 	protected @Autowired UserDAO us;
+	protected @Autowired SessionFactory sessionFactory;
 
 	@PostConstruct
 	@Transactional
@@ -48,6 +63,35 @@ public class Startup{
 		}catch(BadSqlGrammarException e){
 			//e.printStackTrace();
 		}
+		
+		RowMapper<Object> rm = new RowMapper<Object>() {
+
+            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+                DefaultLobHandler lobHandler = new DefaultLobHandler();
+                InputStream stream = lobHandler.getBlobAsBinaryStream(rs, "turnStates");
+                ObjectInputStream ois;
+				try {
+					ois = new ObjectInputStream(stream);
+					TurnState ts = (TurnState) ois.readObject();
+					int id = rs.getInt("World_id");
+					World w = (World) sessionFactory.getCurrentSession().get(World.class, id);
+					w.setTurnState(ts);
+					sessionFactory.getCurrentSession().update(w);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+                return null;
+            }
+        };
+		
+		
+		template.query("SELECT * FROM World_turnStates",rm);
+		
 		
 		UserEntity.NULL_USER = us.getUserEntity(126);
 		
