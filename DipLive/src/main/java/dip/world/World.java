@@ -102,7 +102,6 @@ public class World implements Serializable
 	@OneToMany
 	@MapKeyColumn
 	@Sort(type = SortType.NATURAL)
-	@Lob
 	public SortedMap<Integer, TurnState> getTurnStates() {
 		return turnStates;
 	}

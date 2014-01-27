@@ -29,8 +29,9 @@ import dip.misc.Utils;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Iterator;
-
 import java.io.*;
+
+import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
  *  This is the base class for all Order objects.
@@ -450,6 +451,11 @@ public abstract class Order extends Object implements Orderable, java.io.Seriali
 		
 		return false;
 	}// equals()
+	
+	@Override
+	public int hashCode() {
+		return new HashCodeBuilder(11, 31).append(power).append(src).append(srcUnitType).toHashCode();
+	}
 	
 }// abstract class Order
 

@@ -186,5 +186,10 @@ public interface Orderable extends Serializable
 	*/
 	public void evaluate(Adjudicator adjudicator);
 	
+	@Override
+	public boolean equals(Object obj);
+	
+	public int hashCode();
+	
 }// interface Order
 

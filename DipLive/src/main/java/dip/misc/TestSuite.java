@@ -1147,7 +1147,7 @@ public final class TestSuite
 				currentTS.clearAllOrders();
 				for(int i=0; i<orders.length; i++)
 				{
-					List orderList = currentTS.getOrders(orders[i].getPower());
+					ArrayList orderList = currentTS.getOrders(orders[i].getPower());
 					orderList.add(orders[i]);
 					currentTS.setOrders(orders[i].getPower(), orderList);
 				}

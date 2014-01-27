@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.chughes.dip.GameEntity;
 import com.chughes.dip.UserGameEntity;
 
+import dip.world.TurnState;
 import dip.world.World;
 
 @Repository
@@ -41,10 +42,18 @@ public class GameRepository {
 		return (UserGameEntity) sessionFactory.getCurrentSession().get(UserGameEntity.class, id);
 	}
 
-	@Async
 	@Transactional
 	public void updateWorld(World w){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
+        sessionFactory.getCurrentSession().update(w);
+	}
+	
+	@Transactional
+	public void addTurnstate(int id, TurnState ts){
+		World w = (World) sessionFactory.getCurrentSession().get(World.class, id);
+		w.setTurnState(ts);
+		sessionFactory.getCurrentSession().save(ts);
+		//sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
         sessionFactory.getCurrentSession().update(w);
 	}
 	
@@ -70,6 +79,7 @@ public class GameRepository {
 	@Transactional
 	public void saveGame(GameEntity ge){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
+		sessionFactory.getCurrentSession().save(ge.getW().getInitialTurnState());
 		sessionFactory.getCurrentSession().saveOrUpdate(ge);
 		//sessionFactory.getCurrentSession().flush();
 	}
@@ -79,6 +89,11 @@ public class GameRepository {
 	public List<GameEntity> queryGames(int p,int max){
 		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity").setFirstResult(p).setMaxResults(max);
 		return query.list();
+	}
+
+	@Transactional
+	public void updateTS(TurnState ts) {
+		sessionFactory.getCurrentSession().update(ts);
 	}
 	
 }

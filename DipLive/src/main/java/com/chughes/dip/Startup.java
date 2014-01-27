@@ -27,6 +27,7 @@ import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chughes.data.GameRepository;
 import com.chughes.security.UserDAO;
 import com.chughes.security.UserEntity;
 
@@ -42,7 +43,8 @@ public class Startup{
 	
 	protected @Autowired DataSource dataSource;
 	protected @Autowired UserDAO us;
-	protected @Autowired SessionFactory sessionFactory;
+	protected @Autowired GameRepository gr;
+	//protected @Autowired SessionFactory sf;
 
 	@PostConstruct
 	@Transactional
@@ -64,6 +66,8 @@ public class Startup{
 			//e.printStackTrace();
 		}
 		
+		//sf.openSession();
+		
 		RowMapper<Object> rm = new RowMapper<Object>() {
 
             public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -74,9 +78,7 @@ public class Startup{
 					ois = new ObjectInputStream(stream);
 					TurnState ts = (TurnState) ois.readObject();
 					int id = rs.getInt("World_id");
-					World w = (World) sessionFactory.getCurrentSession().get(World.class, id);
-					w.setTurnState(ts);
-					sessionFactory.getCurrentSession().update(w);
+					gr.addTurnstate(id, ts);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

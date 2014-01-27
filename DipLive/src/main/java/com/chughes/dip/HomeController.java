@@ -381,7 +381,7 @@ public class HomeController {
 		}catch(OrderException oe){
 			return Collections.singletonMap("error", new String[]{oe.getLocalizedMessage()});
 		}
-		logger.info("From: "+o.getSourceUnitType());
+		//logger.info("From: "+o.getSourceUnitType());
 
 		MapInfo info = mr.new DMRMapInfo(w.getLastTurnState());
 		SVGElement element = ((GUIOrder)o).orderSVG(info);
@@ -402,7 +402,8 @@ public class HomeController {
 		transformer1.transform(new DOMSource(element), new StreamResult(sw1));
 
 		//Preventing two orders for same unit
-		List<Orderable> orders = w.getLastTurnState().getOrders(p);
+		TurnState ts = w.getLastTurnState();
+		List<Orderable> orders = ts.getOrders(p);
 		Iterator<Orderable> iter = orders.iterator();
 		//boolean isDuplicate = false;
 		while(iter.hasNext())
@@ -419,7 +420,7 @@ public class HomeController {
 
 		//model.addAttribute("success", 1);
 
-		gameRepo.updateWorld(w);
+		gameRepo.updateTS(ts);
 		String id1 = info.getPowerSVGGElement(p, 1).getId();
 		Map<String,Object> results = new HashMap<String,Object>();
 		results.put("orders",Collections.singletonMap(id1,sw1.toString()));

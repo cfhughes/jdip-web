@@ -89,20 +89,22 @@ public class TurnState implements Serializable
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private int id;
 	// instance variables (we serialize all of this)
+	@Lob
 	private Phase 		phase = null;				
 	@ElementCollection
+	@Lob
 	private List<Serializable>     	resultList = null; 	// order results, post-adjudication
 	@ElementCollection
 	@MapKeyColumn
 	@Lob
-	private Map<String, List<?>>			orderMap = null;				// Map of power=>orders
+	private Map<Power, ArrayList<?>>			orderMap = null;				// Map of power=>orders
 	private boolean 	isSCOwnerChanged = false;		// 'true' if any supply centers changed ownership
+	@Lob
 	private	Position	position = null;				// Position data (majority of game state)
 	@Transient
 	private transient 	World world = null;				// makes it easier when we just pass a turnstate
 	private boolean 	isEnded = false;				// true if game over (won, draw, etc.)
 	private boolean 	isResolved = false;	// true if phase has been adjudicated
-	@Transient
 	private transient 	HashMap<Orderable, Boolean> resultMap = null;		// transient result map
 	
 	
@@ -266,32 +268,32 @@ public class TurnState implements Serializable
 	*	Note that modifications to the returned order List will be reflected
 	*	in the TurnState.
 	*/
-	public List getOrders(Power power)
+	public ArrayList getOrders(Power power)
 	{
 		if(power == null)
 		{
 			throw new IllegalArgumentException("null power");
 		}
 		
-		List orderList = (List) orderMap.get(power);
+		ArrayList orderList = (ArrayList) orderMap.get(power);
 		if(orderList == null)
 		{
 			orderList = new ArrayList(15);
-			orderMap.put(power.getName(), orderList);
+			orderMap.put(power, orderList);
 		}
 		
 		return orderList;
 	}// getOrders()
 	
 	/** Sets the orders for the given Power, deleting any existing orders for the power */
-	public void setOrders(Power power, List list)
+	public void setOrders(Power power, ArrayList list)
 	{
 		if(power == null || list == null)
 		{
 			throw new IllegalArgumentException("power or list null");
 		}
 		
-		orderMap.put(power.getName(), list);
+		orderMap.put(power, list);
 	}// setOrders()
 	
 	/** Set if game has ended for any reason */
