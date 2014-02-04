@@ -64,6 +64,7 @@ public class Judge {
 				}else{
 					updateInfo(ge);
 				}
+				sessionFactory.getCurrentSession().save(ts);
 				sessionFactory.getCurrentSession().update(ge.getW());
 				//Fixed a problem with too much memory being used. 
 				sessionFactory.getCurrentSession().flush();
@@ -150,6 +151,8 @@ public class Judge {
 				long milis = new Date().getTime() + (60L * 60L * 1000L * game.getTurnlength());
 				Date end = new Date(milis);
 				game.setTurnend(end);
+			}else{
+				game.setTurnend(null);
 			}
 
 		}

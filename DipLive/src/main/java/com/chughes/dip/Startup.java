@@ -68,31 +68,31 @@ public class Startup{
 		
 		//sf.openSession();
 		
-		RowMapper<Object> rm = new RowMapper<Object>() {
-
-            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
-                DefaultLobHandler lobHandler = new DefaultLobHandler();
-                InputStream stream = lobHandler.getBlobAsBinaryStream(rs, "turnStates");
-                ObjectInputStream ois;
-				try {
-					ois = new ObjectInputStream(stream);
-					TurnState ts = (TurnState) ois.readObject();
-					int id = rs.getInt("World_id");
-					gr.addTurnstate(id, ts);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (ClassNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-                return null;
-            }
-        };
+//		RowMapper<Object> rm = new RowMapper<Object>() {
+//
+//            public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+//                DefaultLobHandler lobHandler = new DefaultLobHandler();
+//                InputStream stream = lobHandler.getBlobAsBinaryStream(rs, "turnStates");
+//                ObjectInputStream ois;
+//				try {
+//					ois = new ObjectInputStream(stream);
+//					TurnState ts = (TurnState) ois.readObject();
+//					int id = rs.getInt("World_id");
+//					gr.addTurnstate(id, ts);
+//				} catch (IOException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				} catch (ClassNotFoundException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//
+//                return null;
+//            }
+//        };
 		
 		
-		template.query("SELECT * FROM World_turnStates",rm);
+//		template.query("SELECT * FROM World_turnStates",rm);
 		
 		
 		UserEntity.NULL_USER = us.getUserEntity(126);

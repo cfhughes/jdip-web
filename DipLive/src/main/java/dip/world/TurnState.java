@@ -95,7 +95,7 @@ public class TurnState implements Serializable
 	@Lob
 	private List<Serializable>     	resultList = null; 	// order results, post-adjudication
 	@ElementCollection
-	@MapKeyColumn
+	@MapKeyColumn(columnDefinition="VARCHAR(255)")
 	@Lob
 	private Map<Power, ArrayList<?>>			orderMap = null;				// Map of power=>orders
 	private boolean 	isSCOwnerChanged = false;		// 'true' if any supply centers changed ownership

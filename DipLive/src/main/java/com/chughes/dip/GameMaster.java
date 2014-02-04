@@ -1,6 +1,7 @@
 package com.chughes.dip;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Vector;
 
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.chughes.data.GameRepository;
 import com.chughes.dip.GameEntity.Stage;
 
 import dip.world.Power;
@@ -18,6 +20,7 @@ import dip.world.Power;
 public class GameMaster {
 
 	@Autowired private Judge j;
+	@Autowired private GameRepository gr;
 
 	private static final Logger logger = LoggerFactory.getLogger(GameMaster.class);
 	private static volatile boolean busy = false;
@@ -55,9 +58,13 @@ public class GameMaster {
 					return;
 				}
 			}
+			for (UserGameEntity player : ge.getPlayers()) {
+				player.setOrderable(false);
+			}
 
-			j.advanceGame(ge);
-
+			ge.setTurnend(new Date());
+			gr.updateGame(ge);
+			
 		}
 		catch(Exception e){
 			e.printStackTrace();
