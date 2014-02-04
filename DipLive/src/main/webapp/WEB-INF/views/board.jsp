@@ -124,7 +124,7 @@ svg:FIRST-CHILD {
 <c:if test="${!member_of_game and !started}">
 	<form action="<c:url value="/joingame/${gid}" />">
 		Join this game:
-		<c:if test="${secret}">
+		<c:if test="${gameprivate}">
 			<input type="text" name="secret" placeholder="Password">
 		</c:if>
 		<button type="submit" class="btn btn-default">Join</button>

@@ -128,7 +128,7 @@ public class HomeController {
 		boolean member = false;
 		Power p1 = null;
 		if (loggedin){
-			model.addAttribute("private", game.getSecret() != null);
+			model.addAttribute("gameprivate", (game.getSecret().length() > 0));
 			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
 			if (uge != null){
 				member = true;
