@@ -30,8 +30,13 @@ public class GameMaster {
 	public void resolveGames(){
 		if (!busy){
 			busy = true;
-			j.cron();
-			busy = false;
+			try{
+				j.cron();
+			}finally{
+				busy = false;
+			}
+		}else{
+			System.out.println("GameMaster Busy");
 		}
 	}
 
@@ -49,9 +54,6 @@ public class GameMaster {
 
 
 	public void processGame(GameEntity ge){
-		if (busy){
-			return;
-		}
 		try{
 			for (UserGameEntity player : ge.getPlayers()) {
 				if (!player.isReady()){

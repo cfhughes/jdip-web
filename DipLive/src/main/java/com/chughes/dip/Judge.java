@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.social.connect.Connection;
@@ -46,6 +48,7 @@ public class Judge {
 	protected @Autowired Mailer mailer;
 	private @Autowired Facebook facebookApp;
 	private @Autowired UsersConnectionRepository ucr;
+	private static final Logger logger = LoggerFactory.getLogger(Judge.class);
 	
 	@Transactional
 	public void advanceGame(GameEntity ge){
@@ -165,7 +168,7 @@ public class Judge {
 		Query q = sessionFactory.getCurrentSession().createQuery("from GameEntity where turnend < current_timestamp() and stage= 'PLAYING'");
 		List<GameEntity> list = q.list();
 		for (GameEntity ge : list){
-
+			//System.out.println("Opening game "+ge.getId()+" for Processing");
 			advanceGame(ge);
 
 		}
