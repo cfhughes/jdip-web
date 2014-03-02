@@ -1,7 +1,13 @@
 package com.chughes.dip;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -12,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -44,6 +51,15 @@ public class NewGameController {
 		model.addAttribute("game", ge);
 		model.addAttribute("variants",VariantManager.getVariants());
 		return "newgame";
+	}
+	
+	@RequestMapping(value="/vmap/{variant}")
+	public void image(@PathVariable(value="variant") String variant,HttpServletResponse response) throws IOException{
+		Variant v = VariantManager.getVariant(variant, 1.0f);
+		URI mapuri = v.getDefaultMapGraphic().getURI();
+		InputStream stream = VariantManager.getResource(v, mapuri).openStream();
+		response.setContentType("image/svg+xml");
+		IOUtils.copy(stream, response.getOutputStream());
 	}
 	
 	@PreAuthorize("hasRole('PLAYER')")

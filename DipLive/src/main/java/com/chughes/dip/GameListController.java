@@ -23,11 +23,12 @@ public class GameListController {
 
 
 	@RequestMapping(value="/gamelist")
-	public String listGames(Model model,@RequestParam(value="p", required = false) Integer p){
+	public String listGames(Model model,@RequestParam(value="p", required = false) Integer p,@RequestParam(value="joinable", required = false) Integer j){
 		if (p == null)p = 1;
 		int offset = (p-1)*10;
-		model.addAttribute("games", gameService.searchGames(offset,10));
+		model.addAttribute("games", gameService.searchGames(offset,10,j));
 		model.addAttribute("page", p);
+		model.addAttribute("joinable", j);
 		return "gamelist";
 	}
 	

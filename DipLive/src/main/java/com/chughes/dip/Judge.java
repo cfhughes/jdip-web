@@ -61,13 +61,13 @@ public class Judge {
 				if (ts != null){
 					ge.getW().setTurnState(ts);
 				}
+				sessionFactory.getCurrentSession().save(ts);
 				//End Game if Victory Occurs
 				if (ge.getW().getLastTurnState().isEnded()){
 					endGame(ge);
 				}else{
 					updateInfo(ge);
 				}
-				sessionFactory.getCurrentSession().save(ts);
 				sessionFactory.getCurrentSession().update(ge.getW());
 				//Fixed a problem with too much memory being used. 
 				sessionFactory.getCurrentSession().flush();

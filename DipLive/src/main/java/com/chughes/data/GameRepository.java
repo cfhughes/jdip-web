@@ -86,8 +86,14 @@ public class GameRepository {
 	
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<GameEntity> queryGames(int p,int max){
-		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity").setFirstResult(p).setMaxResults(max);
+	public List<GameEntity> queryGames(int p,int max, Integer j){
+		String clause = "";
+		if (j != null){
+			if (j==1){
+				clause = " WHERE stage = '"+GameEntity.Stage.PREGAME+"'";
+			}
+		}
+		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity"+clause).setFirstResult(p).setMaxResults(max);
 		return query.list();
 	}
 

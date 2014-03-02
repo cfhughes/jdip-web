@@ -40,7 +40,7 @@
 	<input type="hidden" id="variant" name="variant" value="Standard" />
 	<div class="tab-content" class="col-lg-5" style="height: 300px; overflow: auto;">
 		<c:forEach items="${variants}" var="variant">
-			<div class="tab-pane panel panel-default" id="${variant}"><div class="panel-body">${variant.description}</div></div>
+			<div class="tab-pane panel panel-default" id="${variant}"><div class="panel-body"><img style="width:50%;min-width:300px;" src="<c:url value="/vmap/${variant.name}" />" /><p>${variant.description}</p><p><b>Powers: </b><c:forEach items="${variant.powers}" var="power">${power} </c:forEach></p></div></div>
 		</c:forEach>
 	</div>
 	<div class="form-group">
