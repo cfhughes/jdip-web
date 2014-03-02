@@ -60,8 +60,8 @@ public class Judge {
 				TurnState ts = stdJudge.getNextTurnState();
 				if (ts != null){
 					ge.getW().setTurnState(ts);
+					sessionFactory.getCurrentSession().save(ts);
 				}
-				sessionFactory.getCurrentSession().save(ts);
 				//End Game if Victory Occurs
 				if (ge.getW().getLastTurnState().isEnded()){
 					endGame(ge);
