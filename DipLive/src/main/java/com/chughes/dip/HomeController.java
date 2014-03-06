@@ -183,7 +183,8 @@ public class HomeController {
 		model.addAttribute("players", players);
 		model.addAttribute("member_of_game", member);
 		model.addAttribute("gamephase", game.getW().getLastTurnState().getPhase().toString());
-		model.addAttribute("started", game.getStage() == Stage.PLAYING);
+		model.addAttribute("started", game.getStage() != Stage.PREGAME);
+		model.addAttribute("playing", game.getStage() == Stage.PLAYING);
 		model.addAttribute("next", game.getTurnend());
 
 		return "board";

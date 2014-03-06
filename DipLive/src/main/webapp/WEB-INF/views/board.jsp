@@ -134,7 +134,7 @@ svg:FIRST-CHILD {
 <div id="jpeg-map">
 	<img id="map-image" src="" style="display: none;"></img>
 </div>
-<c:if test="${member_of_game and started}">
+<c:if test="${member_of_game and playing}">
 	<div style="height: 20px" id="bottom-bar"></div>
 	<div id="order-type" class="btn-group">
 		<c:choose>
@@ -367,7 +367,7 @@ svg:FIRST-CHILD {
 				}
 			});
 		});
-<c:if test="${started}">
+<c:if test="${playing}">
 		var from = 0;
 		var order = {};
 		$("#MouseLayer").children().hover(function() {
