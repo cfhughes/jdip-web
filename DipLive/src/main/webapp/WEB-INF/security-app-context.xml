@@ -24,7 +24,7 @@
 	</beans:bean>
 	
 	<mvc:interceptors>
-	    <beans:bean class="com.chughes.dip.FBCanvasInterceptor" />
+	    <beans:bean class="com.chughes.dip.user.FBCanvasInterceptor" />
 	    
 	</mvc:interceptors>
 
@@ -101,19 +101,19 @@
 		<beans:property name="annotatedClasses">
 			<beans:list>
 
-				<beans:value>com.chughes.dip.GameEntity
+				<beans:value>com.chughes.dip.game.GameEntity
 				</beans:value>
-				<beans:value>com.chughes.dip.UserGameEntity
+				<beans:value>com.chughes.dip.game.UserGameEntity
 				</beans:value>
-				<beans:value>com.chughes.dip.Message
+				<beans:value>com.chughes.dip.chat.Message
 				</beans:value>
 				<beans:value>dip.world.World
 				</beans:value>
 				<beans:value>dip.world.TurnState
 				</beans:value>
-				<beans:value>com.chughes.dip.Post
+				<beans:value>com.chughes.dip.chat.Post
 				</beans:value>
-				<beans:value>com.chughes.security.UserEntity
+				<beans:value>com.chughes.dip.user.UserEntity
 				</beans:value>
 			</beans:list>
 		</beans:property>
@@ -152,7 +152,7 @@
 		<remember-me />
 	</http>
 
-	<beans:bean id="loginLogger" class="com.chughes.security.SessionLogger" />
+	<beans:bean id="loginLogger" class="com.chughes.dip.user.SessionLogger" />
 	
 	<beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 

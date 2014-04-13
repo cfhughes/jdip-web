@@ -349,7 +349,7 @@ public class RetreatChecker
 		*/
 		public final void setOptions(OrderResult or)
 		{
-			if(or.getOrder() != move)
+			if(!or.getOrder().equals(move))
 			{
 				throw new IllegalArgumentException();
 			}

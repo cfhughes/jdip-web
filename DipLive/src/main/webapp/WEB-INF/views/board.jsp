@@ -422,8 +422,10 @@ svg:FIRST-CHILD {
 								for (var i = 0;i < msg["error"].length;i++) {
 									alert(msg["error"][i]);
 								}
+							}else if (msg["orders"] === undefined){
+								alert("An error occured, refreshing the page may fix the problem.");
 							}
-							console.log(msg);
+							//console.log(msg);
 						}
 					});
 			};
