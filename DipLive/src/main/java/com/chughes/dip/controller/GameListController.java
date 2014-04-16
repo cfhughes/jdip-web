@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.chughes.dip.data.UserRepository;
 import com.chughes.dip.game.GameEntity;
 import com.chughes.dip.game.GameMaster;
 import com.chughes.dip.game.GameService;
-import com.chughes.dip.user.UserDAO;
 import com.chughes.dip.user.UserDetailsImpl;
 import com.chughes.dip.user.UserEntity;
 
@@ -20,7 +20,7 @@ import com.chughes.dip.user.UserEntity;
 public class GameListController {
 
 	@Autowired private GameService gameService;
-	@Autowired private UserDAO userrepo;
+	@Autowired private UserRepository userrepo;
 	@Autowired private GameMaster gm;
 
 

@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.chughes.dip.data.UserRepository;
+
 @Controller
 public class UserToolsController {
 
 	@Autowired
-	UserDAO us;
+	UserRepository us;
 
 	@RequestMapping(value="/login")
 	public String login(){
@@ -49,7 +51,7 @@ public class UserToolsController {
 	@RequestMapping(value="/saveuser")
 	public String saveUser(@Valid UserDetailsImpl user) throws Exception{
 
-		us.saveUser(user);
+		us.createUser(user);
 		return "saveuser";
 	}
 

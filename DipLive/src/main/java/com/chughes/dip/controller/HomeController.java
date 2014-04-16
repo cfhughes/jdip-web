@@ -47,12 +47,12 @@ import org.xml.sax.SAXException;
 
 import com.chughes.dip.data.GameRepository;
 import com.chughes.dip.data.MapHolder;
+import com.chughes.dip.data.UserRepository;
 import com.chughes.dip.game.GameEntity;
 import com.chughes.dip.game.GameMaster;
 import com.chughes.dip.game.UserGameEntity;
 import com.chughes.dip.game.GameEntity.Stage;
 import com.chughes.dip.misc.UIOrder;
-import com.chughes.dip.user.UserDAO;
 import com.chughes.dip.user.UserDetailsImpl;
 import com.chughes.dip.user.UserEntity;
 
@@ -80,7 +80,7 @@ import dip.world.variant.data.Variant;
 @Controller
 public class HomeController {
 
-	@Autowired private UserDAO us;
+	@Autowired private UserRepository us;
 	@Autowired private GameRepository gameRepo;
 	@Autowired private MapHolder mh;
 	@Autowired private GameMaster gm;

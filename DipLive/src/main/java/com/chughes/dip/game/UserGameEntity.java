@@ -37,6 +37,7 @@ public class UserGameEntity implements Serializable {
 	private int id;
 	private boolean ready;
 	private boolean orderable;
+	private boolean unread;
 	private float victory_share = -1;
 	private int supply_centers;
 	private int missed;
@@ -153,6 +154,12 @@ public class UserGameEntity implements Serializable {
 	}
 	public void setColor(String color) {
 		this.color = color;
+	}
+	public boolean isUnread() {
+		return unread;
+	}
+	public void setUnread(boolean unread) {
+		this.unread = unread;
 	}
 	
 }

@@ -1,4 +1,4 @@
-package com.chughes.dip.user;
+package com.chughes.dip.data;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,14 +14,17 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.chughes.dip.user.UserDetailsImpl;
+import com.chughes.dip.user.UserEntity;
+
 @Repository
-public class UserDAO{
+public class UserRepository{
 
 	@Autowired private SessionFactory sessionFactory;
 	@Autowired private BCryptPasswordEncoder encoder;
 
 	@Transactional
-	public void saveUser(UserDetailsImpl user) throws Exception{
+	public void createUser(UserDetailsImpl user) throws Exception{
 		
 		Session session = sessionFactory.getCurrentSession();
 		UserEntity ue = new UserEntity();
@@ -79,7 +82,7 @@ public class UserDAO{
 		}
 
 
-		Logger.getLogger(UserDAO.class).info("Here2");
+		Logger.getLogger(UserRepository.class).info("Here2");
 		return ud;
 	}
 

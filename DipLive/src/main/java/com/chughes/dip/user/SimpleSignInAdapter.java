@@ -7,12 +7,14 @@ import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.web.SignInAdapter;
 import org.springframework.web.context.request.NativeWebRequest;
 
+import com.chughes.dip.data.UserRepository;
+
 public final class SimpleSignInAdapter implements SignInAdapter {
 	
 	//private final UserCookieGenerator userCookieGenerator = new UserCookieGenerator();
-	private UserDAO userR;
+	private UserRepository userR;
 
-	public SimpleSignInAdapter(UserDAO userR) {
+	public SimpleSignInAdapter(UserRepository userR) {
 		super();
 		this.userR = userR;
 	}

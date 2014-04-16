@@ -30,6 +30,8 @@ import org.springframework.social.google.connect.GoogleConnectionFactory;
 import org.springframework.social.facebook.web.CanvasSignInController;
 import org.springframework.web.client.RestTemplate;
 
+import com.chughes.dip.data.UserRepository;
+
 @Configuration
 @PropertySource("application.properties")
 public class SocialConfig {
@@ -58,7 +60,7 @@ public class SocialConfig {
 	}
 	
 	@Inject
-	private UserDAO user;
+	private UserRepository user;
 	
 	@Bean
 	@Scope(value="request", proxyMode=ScopedProxyMode.INTERFACES)

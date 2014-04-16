@@ -7,12 +7,14 @@ import org.springframework.social.google.api.Google;
 import org.springframework.social.google.api.plus.Person;
 import org.springframework.social.google.api.userinfo.GoogleUserInfo;
 
+import com.chughes.dip.data.UserRepository;
+
 
 public class SimpleConnectionSignUp implements ConnectionSignUp {
 	
-	private UserDAO userRepo;
+	private UserRepository userRepo;
 
-	public SimpleConnectionSignUp(UserDAO user) {
+	public SimpleConnectionSignUp(UserRepository user) {
 		userRepo = user;
 	}
 

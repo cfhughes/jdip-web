@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.chughes.dip.data.UserRepository;
 import com.chughes.dip.game.GameEntity;
 import com.chughes.dip.game.GameService;
 import com.chughes.dip.game.GameEntity.Stage;
-import com.chughes.dip.user.UserDAO;
 import com.chughes.dip.user.UserDetailsImpl;
 import com.chughes.dip.user.UserEntity;
 
@@ -43,7 +43,7 @@ public class NewGameController {
 	private GameService gameService;
 	
 	@Autowired
-    UserDAO us;
+    UserRepository us;
 	
 	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value="/newgame")

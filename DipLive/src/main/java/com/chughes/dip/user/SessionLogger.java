@@ -12,9 +12,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.chughes.dip.data.UserRepository;
+
 public class SessionLogger implements AuthenticationSuccessHandler {
 	
-	@Autowired UserDAO us;
+	@Autowired UserRepository us;
 
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request,

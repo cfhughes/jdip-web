@@ -6,13 +6,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.chughes.dip.user.UserDAO;
+import com.chughes.dip.data.UserRepository;
 import com.chughes.dip.user.UserEntity;
 
 @Controller
 public class ProfileController {
 	
-	@Autowired UserDAO us;
+	@Autowired UserRepository us;
 	
 	@RequestMapping(value="/player/{id}")
 	public String profile(@PathVariable(value="id") int id, Model m){

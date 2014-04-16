@@ -27,15 +27,15 @@ import com.chughes.dip.chat.UIChat;
 import com.chughes.dip.chat.UIChatRequest;
 import com.chughes.dip.data.ChatRepository;
 import com.chughes.dip.data.GameRepository;
+import com.chughes.dip.data.UserRepository;
 import com.chughes.dip.game.UserGameEntity;
-import com.chughes.dip.user.UserDAO;
 import com.chughes.dip.user.UserDetailsImpl;
 import com.chughes.dip.user.UserEntity;
 
 @Controller
 public class ChatController {
 
-	@Autowired UserDAO us;
+	@Autowired UserRepository us;
 	@Autowired ChatRepository cr;
 	@Autowired GameRepository gr;
 
@@ -104,6 +104,7 @@ public class ChatController {
 
 					if (gu != null){
 						gu.getMessages().add(m);
+						gu.setUnread(true);
 						m.setTo(gu);
 					}
 
@@ -127,6 +128,7 @@ public class ChatController {
 			UserGameEntity uge = gr.inGameUser(request.getGameid(), user.getId());
 			if (uge != null){
 				List<SortedMap<String,String>> result = new ArrayList<SortedMap<String,String>>();
+				uge.setUnread(false);
 				List<Object[]> re = cr.getMessages(user.getId(), request);
 				Map<Integer, Long> read = uge.getReadlog();
 				for (Object[] m : re) {

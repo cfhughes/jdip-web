@@ -22,6 +22,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.chughes.dip.data.UserRepository;
+
 @PropertySource("application.properties")
 public class FBCanvasInterceptor extends HandlerInterceptorAdapter {
 
@@ -35,7 +37,7 @@ public class FBCanvasInterceptor extends HandlerInterceptorAdapter {
 	private UsersConnectionRepository usersConnectionRepository;
 
 	@Inject
-	private UserDAO user;
+	private UserRepository user;
 
 	@Override
 	public boolean preHandle(HttpServletRequest request,

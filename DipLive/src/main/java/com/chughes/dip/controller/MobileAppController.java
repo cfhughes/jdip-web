@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.chughes.dip.data.UserRepository;
 import com.chughes.dip.game.UserGameEntity;
-import com.chughes.dip.user.UserDAO;
 import com.chughes.dip.user.UserEntity;
 
 @Controller
@@ -26,7 +26,7 @@ public class MobileAppController {
 	
 	@Autowired private ConnectionFactoryLocator cfl;
 	@Autowired private UsersConnectionRepository ucr;
-	@Autowired private UserDAO us;
+	@Autowired private UserRepository us;
 	
 	@RequestMapping(value = "/JSONmygames")
 	public @ResponseBody Map<Integer,String> myGames(Model model,@RequestParam(value="auth") String auth,@RequestParam(value="p") String p){

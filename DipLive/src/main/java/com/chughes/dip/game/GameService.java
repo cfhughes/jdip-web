@@ -13,15 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.chughes.dip.controller.HomeController;
 import com.chughes.dip.data.GameRepository;
+import com.chughes.dip.data.UserRepository;
 import com.chughes.dip.game.GameEntity.Stage;
-import com.chughes.dip.user.UserDAO;
 import com.chughes.dip.user.UserEntity;
 
 @Service
 public class GameService {
 
 	@Autowired private GameRepository gameRepo;
-	@Autowired private UserDAO userRepo;
+	@Autowired private UserRepository userRepo;
 	
 	private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
