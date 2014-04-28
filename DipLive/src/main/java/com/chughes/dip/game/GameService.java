@@ -25,15 +25,18 @@ public class GameService {
 	
 	private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
-	public void addUserToGame(GameEntity game, UserEntity user, String secret){
+	public void addUserToGame(GameEntity game, UserEntity user, String secret) throws Exception{
 		if (game.getStage() != Stage.PREGAME){
-			return;
+			throw new Exception("Something went wrong, the game has allready started.");
 		}
 		if (gameRepo.inGameUser(game.getId(), user.getId()) != null){
-			return;
+			throw new Exception("The user is already in this game.");
 		}
 		if (game.getSecret() != null && game.getSecret().length() > 0 && !game.getSecret().equals(secret)) {
-			return;
+			throw new Exception("Incorrect password");
+		}
+		if (game.getLevel() != 0 && game.getLevel() != user.getLevel()){
+			throw new Exception("User is not the correct level for this game.");
 		}
 		UserGameEntity uge = new UserGameEntity();
 		uge.setGame(game);

@@ -1,5 +1,13 @@
-<%@include file="head.jsp"%>
+<%@ page language="java"
+	contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib prefix="sec"
+	uri="http://www.springframework.org/security/tags"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<!DOCTYPE html>
+<html>
 <script type="text/javascript"
 	src="<c:url value="/resources/jquery.localtime-0.8.0.min.js" />"></script>
 <style type="text/css">
@@ -121,143 +129,9 @@ svg:FIRST-CHILD {
 }
 </style>
 
-<c:if test="${!member_of_game and !started and loggedin}">
-	<form action="<c:url value="/joingame/${gid}" />">
-		Join this game:
-		<c:if test="${gameprivate}">
-			<input type="text" name="secret" placeholder="Password">
-		</c:if>
-		<button type="submit" class="btn btn-default">Join</button>
-	</form>
-</c:if>
+
 <div id="svg-map">${svg}</div>
-<div id="jpeg-map">
-	<img id="map-image" src="" style="display: none;"></img>
-</div>
-<c:if test="${member_of_game and playing}">
-	<div style="height: 20px" id="bottom-bar"></div>
-	<div id="order-type" class="btn-group">
-		<c:choose>
-			<c:when test="${phasetype == 'M'}">
 
-				<button id="order-move" class="btn btn-default">Move</button>
-				<button id="order-hold" class="btn btn-default">Hold</button>
-				<button id="order-shold" class="btn btn-default">Support
-					Hold</button>
-				<button id="order-smove" class="btn btn-default">Support
-					Move</button>
-				<button id="order-convoy" class="btn btn-default">Convoy</button>
-
-			</c:when>
-			<c:when test="${phasetype == 'R'}">
-				<button id="order-retreat" class="btn btn-default">Retreat</button>
-				<button id="order-disband" class="btn btn-default">Disband</button>
-			</c:when>
-			<c:when test="${phasetype == 'B'}">
-				<button id="order-builda" class="btn btn-default">Build
-					Army</button>
-				<button id="order-buildf" class="btn btn-default">Build
-					Fleet</button>
-				<button id="order-destroy" class="btn btn-default">Disband</button>
-			</c:when>
-		</c:choose>
-	</div>
-	<button id="ready-button"
-		class="btn btn-default<c:if test="${isready}"> active</c:if>">Ready</button>
-	<img id="ready-img" src="<c:url value="/resources/img/check.png"/>"
-		<c:if test="${!isready}">class="intangible"</c:if> />
-	<h5><div style="margin-top:2px;margin-right:3px;float:left;height:10px;width:10px;background-color:${me.color}"></div>${me.power}
-		- ${me.supply_centers}
-		<c:if test="${not empty next}"> - Next Turn: <span
-				data-localtime-format="dd MMM h:mm a"><fmt:formatDate
-					pattern="yyyy-MM-dd'T'HH:mm:ss'Z'" value="${next}" /></span>
-		</c:if>
-	</h5>
-</c:if>
-
-<h4>
-	<span id="previous-phase" class="glyphicon glyphicon-backward"></span>
-	<span id="phase-name">${gamephase}</span> <span id="next-phase"
-		class="glyphicon glyphicon-forward"></span>
-</h4>
-
-<c:if test="${member_of_game}">
-
-	<div id="orders-panel">
-		Text Order Input:<input type="text" id="order_textinput" />
-		<button id="ordertext_send" class="btn btn-default" type="btn">Go</button>
-		<c:forEach items="${textorders}" var="order">
-			<p id="${order.key}_text">
-				<span class="label label-success">${order.value}</span>
-				<button province_id="${order.key}" class="glyphicon glyphicon-trash"></button>
-			</p>
-		</c:forEach>
-	</div>
-	<div class="row">
-		<ul id="chat-tabs" class="nav nav-tabs">
-			<li chatid="-1" class="active"><a href="#allchat"
-				data-toggle="tab">All Players</a></li>
-			<c:forEach items="${players}" var="player">
-				<c:if test="${player.id != me_id}">
-					<li chatid="${player.id}"><a id="a-${player.id}" href="#tab-${player.id}"
-						data-toggle="tab"><div style="margin-top:5px;margin-right:3px;float:left;height:10px;width:10px;background-color:${player.color}"></div>${player.user.username}(${player.power}
-							${player.supply_centers})<c:if test="${player.ready}">
-								<img src="<c:url value="/resources/img/check.png"/>" />
-							</c:if>
-					</a></li>
-				</c:if>
-			</c:forEach>
-		</ul>
-		<div class="tab-content">
-			<div class="tab-pane active" id="allchat">
-				<div id="chatlog--1" class="chat-messages"></div>
-				<textarea id="chat--1" name="-1"
-					class="chat-input span4 form-control" cols="" rows="3"></textarea>
-				<button class="dipchat-submit btn btn-default" type="btn"
-					userid="-1">Send</button>
-
-				<h4 class="pull-right">All Players</h4>
-			</div>
-			<c:forEach items="${players}" var="player">
-				<c:if test="${player.id != me_id}">
-					<div class="tab-pane" id="tab-${player.id}">
-						<div id="chatlog-${player.id}" class="chat-messages"></div>
-						<textarea id="chat-${player.id}" name="${player.id}"
-							class="chat-input form-control span4" rows="3" cols=""></textarea>
-						<button userid="${player.id}"
-							class="dipchat-submit btn btn-default" type="btn">Send</button>
-						<div class="pull-right">
-							<p>
-								<span style="font-weight: bold;">${player.user.username}</span>
-								${player.power}
-							</p>
-						</div>
-					</div>
-				</c:if>
-			</c:forEach>
-		</div>
-
-	</div>
-	<div>
-		<p>
-			<a
-				onclick="confirm('Are you sure you want to leave? Retreating from battle is frowned upon.');"
-				href="../leavegame/${gid}"><span
-				class="glyphicon glyphicon-remove-circle"></span> Leave This Game</a>
-		</p>
-	</div>
-</c:if><c:if test="${!member_of_game}">
-<div class="well well-small">
-<%-- 	<h4>${game.name} - ${game.phase}</h4> --%>
-<%-- 	<p>${game.w.nonTurnData['_variant_info_'].variantName}</p> --%>
-	<c:forEach items="${players}" var="player">
-		<p style="color: blue">
-			<a href="<c:url value="/player/${player.user.id}" />">${player.user.username}</a>
-			${player.power} <c:if test="${player.user.username == 'EMPTY'}"><a href="<c:url value="/joingame/${gid}?r=${player.id}" />">[Take Over]</a></c:if>
-		</p>
-	</c:forEach>
-</div>
-</c:if>
 <script type="text/javascript">
 	//<![CDATA[
 	$(function() {
@@ -370,34 +244,6 @@ svg:FIRST-CHILD {
 			});
 		});
 <c:if test="${playing}">
-        $("#ordertext_send").click(function(){
-        	$.ajax("${gid}/JSONtextorder",
-					{
-						data : JSON.stringify($("#order_textinput").val()),
-						contentType : 'application/json',
-						type : 'POST',
-						success : function(msg) {
-							for ( var layer in msg["orders"]) {
-								var $element = document.importNode(new DOMParser().parseFromString(msg["orders"][layer],"image/svg+xml").documentElement,true);
-								$("#"+$element.id.replace("/","\\/")).remove();
-								$("#Layer1 > #" + layer).append($element);
-							}
-							for ( var id in msg["orders_text"]) {
-								$("#"+id.replace("/","\\/")+"_text").remove();
-								$("#orders-panel").append('<p id="'+id+'_text"><span class="label label-success">'+msg["orders_text"][id]+'</span> <button province_id="'+id+'" class="glyphicon glyphicon-trash"></button></p>');
-								$("#orders-panel > p > button").on('click',removeorder);
-							}
-							if (msg["error"] !== undefined){
-								for (var i = 0;i < msg["error"].length;i++) {
-									alert(msg["error"][i]);
-								}
-							}else if (msg["orders"] === undefined){
-								alert("An error occured, refreshing the page may fix the problem.");
-							}
-							//console.log(msg);
-						}
-					});
-        });
 		var from = 0;
 		var order = {};
 		$("#MouseLayer").children().hover(function() {
@@ -507,5 +353,4 @@ svg:FIRST-CHILD {
 	});
 	//]]>
 </script>
-
-<%@include file="tail.jsp"%>
+</html>

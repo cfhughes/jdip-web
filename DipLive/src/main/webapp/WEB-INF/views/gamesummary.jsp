@@ -1,7 +1,9 @@
-<div class="well well-small">
+<div class="well well-sm">
 	<h4>
 		<a href='<c:url value="/game/${game.id}" />'>${game.name}</a>
 		${game.phase}
+		<c:if test="${unread}"><span class="label label-success">New Message!</span></c:if>
+		<c:if test="${needorders}"><span class="label label-default">Orders Needed</span></c:if>
 	</h4>
 	<p>${game.w.nonTurnData['_variant_info_'].variantName}</p>
 	<c:forEach items="${game.players}" var="player">

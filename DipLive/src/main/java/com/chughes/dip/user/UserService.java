@@ -11,4 +11,10 @@ public class UserService {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		return (UserDetailsImpl)auth.getPrincipal();
 	}
+	
+	public void updateLevel(UserEntity ue){
+		if (ue.getLosses() + ue.getWins() > 10 && ue.getScore() > 75){
+			ue.setLevel(ue.getLevel() + 1);
+		}
+	}
 }

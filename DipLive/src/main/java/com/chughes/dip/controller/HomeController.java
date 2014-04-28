@@ -65,6 +65,7 @@ import dip.gui.order.GUIOrder.MapInfo;
 import dip.gui.order.GUIOrderFactory;
 import dip.order.Order;
 import dip.order.OrderException;
+import dip.order.OrderParser;
 import dip.order.Orderable;
 import dip.order.ValidationOptions;
 import dip.world.Phase;
@@ -192,6 +193,91 @@ public class HomeController {
 		model.addAttribute("next", game.getTurnend());
 
 		return "board";
+	}
+	
+	@RequestMapping(value = "/m/game/{gameID}")
+	public String homeM(Model model,@PathVariable(value="gameID") int id) throws Exception {
+		boolean loggedin = false;
+		UserDetailsImpl user = null;
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.getPrincipal() instanceof UserDetails){
+			UserDetails user1 = (UserDetails)auth.getPrincipal();
+			user = (UserDetailsImpl) user1;
+
+			UserEntity ue = us.getUserEntity(user.getId());
+			model.addAttribute("user",ue);
+			model.addAttribute("loggedin", true);
+
+			loggedin = true;
+		}
+
+		GameEntity game = gameRepo.findById(id);
+
+		World w = game.getW();
+
+		boolean member = false;
+		Power p1 = null;
+		model.addAttribute("gameprivate", (game.getSecret().length() > 0));
+		if (loggedin){
+			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
+			if (uge != null){
+				member = true;
+				model.addAttribute("me_id", uge.getId());
+				model.addAttribute("me", uge);
+
+				model.addAttribute("isready", uge.isReady());
+				model.addAttribute("phasetype", w.getLastTurnState().getPhase().getPhaseType().getBriefName());
+				if (game.getStage() == Stage.PLAYING){
+					Map<String,String> provinces = new HashMap<String,String>();
+					for (Province p:game.getW().getMap().getProvinces()){
+						for (String shortn :p.getShortNames()){
+							provinces.put(shortn, p.getFullName());
+						}
+					}
+					model.addAttribute("provinces", provinces);
+					//Show orders just for the logged in user.
+					p1 = w.getMap().getPowerMatching(uge.getPower());
+					List<GUIOrder> orders = w.getLastTurnState().getOrders(p1);
+					Map<String,String> textorders = new HashMap<String,String>();
+					for (GUIOrder o : orders) {
+						System.out.println(o.toFullString());
+						textorders.put(o.getSource().toString(), o.toFullString());
+					}
+					model.addAttribute("textorders", textorders);
+				}
+			}
+		}
+
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer1 = tf.newTransformer();
+		transformer1.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		transformer1.setOutputProperty(OutputKeys.METHOD, "xml");
+		transformer1.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer1.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+		//ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		StringWriter sw1 = new StringWriter();
+
+		transformer1.transform(new DOMSource(renderSVG(id,w, p1, null)), new StreamResult(sw1));
+
+		model.addAttribute("svg", sw1.toString());
+		model.addAttribute("gid", id);
+		DefaultMapRenderer2 mr = mh.getMr(id);
+		Set<UserGameEntity> players = game.getPlayers();
+		if (game.getStage() == Stage.PLAYING){
+			for (UserGameEntity player : players) {
+				player.setColor(mr.getMapMetadata().getPowerColor(w.getMap().getPowerMatching(player.getPower())));
+			}
+		}
+		model.addAttribute("players", players);
+		model.addAttribute("member_of_game", member);
+		model.addAttribute("gamephase", game.getW().getLastTurnState().getPhase().toString());
+		model.addAttribute("started", game.getStage() != Stage.PREGAME);
+		model.addAttribute("playing", game.getStage() == Stage.PLAYING);
+		model.addAttribute("next", game.getTurnend());
+
+		return "boardm";
 	}
 
 	private SVGDocument renderSVG(int id, World w, Power p1, String phase) throws TransformerException, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException {
@@ -334,6 +420,90 @@ public class HomeController {
 		response.getOutputStream().close();
 
 	}
+	
+	@PreAuthorize("hasRole('PLAYER')")
+	@RequestMapping(value = "/game/{gameID}/JSONtextorder")
+	public @ResponseBody Map<String, ?> textOrder(@PathVariable(value="gameID") int id, @RequestBody String order) throws TransformerException{
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserDetailsImpl user = (UserDetailsImpl) auth.getPrincipal();
+
+		UserEntity ue = us.getUserEntity(user.getId());
+
+		GameEntity game = gameRepo.findById(id);
+
+		World w = game.getW();
+
+		UserGameEntity uge = gameRepo.inGameUser(id, ue.getId());
+
+		Power p = w.getMap().getPowerMatching(uge.getPower());
+		
+		OrderParser op = OrderParser.getInstance();
+		Order o;
+		try {
+			o = op.parse(new GUIOrderFactory(), order, p, w.getLastTurnState(), true, false);
+		} catch (OrderException e) {
+			return Collections.singletonMap("error", new String[]{e.getLocalizedMessage()});
+		}
+		
+		return orderJSON(id, w, o, p);
+	}
+	
+	private Map<String,?> orderJSON(int id, World w, Order o, Power p) throws TransformerException{
+		ValidationOptions vo = new ValidationOptions();
+		vo.setOption(ValidationOptions.KEY_GLOBAL_PARSING, ValidationOptions.VALUE_GLOBAL_PARSING_STRICT);
+		try{
+			o.validate(w.getLastTurnState(), vo, w.getRuleOptions());
+		}catch(OrderException oe){
+			return Collections.singletonMap("error", new String[]{oe.getLocalizedMessage()});
+		}
+		
+		DefaultMapRenderer2 mr = mh.getMr(id);
+		
+		MapInfo info = mr.new DMRMapInfo(w.getLastTurnState());
+		SVGElement element = ((GUIOrder)o).orderSVG(info);
+
+
+		TransformerFactory tf = TransformerFactory.newInstance();
+		Transformer transformer1 = tf.newTransformer();
+		transformer1.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+		transformer1.setOutputProperty(OutputKeys.METHOD, "xml");
+		transformer1.setOutputProperty(OutputKeys.INDENT, "yes");
+		transformer1.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+
+		//ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+		StringWriter sw1 = new StringWriter();
+
+
+		transformer1.transform(new DOMSource(element), new StreamResult(sw1));
+
+		//Preventing two orders for same unit
+		TurnState ts = w.getLastTurnState();
+		List<Orderable> orders = ts.getOrders(p);
+		Iterator<Orderable> iter = orders.iterator();
+		//boolean isDuplicate = false;
+		while(iter.hasNext())
+		{
+			//System.out.println("Looping");
+			Orderable listOrder = iter.next();
+			if( listOrder.getSource().isProvinceEqual(o.getSource()) )
+			{
+				//System.out.println("Should be removed");
+				iter.remove();
+			}
+		}
+		orders.add(o);
+
+		//model.addAttribute("success", 1);
+
+		gameRepo.updateTS(ts);
+		String id1 = info.getPowerSVGGElement(p, 1).getId();
+		Map<String,Object> results = new HashMap<String,Object>();
+		results.put("orders",Collections.singletonMap(id1,sw1.toString()));
+		results.put("orders_text", Collections.singletonMap(o.getSource().toString(),o.toFullString()));
+		return results;
+	}
 
 
 	@PreAuthorize("hasRole('PLAYER')")
@@ -378,59 +548,9 @@ public class HomeController {
 		}else if (order.getType().equals("order-destroy")){
 			o = new GUIOrderFactory().createRemove(p, mr.getLocation(order.getLoc()), Unit.Type.UNDEFINED);
 		}
-
-		ValidationOptions vo = new ValidationOptions();
-		vo.setOption(ValidationOptions.KEY_GLOBAL_PARSING, ValidationOptions.VALUE_GLOBAL_PARSING_STRICT);
-		try{
-			o.validate(w.getLastTurnState(), vo, w.getRuleOptions());
-		}catch(OrderException oe){
-			return Collections.singletonMap("error", new String[]{oe.getLocalizedMessage()});
-		}
 		//logger.info("From: "+o.getSourceUnitType());
-
-		MapInfo info = mr.new DMRMapInfo(w.getLastTurnState());
-		SVGElement element = ((GUIOrder)o).orderSVG(info);
-
-
-		TransformerFactory tf = TransformerFactory.newInstance();
-		Transformer transformer1 = tf.newTransformer();
-		transformer1.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-		transformer1.setOutputProperty(OutputKeys.METHOD, "xml");
-		transformer1.setOutputProperty(OutputKeys.INDENT, "yes");
-		transformer1.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-
-		//ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-		StringWriter sw1 = new StringWriter();
-
-
-		transformer1.transform(new DOMSource(element), new StreamResult(sw1));
-
-		//Preventing two orders for same unit
-		TurnState ts = w.getLastTurnState();
-		List<Orderable> orders = ts.getOrders(p);
-		Iterator<Orderable> iter = orders.iterator();
-		//boolean isDuplicate = false;
-		while(iter.hasNext())
-		{
-			//System.out.println("Looping");
-			Orderable listOrder = iter.next();
-			if( listOrder.getSource().isProvinceEqual(o.getSource()) )
-			{
-				//System.out.println("Should be removed");
-				iter.remove();
-			}
-		}
-		orders.add(o);
-
-		//model.addAttribute("success", 1);
-
-		gameRepo.updateTS(ts);
-		String id1 = info.getPowerSVGGElement(p, 1).getId();
-		Map<String,Object> results = new HashMap<String,Object>();
-		results.put("orders",Collections.singletonMap(id1,sw1.toString()));
-		results.put("orders_text", Collections.singletonMap(o.getSource().toString(),o.toFullString()));
-		return results;
+		return orderJSON(id, w, o, p);
+		
 	}
 
 	@PreAuthorize("hasRole('PLAYER')")

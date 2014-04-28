@@ -29,6 +29,7 @@ import org.springframework.util.MultiValueMap;
 import com.chughes.dip.game.GameEntity.Stage;
 import com.chughes.dip.misc.Mailer;
 import com.chughes.dip.user.UserEntity;
+import com.chughes.dip.user.UserService;
 
 import dip.gui.order.GUIOrderFactory;
 import dip.process.Adjustment;
@@ -48,6 +49,7 @@ public class Judge {
 	protected @Autowired Mailer mailer;
 	private @Autowired Facebook facebookApp;
 	private @Autowired UsersConnectionRepository ucr;
+	private @Autowired UserService us;
 	private static final Logger logger = LoggerFactory.getLogger(Judge.class);
 	
 	@Transactional
@@ -89,11 +91,15 @@ public class Judge {
 		for (UserGameEntity player : ge.getPlayers()) {
 			int owned = info.get(ge.getW().getMap().getPower(player.getPower())).getSupplyCenterCount();
 			player.setVictory_share(((float)owned)/((float)total));
+			//Adds to score
+			player.getUser().setScore((int) (.75 * player.getUser().getScore() + 25 * owned/total));
+			us.updateLevel(player.getUser());
 			if (owned > 0) {
 				player.getUser().setWins(player.getUser().getWins()+1);
 			}else {
 				player.getUser().setLosses(player.getUser().getLosses()+1);
 			}
+			
 			sessionFactory.getCurrentSession().update(player.getUser());
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(ge);

@@ -1,4 +1,4 @@
-package com.chughes.dip.user;
+package com.chughes.dip.controller;
 
 import javax.validation.Valid;
 
@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.chughes.dip.data.UserRepository;
+import com.chughes.dip.user.UserDetailsImpl;
+import com.chughes.dip.user.UserEntity;
 
 @Controller
 public class UserToolsController {

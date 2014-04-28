@@ -416,6 +416,9 @@ public class OrderParser
 			//Log.println("  OP:parse(): eating token: ", pTok);
 		}
 		
+		// reset power, if null, to default (if specified)
+		power = (power == null) ? defaultPower : power;
+		
 		// if we're not allowed to guess, and power is null, error.
 		if(!guessing && power == null)
 		{
@@ -423,10 +426,7 @@ public class OrderParser
 			String pTok = getToken(st);
 			throw new OrderException(Utils.getLocalString(OF_POWER_NOT_RECOGNIZED, pTok));
 		}
-		
-		// reset power, if null, to default (if specified)
-		power = (power == null) ? defaultPower : power;
-		
+
 		// if we are locked, the power must be the default power
 		if(locked)
 		{

@@ -35,7 +35,7 @@ public class GameListController {
 	}
 	
 	@RequestMapping(value="/joingame/{gameID}")
-	public String join(Model model,@PathVariable(value="gameID") int id,@RequestParam(value="secret", required = false) String secret,@RequestParam(value="r", required = false) Integer replace){
+	public String join(Model model,@PathVariable(value="gameID") int id,@RequestParam(value="secret", required = false) String secret,@RequestParam(value="r", required = false) Integer replace) throws Exception{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getPrincipal() instanceof UserDetailsImpl){
 			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();

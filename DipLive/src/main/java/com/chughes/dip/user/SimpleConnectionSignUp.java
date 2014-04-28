@@ -22,15 +22,25 @@ public class SimpleConnectionSignUp implements ConnectionSignUp {
 	public String execute(Connection<?> conn) {
 		UserProfile profile = conn.fetchUserProfile();
 		UserEntity newguy = new UserEntity();
-		newguy.setUsername(profile.getUsername());
+		
+		String newname = "";
+		newname = profile.getUsername();
 		//newguy.setEmail(profile.getEmail());
 		System.out.println(conn.getApi().getClass());
 		if (conn.getApi() instanceof Google){
 			//System.out.println("in Google");
 			Google google = (Google) conn.getApi();
 			Person guser = google.plusOperations().getGoogleProfile();
-			System.out.println("fn: "+guser.getDisplayName());
-			newguy.setUsername(guser.getDisplayName());
+			//System.out.println("fn: "+guser.getDisplayName());
+			newname = guser.getDisplayName();
+		}
+		newguy.setUsername(newname);
+		for (int i = 1;i < 100;i++){
+			if (userRepo.getUserByName(newguy.getUsername()) != null){
+				newguy.setUsername(newname + "" + i);
+			}else{
+				break;
+			}
 		}
 		userRepo.saveUser(newguy);
 		return newguy.getId()+"";

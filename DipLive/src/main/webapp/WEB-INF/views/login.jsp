@@ -24,6 +24,17 @@
 		</div>
 	</div>
 	<div class="form-group">
+		<div class="col-lg-offset-2 col-lg-10">
+			<div class="checkbox">
+				<label> <input id="j_remember"
+					name="_spring_security_remember_me" type="checkbox" />Remember Me
+				</label>
+			</div>
+
+		</div>
+
+	</div>
+	<div class="form-group">
 		<div class="col-lg-offset-2 col-lg-5">
 			<button class="btn btn-default" type="submit">Login</button>
 		</div>

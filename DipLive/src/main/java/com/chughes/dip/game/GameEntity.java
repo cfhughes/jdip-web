@@ -49,6 +49,7 @@ public class GameEntity implements Serializable{
 	@Max(336)
 	private int turnlength = 0;//hours
 	private Date turnend;
+	private int level;
 	
 	public int getTurnlength() {
 		return turnlength;
@@ -143,6 +144,12 @@ public class GameEntity implements Serializable{
 	}
 	public void setCrashed(boolean crashed) {
 		this.crashed = crashed;
+	}
+	public int getLevel() {
+		return level;
+	}
+	public void setLevel(int level) {
+		this.level = level;
 	}
 	
 }

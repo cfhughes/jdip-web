@@ -33,6 +33,8 @@ public class UserEntity {
 	private int wins;
 	private int losses;
 	private int retreats;
+	private int level;
+	private int score;
 	
 	
 	public int getWins() {
@@ -96,6 +98,18 @@ public class UserEntity {
 	}
 	public void setRetreats(int retreats) {
 		this.retreats = retreats;
+	}
+	public int getLevel() {
+		return level;
+	}
+	public void setLevel(int level) {
+		this.level = level;
+	}
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 }

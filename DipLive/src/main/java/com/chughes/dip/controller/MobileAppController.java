@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.UsersConnectionRepository;
@@ -27,6 +28,14 @@ public class MobileAppController {
 	@Autowired private ConnectionFactoryLocator cfl;
 	@Autowired private UsersConnectionRepository ucr;
 	@Autowired private UserRepository us;
+	
+	@RequestMapping(value="/JSONauth")
+	public @ResponseBody String auth(){
+		
+		
+		return null;
+		
+	}
 	
 	@RequestMapping(value = "/JSONmygames")
 	public @ResponseBody Map<Integer,String> myGames(Model model,@RequestParam(value="auth") String auth,@RequestParam(value="p") String p){

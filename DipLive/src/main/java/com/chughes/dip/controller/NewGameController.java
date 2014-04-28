@@ -65,7 +65,7 @@ public class NewGameController {
 	
 	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value = "/savegame")
-	public String saveGame(Model model,@Valid GameEntity game,@RequestParam(value="variant")String variant){
+	public String saveGame(Model model,@Valid GameEntity game,@RequestParam(value="variant")String variant) throws Exception{
 
 		//TODO: Are all variants version 1.0?
 		Variant vs = VariantManager.getVariant(variant, 1.0f);
