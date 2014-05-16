@@ -195,7 +195,7 @@ public class HomeController {
 		return "board";
 	}
 	
-	@RequestMapping(value = "/m/game/{gameID}")
+	@RequestMapping(value = "/game/m{gameID}")
 	public String homeM(Model model,@PathVariable(value="gameID") int id) throws Exception {
 		boolean loggedin = false;
 		UserDetailsImpl user = null;

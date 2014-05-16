@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.env.Environment;
@@ -33,7 +34,7 @@ import org.springframework.web.client.RestTemplate;
 import com.chughes.dip.data.UserRepository;
 
 @Configuration
-@PropertySource("application.properties")
+@PropertySources(value = {@PropertySource("classpath:application.properties")})
 public class SocialConfig {
 	
     @Autowired
@@ -75,15 +76,15 @@ public class SocialConfig {
 	    return connectionRepository().getPrimaryConnection(Facebook.class).getApi();
 	}
 	
-//	@Bean
-//	public Facebook facebookApp() {
-//		// retrieve app access token
-//		RestTemplate restTemplate = new RestTemplate();
-//		String result = restTemplate.getForObject("https://graph.facebook.com/oauth/access_token?grant_type=client_credentials&client_id="+environment.getProperty("facebook.clientId")+"&client_secret="+environment.getProperty("facebook.clientSecret"),  String.class);
-//		String appAccessToken = result.replaceAll("access_token=", "");
-//		FacebookTemplate fbt = new FacebookTemplate(appAccessToken);
-//		return fbt;
-//	}
+	@Bean
+	public Facebook facebookApp() {
+		// retrieve app access token
+		RestTemplate restTemplate = new RestTemplate();
+		String result = restTemplate.getForObject("https://graph.facebook.com/oauth/access_token?grant_type=client_credentials&client_id="+environment.getProperty("facebook.clientId")+"&client_secret="+environment.getProperty("facebook.clientSecret"),  String.class);
+		String appAccessToken = result.replaceAll("access_token=", "");
+		FacebookTemplate fbt = new FacebookTemplate(appAccessToken);
+		return fbt;
+	}
 	
 	@Bean
 	@Scope(value="request", proxyMode=ScopedProxyMode.INTERFACES)	

@@ -8,104 +8,15 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <!DOCTYPE html>
 <html>
-<script type="text/javascript"
-	src="<c:url value="/resources/jquery.localtime-0.8.0.min.js" />"></script>
+<head><script src="//code.jquery.com/jquery-2.0.3.min.js"
+	type="text/javascript"></script>
+	<link
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css"
+	rel="stylesheet" />
 <style type="text/css">
-.chatcontainer {
-	position: relative;
-	padding: 10px;
-	margin: 1em 0 3em;
-	color: #000;
-	background: #f3961c;
-	/* default background for browsers without gradient support */
-	/* css3 */
-	background: -webkit-gradient(linear, 0 0, 0 100%, from(#f9d835),
-		to(#f3961c));
-	background: -moz-linear-gradient(#f9d835, #f3961c);
-	background: -o-linear-gradient(#f9d835, #f3961c);
-	background: linear-gradient(#f9d835, #f3961c);
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	border-radius: 10px;
-	max-width: 500px;
-}
-
-/* Variant : for left/right positioned triangle */
-.chatcontainer.chat-left {
-	margin-left: 50px;
-}
-
-/* Variant : for right positioned triangle
------------------------------------------- */
-.chatcontainer.chat-right {
-	margin-right: 50px;
-}
-
-/* THE TRIANGLE
-------------------------------------------------------------------------------------------------------------------------------- */
-
-/* creates triangle */
-.chatcontainer:after {
-	content: "";
-	position: absolute;
-	bottom: -15px; /* value = - border-top-width - border-bottom-width */
-	left: 50px; /* controls horizontal position */
-	border-width: 15px 15px 0;
-	/* vary these values to change the angle of the vertex */
-	border-style: solid;
-	border-color: #f3961c transparent;
-	/* reduce the damage in FF3.0 */
-	display: block;
-	width: 0;
-}
-
-/* Variant : left
------------------------------------------- */
-.chatcontainer.chat-left:after {
-	top: 16px; /* controls vertical position */
-	left: -50px; /* value = - border-left-width - border-right-width */
-	bottom: auto;
-	border-width: 10px 50px 10px 0;
-	border-color: transparent #f3961c;
-}
-
-/* Variant : right
------------------------------------------- */
-.chatcontainer.chat-right:after {
-	top: 16px; /* controls vertical position */
-	right: -50px; /* value = - border-left-width - border-right-width */
-	bottom: auto;
-	left: auto;
-	border-width: 10px 0 10px 50px;
-	border-color: transparent #f3961c;
-}
-
-.chat-me:after {
-	border-color: #075698 transparent;
-}
-
-.chat-me {
-	background: #075698;
-	/* css3 */
-	background: -webkit-gradient(linear, 0 0, 0 100%, from(#2e88c4),
-		to(#075698));
-	background: -moz-linear-gradient(#2e88c4, #075698);
-	background: -o-linear-gradient(#2e88c4, #075698);
-	background: linear-gradient(#2e88c4, #075698);
-}
-
-.chat-input {
-	padding: 5px 2px;
-	margin: 5px;
-	border: 1px solid #bbb;
-	width: 335px;
-	float: left;
-}
-
-.chat-messages {
-	height: 200px;
-	overflow: auto;
-	border: 1px solid #000;
+#orderbar {
+  position: fixed;
+  bottom: 0;
 }
 
 use,symbol {
@@ -129,9 +40,46 @@ svg:FIRST-CHILD {
 }
 </style>
 
+</head>
+<body>
 
 <div id="svg-map">${svg}</div>
+<c:if test="${member_of_game and playing}">
+	<div id="orderbar">
+	<form class="form-inline"><div class="form-group"><select id="order-type" class="form-control" >
+	
+		<c:choose>
+			<c:when test="${phasetype == 'M'}">
 
+				<option value="order-move" >Move</option>
+				<option value="order-hold" >Hold</option>
+				<option value="order-shold" >Support
+					Hold</option>
+				<option value="order-smove" >Support
+					Move</option>
+				<option value="order-convoy" >Convoy</option>
+
+			</c:when>
+			<c:when test="${phasetype == 'R'}">
+				<option value="order-retreat" >Retreat</option>
+				<option value="order-disband" >Disband</option>
+			</c:when>
+			<c:when test="${phasetype == 'B'}">
+				<option value="order-builda" >Build
+					Army</option>
+				<option value="order-buildf" >Build
+					Fleet</option>
+				<option value="order-destroy" >Disband</option>
+			</c:when>
+		</c:choose>
+	</select>
+	</div><div class="form-group">
+	<button id="ready-button"
+		class="btn btn-default<c:if test="${isready}"> active</c:if>">Ready</button>
+	<img id="ready-img" src="<c:url value="/resources/img/check.png"/>"
+		<c:if test="${!isready}">class="intangible"</c:if> /></div></form>
+		</div>
+		</c:if>
 <script type="text/javascript">
 	//<![CDATA[
 	$(function() {
@@ -252,11 +200,11 @@ svg:FIRST-CHILD {
 			$("#bottom-bar").html("");
 		});
 		//Select Order Type
-		$("#order-type > *").click(function() {
-			$("#order-type > *").removeClass("active");
-			$(this).addClass("active");
+		$("#order-type").change(function() {
+			//$("#order-type > *").removeClass("active");
+			//$(this).addClass("active");
 			order = {
-				"type" : $(this).attr("id")
+				"type" : $(this).val()
 			};
 			from = 0;
 		});
@@ -276,7 +224,7 @@ svg:FIRST-CHILD {
 		};
 		$("#orders-panel > p > button").click(removeorder);
 		//Click On Map
-		$("#MouseLayer > *").click(function() {
+		$("#MouseLayer > *").on('touchend',function() {
 			var send = function() {
 				$.ajax("${gid}/JSONorder",
 					{
@@ -344,6 +292,7 @@ svg:FIRST-CHILD {
 					}
 				}
 			});
+			return false;
 		});
 		var provinces = {
 <c:forEach items="${provinces}" var="province">
@@ -353,4 +302,5 @@ svg:FIRST-CHILD {
 	});
 	//]]>
 </script>
+</body>
 </html>

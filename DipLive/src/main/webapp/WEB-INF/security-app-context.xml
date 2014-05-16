@@ -28,7 +28,7 @@
 	    
 	</mvc:interceptors>
 
-	<context:property-placeholder location="classpath:application.properties" />
+	<context:property-placeholder location="application.properties" />
 
 	<beans:bean id="mailSender"
 		class="org.springframework.mail.javamail.JavaMailSenderImpl">

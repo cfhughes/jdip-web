@@ -182,7 +182,7 @@ svg:FIRST-CHILD {
 </h4>
 
 <c:if test="${member_of_game}">
-
+<c:if test="${playing}">
 	<div id="orders-panel">
 		Text Order Input:<input type="text" id="order_textinput" />
 		<button id="ordertext_send" class="btn btn-default" type="btn">Go</button>
@@ -193,6 +193,7 @@ svg:FIRST-CHILD {
 			</p>
 		</c:forEach>
 	</div>
+	</c:if>
 	<div class="row">
 		<ul id="chat-tabs" class="nav nav-tabs">
 			<li chatid="-1" class="active"><a href="#allchat"
