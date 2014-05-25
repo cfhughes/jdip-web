@@ -31,6 +31,11 @@ use,symbol {
 	visibility: hidden;
 }
 
+svg {
+	width: 1000px;
+	height: 1000px;	
+}
+
 svg:not(:root ) {
 	overflow: visible;
 }

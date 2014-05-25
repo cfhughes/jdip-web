@@ -1,6 +1,7 @@
 package com.chughes.dip.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -34,6 +35,7 @@ public class GameListController {
 		return "gamelist";
 	}
 	
+	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value="/joingame/{gameID}")
 	public String join(Model model,@PathVariable(value="gameID") int id,@RequestParam(value="secret", required = false) String secret,@RequestParam(value="r", required = false) Integer replace) throws Exception{
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -53,6 +55,7 @@ public class GameListController {
 		return "redirect:../game/"+id;
 	}
 	
+	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value="/leavegame/{gameID}")
 	public String leave(Model model,@PathVariable(value="gameID") int id){
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();

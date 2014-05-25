@@ -31,7 +31,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.chughes.dip.data.GameRepository;
 import com.chughes.dip.data.UserRepository;
+import com.chughes.dip.game.GameEntity;
 import com.chughes.dip.game.GameInfo;
+import com.chughes.dip.game.GameMaster;
+import com.chughes.dip.game.GameService;
 import com.chughes.dip.game.GameInfo.GameInfoPlayer;
 import com.chughes.dip.game.UserGameEntity;
 import com.chughes.dip.user.UserDetailsImpl;
@@ -40,6 +43,8 @@ import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import dip.world.Power;
+import dip.world.variant.VariantManager;
+import dip.world.variant.data.Variant;
 
 @Controller
 public class MobileAppController {
@@ -121,17 +126,63 @@ public class MobileAppController {
 		UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
 
 		Set<UserGameEntity> players = uge.getGame().getPlayers();
-		GameInfoPlayer[] p = new GameInfoPlayer[players.size()];
+		GameInfoPlayer[] p = new GameInfoPlayer[players.size()-1];
 
 		GameInfo info = new GameInfo();
 		int i = 0;
 		for (UserGameEntity player : players) {
+			if (uge.equals(player)) continue;
 			p[i] = info.new GameInfoPlayer();
 			p[i].setId(player.getId());
 			p[i].setPower(player.getPower());
+			p[i].setUsername(player.getUser().getUsername());
 			i++;
 		}
+		info.setMe(uge.getId());
 		info.setPlayers(p);
 		return info;
+	}
+	
+	@Autowired private GameService gameService;
+	@Autowired private UserRepository userrepo;
+	@Autowired private GameMaster gm;
+	
+	@PreAuthorize("hasRole('PLAYER')")
+	@RequestMapping(value="/joingame_m/{gameID}")
+	public @ResponseBody String join(Model model,@PathVariable(value="gameID") int id,@RequestParam(value="secret", required = false) String secret,@RequestParam(value="r", required = false) Integer replace){
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth.getPrincipal() instanceof UserDetailsImpl){
+			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
+			UserEntity ue = userrepo.getUserEntity(user.getId());
+			GameEntity ge = gameService.getGame(id);
+			if (replace != null){
+				gameService.replaceUserInGame(ge, replace, ue);
+			}else{
+				try {
+					gameService.addUserToGame(ge, ue, secret);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return e.getLocalizedMessage();
+				}
+				if (ge.getPlayers().size() == ge.getMaxplayers()){
+					gm.beginGame(ge);
+				}
+			}
+		}
+		return "Success";
+	}
+	
+	@PreAuthorize("hasRole('PLAYER')")
+	@RequestMapping(value="/listgames_m")
+	public @ResponseBody Map<Integer,Map<String,String>> listgames(){
+		Map<Integer,Map<String,String>> result = new HashMap<Integer,Map<String,String>>();
+		List<GameEntity> games = gameService.searchGames(0,100,1);
+		for (GameEntity gameEntity : games) {
+			Map<String,String> game = new HashMap<String,String>();
+			game.put("name", gameEntity.getName());
+			game.put("variant", gameEntity.getW().getVariantInfo().getVariantName());
+			result.put(gameEntity.getId(), game);
+		}
+		return result;
 	}
 }
