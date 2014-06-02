@@ -73,7 +73,7 @@ public class UserRepository{
 		//System.out.println(sessionFactory);
 		session = sessionFactory.getCurrentSession();
 		//System.out.println("About Here");
-		Query query = session.createQuery("from UserEntity i where i.username = :name and i.password is not null");
+		Query query = session.createQuery("from UserEntity i where i.username = :name");
 		query.setString("name", name);
 		user = (UserEntity) query.uniqueResult();
 		if (user != null){

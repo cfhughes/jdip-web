@@ -93,7 +93,7 @@ public class GameRepository {
 				clause = " WHERE stage = '"+GameEntity.Stage.PREGAME+"'";
 			}
 		}
-		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity"+clause).setFirstResult(p).setMaxResults(max);
+		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity"+clause+" order by id desc").setFirstResult(p).setMaxResults(max);
 		return query.list();
 	}
 

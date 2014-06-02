@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,6 +26,7 @@ import org.springframework.social.oauth2.AccessGrant;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -181,8 +183,18 @@ public class MobileAppController {
 			Map<String,String> game = new HashMap<String,String>();
 			game.put("name", gameEntity.getName());
 			game.put("variant", gameEntity.getW().getVariantInfo().getVariantName());
+			game.put("haspassword", (gameEntity.getSecret() != null && gameEntity.getSecret().length() > 0)+"");
+			game.put("joinedplayers", gameEntity.getPlayers().size()+"");
+			game.put("totalplayers", gameEntity.getMaxplayers()+"");
 			result.put(gameEntity.getId(), game);
 		}
 		return result;
+	}
+	
+	@RequestMapping(value="/saveuser_m")
+	public @ResponseBody String saveUser(@RequestBody @Valid UserDetailsImpl user) throws Exception{
+
+		us.createUser(user);
+		return "success";
 	}
 }

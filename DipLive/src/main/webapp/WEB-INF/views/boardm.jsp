@@ -198,7 +198,7 @@ svg:FIRST-CHILD {
 		});
 <c:if test="${playing}">
 		var from = 0;
-		var order = {};
+		var order = {"type" : "order-move"};
 		$("#MouseLayer").children().hover(function() {
 			$("#bottom-bar").html("<p>" + provinces[$(this).attr("id")] + "</p>");
 		}, function() {
