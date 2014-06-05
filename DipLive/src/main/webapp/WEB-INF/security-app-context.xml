@@ -148,7 +148,7 @@
 		<form-login login-page="/login" authentication-failure-url="/loginfailed"
 			authentication-success-handler-ref="loginLogger" />
 		<logout />
-		<remember-me key="B940ndkwjhqeus87a67q"/>
+		<remember-me key="B940ndkwjhqeus87a67q" />
 	</http>
 
 	<beans:bean id="loginLogger" class="com.chughes.dip.user.SessionLogger" />

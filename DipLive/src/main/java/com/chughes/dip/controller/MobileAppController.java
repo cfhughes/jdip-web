@@ -9,15 +9,18 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.RememberMeServices;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.social.connect.Connection;
 import org.springframework.social.connect.ConnectionFactoryLocator;
 import org.springframework.social.connect.UsersConnectionRepository;
@@ -58,8 +61,10 @@ public class MobileAppController {
 	@Autowired private GameRepository gameRepo;
 
 	@RequestMapping(value="/JSONauthtest")
-	public @ResponseBody String test(){
-		UserDetailsImpl user = null;
+	public @ResponseBody String test(HttpSession ses){
+		ses.getId();
+		//UserDetailsImpl user = null;
+		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getPrincipal() instanceof UserDetailsImpl){
 			return "loggedin";
@@ -72,6 +77,8 @@ public class MobileAppController {
 		OAuth2ConnectionFactory<?> cf = (OAuth2ConnectionFactory<?>) cfl.getConnectionFactory(p);
 
 		Connection<?> connect = cf.createConnection(new AccessGrant(auth));
+		
+		
 
 		List<String> users = ucr.findUserIdsWithConnection(connect);
 
@@ -84,10 +91,10 @@ public class MobileAppController {
 			SecurityContextHolder.getContext().setAuthentication(token);
 
 			HttpServletRequestWrapper wrapper = new HttpServletRequestWrapper(request ) {
-				@Override public String getParameter(String name) { return "true"; }            
+				@Override public String getParameter(String name) { return "on"; }            
 			};
-
-			rms.loginSuccess(wrapper, response, token); 
+			//TODO: This doesn't seem to work to add remember-me cookie
+			rms.loginSuccess(wrapper, response, token);
 			return "success";
 		}
 		return "fail";
