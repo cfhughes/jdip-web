@@ -4,10 +4,13 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,8 +27,19 @@ public class UserRepository{
 	@Autowired private BCryptPasswordEncoder encoder;
 
 	@Transactional
+	public void removeAndroidRegistration(String reg){
+		Query q = sessionFactory.getCurrentSession().createQuery("from UserEntity ue WHERE ? in elements(ue.androidApps)");
+		q.setString(0, reg);
+		UserEntity ue = (UserEntity) q.uniqueResult();
+		if (ue != null){
+			ue.getAndroidApps().remove(reg);
+			saveUser(ue);
+		}
+	}
+
+	@Transactional
 	public void createUser(UserDetailsImpl user) throws Exception{
-		
+
 		Session session = sessionFactory.getCurrentSession();
 		UserEntity ue = new UserEntity();
 		if (user.getUsername().length() < 2){
@@ -40,21 +54,21 @@ public class UserRepository{
 		session.save(ue);
 
 	}
-	
+
 	@Transactional
 	public Serializable saveUser(UserEntity ue){
 		Session session = sessionFactory.getCurrentSession();
 		return session.save(ue);
 	}
-	
+
 	@Transactional
 	public void updateUser(UserEntity user){
 		sessionFactory.getCurrentSession().setFlushMode(FlushMode.AUTO);
 		//merge is only necessary for detached NULL_USER, are there disadvantages to using merge()?
 		sessionFactory.getCurrentSession().merge(user);
-        //sessionFactory.getCurrentSession().flush();
+		//sessionFactory.getCurrentSession().flush();
 	}
-	
+
 	@Transactional
 	public void editUser(UserEntity user){
 
@@ -92,7 +106,7 @@ public class UserRepository{
 		UserEntity ue = (UserEntity)session.get(UserEntity.class, id);
 		return ue;
 	}
-	
+
 
 
 }

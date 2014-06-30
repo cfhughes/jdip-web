@@ -44,9 +44,7 @@ public class SocialConfig {
 	public ConnectionFactoryLocator connectionFactoryLocator() {
 	    ConnectionFactoryRegistry registry = new ConnectionFactoryRegistry();
 	    registry.addConnectionFactory(new FacebookConnectionFactory(environment.getProperty("facebook.clientId"),environment.getProperty("facebook.clientSecret")));
-        GoogleConnectionFactory google = new GoogleConnectionFactory(
-                "454990989619.apps.googleusercontent.com",
-                "jOhrbBz-kjvPl46AA134IuqO");
+        GoogleConnectionFactory google = new GoogleConnectionFactory(environment.getProperty("google.clientId"),environment.getProperty("google.clientSecret"));
         google.setScope("https://www.googleapis.com/auth/plus.login");
 	    registry.addConnectionFactory(google);
 	    return registry;

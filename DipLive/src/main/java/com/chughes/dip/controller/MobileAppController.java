@@ -61,12 +61,20 @@ public class MobileAppController {
 	@Autowired private GameRepository gameRepo;
 
 	@RequestMapping(value="/JSONauthtest")
-	public @ResponseBody String test(HttpSession ses){
+	public @ResponseBody String test(HttpSession ses,@RequestParam(value="reg",required=false)String reg){
 		ses.getId();
 		//UserDetailsImpl user = null;
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getPrincipal() instanceof UserDetailsImpl){
+			if (reg != null && reg.length() > 0){
+				UserEntity ue = us.getUserEntity(((UserDetailsImpl)auth.getPrincipal()).getId());
+				if (!ue.getAndroidApps().contains(reg)){
+					us.removeAndroidRegistration(reg);
+					ue.getAndroidApps().add(reg);
+				}
+				us.editUser(ue);
+			}
 			return "loggedin";
 		}
 		return "anon";
@@ -204,4 +212,5 @@ public class MobileAppController {
 		us.createUser(user);
 		return "success";
 	}
+	
 }

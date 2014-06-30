@@ -35,6 +35,7 @@ public class UserEntity {
 	private int retreats;
 	private int level;
 	private int score;
+	private Set<String> androidApps;
 	
 	
 	public int getWins() {
@@ -110,6 +111,14 @@ public class UserEntity {
 	}
 	public void setScore(int score) {
 		this.score = score;
+	}
+	@ElementCollection
+	public Set<String> getAndroidApps() {
+		if (androidApps == null)androidApps = new HashSet<String>();
+		return androidApps;
+	}
+	public void setAndroidApps(Set<String> androidApps) {
+		this.androidApps = androidApps;
 	}
 
 }

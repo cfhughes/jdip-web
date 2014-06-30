@@ -28,6 +28,7 @@ import org.springframework.util.MultiValueMap;
 
 import com.chughes.dip.game.GameEntity.Stage;
 import com.chughes.dip.misc.Mailer;
+import com.chughes.dip.misc.PushNotifier;
 import com.chughes.dip.user.UserEntity;
 import com.chughes.dip.user.UserService;
 
@@ -50,6 +51,7 @@ public class Judge {
 	private @Autowired Facebook facebookApp;
 	private @Autowired UsersConnectionRepository ucr;
 	private @Autowired UserService us;
+	private @Autowired PushNotifier pn;
 	private static final Logger logger = LoggerFactory.getLogger(Judge.class);
 	
 	@Transactional
@@ -139,6 +141,10 @@ public class Judge {
 						if (!result.containsKey("success")){
 							System.out.println("Facebook returned: "+result.get("message"));
 						}
+					}
+					//Android Notify
+					for (String reg:player.getUser().getAndroidApps()){
+						pn.push(reg, game.getName());
 					}
 				}catch (Exception e){
 					e.printStackTrace();
