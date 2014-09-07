@@ -85,6 +85,7 @@ public class Variant implements Cloneable, Comparable
 	private BorderData[] borderData = null;
 	private boolean allowBCYears = false;
 	private String[] aliases = new String[0];
+	private String[][] paths;
 	
 	/** Class of Rule Option name/value pairs */
 	public static class NameValuePair
@@ -132,6 +133,8 @@ public class Variant implements Cloneable, Comparable
 	public Power[] getPowers() 				{ return powers; }
 	/** Returns SupplyCenter objects */
 	public SupplyCenter[] getSupplyCenters(){ return supplyCenters; }
+	/** Returns paths for province shapes */
+	public String[][] getPaths()			{ return paths; }
 	/** Victory Conditions: Number of Supply Centers required for victory. */
 	public int getNumSCForVictory() 		{ return vcNumSCForVictory; }
 	/** Victory Conditions: Maximum years without a supply-center ownership change before game ends. */
@@ -207,6 +210,10 @@ public class Variant implements Cloneable, Comparable
 	{ 
 		supplyCenters = (SupplyCenter[]) supplyCenterList.toArray(new SupplyCenter[supplyCenterList.size()]); 
 	}// setSupplyCenters()
+	
+	public void setPaths(List<String[]> pathsList){
+		paths = (String[][]) pathsList.toArray(new String[pathsList.size()][]);
+	}
 	
 	/** Sets the RuleOptions (as a List of name-value pairs) associated with this Variant */
 	public void setRuleOptionNVPs(List nvpList)

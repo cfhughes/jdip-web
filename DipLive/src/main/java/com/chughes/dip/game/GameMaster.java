@@ -23,21 +23,12 @@ public class GameMaster {
 	@Autowired private GameRepository gr;
 
 	private static final Logger logger = LoggerFactory.getLogger(GameMaster.class);
-	private static volatile boolean busy = false;
 
 	//Every minute
 	@Scheduled(cron="0 * * * * ?")
 	public void resolveGames(){
-		if (!busy){
-			busy = true;
-			try{
-				j.cron();
-			}finally{
-				busy = false;
-			}
-		}else{
-			System.out.println("GameMaster Busy");
-		}
+		j.cron();
+
 	}
 
 	public void beginGame(GameEntity game){
@@ -66,7 +57,7 @@ public class GameMaster {
 
 			ge.setTurnend(new Date());
 			gr.updateGame(ge);
-			
+
 		}
 		catch(Exception e){
 			e.printStackTrace();

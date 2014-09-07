@@ -23,19 +23,18 @@
 package dip.world.variant.parser;
 
 import dip.world.variant.VariantManager;
-
 import dip.world.variant.data.Variant;
 import dip.world.variant.data.SupplyCenter;
 import dip.world.variant.data.InitialState;
 import dip.world.variant.data.MapGraphic;
 import dip.world.variant.data.ProvinceData;
 import dip.world.variant.data.BorderData;
-
 import dip.world.Phase;
 import dip.world.Power;
 import dip.world.Unit;
 import dip.world.Coast;
-
+import dip.gui.map.DefaultMapRenderer2;
+import dip.gui.map.SVGUtils;
 import dip.misc.LRUCache;
 import dip.misc.Utils;
 import dip.misc.Log;
@@ -43,13 +42,16 @@ import dip.misc.Log;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.w3c.dom.*;
+import org.w3c.dom.svg.SVGElement;
 
 
 /**
@@ -335,6 +337,22 @@ public class XMLVariantParser implements VariantParser
 				supplyCenterList.add(supplyCenter);
 			}
 			variant.setSupplyCenters(supplyCenterList);
+			
+//			//paths
+//			nodes = SVGUtils.findNodeWithID(elVariant, "MouseLayer").getChildNodes();
+//			List<String[]> pathList = new ArrayList<String[]>(nodes.getLength());
+//			for (int j = 0; j < nodes.getLength(); j++) {
+//				element = (Element) nodes.item(j);
+//				if (element.getNodeName().equals("path")){
+//					pathList.add(new String[]{element.getAttribute("d")});
+//				}else if(element.getNodeName().equals("g")){
+//					String[] s = new String[element.getChildNodes().getLength()];
+//					for (int j2 = 0; j2 < element.getChildNodes().getLength(); j2++) {
+//						s[j2] = ((Element) element.getChildNodes().item(j2)).getAttribute("g");
+//					}
+//					pathList.add(s);
+//				}
+//			}
 			
 			// initial state (multiple)
 			nodes = elVariant.getElementsByTagName(EL_INITIALSTATE);

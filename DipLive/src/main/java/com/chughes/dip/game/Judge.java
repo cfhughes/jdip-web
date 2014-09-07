@@ -55,6 +55,7 @@ public class Judge {
 	private static final Logger logger = LoggerFactory.getLogger(Judge.class);
 	
 	@Transactional
+	@Async
 	public void advanceGame(GameEntity ge){
 		if (!ge.isCrashed()){
 			try{
@@ -161,14 +162,7 @@ public class Judge {
 					player.setReady(true);
 				}
 			}
-			//Determine next phase end
-			if (game.getTurnlength() != 0){
-				long milis = new Date().getTime() + (60L * 60L * 1000L * game.getTurnlength());
-				Date end = new Date(milis);
-				game.setTurnend(end);
-			}else{
-				game.setTurnend(null);
-			}
+			
 
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(game);
@@ -180,6 +174,16 @@ public class Judge {
 		Query q = sessionFactory.getCurrentSession().createQuery("from GameEntity where turnend < current_timestamp() and stage= 'PLAYING'");
 		List<GameEntity> list = q.list();
 		for (GameEntity ge : list){
+			
+			//TODO:This still leaves the possibility for game to be processed twice
+			//Determine next phase end
+			if (ge.getTurnlength() != 0){
+				long milis = new Date().getTime() + (60L * 60L * 1000L * ge.getTurnlength());
+				Date end = new Date(milis);
+				ge.setTurnend(end);
+			}else{
+				ge.setTurnend(null);
+			}
 			//System.out.println("Opening game "+ge.getId()+" for Processing");
 			advanceGame(ge);
 
