@@ -12,7 +12,7 @@
 
 	<div class="form-group">
 		<label for="turnlength" class="control-label col-lg-2">Turn
-			Length (0-336 hours, 0 = Unconstrained)</label>
+			Length (1-336 hours)</label>
 		<div class="col-lg-5">
 			<form:input path="turnlength" id="turnlength" type="text"
 				class="form-control" />

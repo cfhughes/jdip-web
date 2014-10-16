@@ -133,6 +133,7 @@ public class HomeController {
 		boolean member = false;
 		Power p1 = null;
 		model.addAttribute("gameprivate", (game.getSecret().length() > 0));
+		model.addAttribute("tournament", game.isTournament());
 		if (loggedin){
 			UserGameEntity uge = gameRepo.inGameUser(id, user.getId());
 			if (uge != null){
@@ -277,7 +278,7 @@ public class HomeController {
 		model.addAttribute("playing", game.getStage() == Stage.PLAYING);
 		model.addAttribute("next", game.getTurnend());
 
-		return "boardm";
+		return "boardmcompat";
 	}
 
 	private SVGDocument renderSVG(int id, World w, Power p1, String phase) throws TransformerException, IOException, SAXException, ParserConfigurationException, MapException, InterruptedException {

@@ -29,13 +29,13 @@ public class PushNotifier {
     private Environment environment;
 
 	@Async
-	public void push(String reg,String name){
+	public void push(String reg,String name,int id){
 		try {
 			ClientHttpRequest req = f.createRequest(new URI("https://android.googleapis.com/gcm/send"), HttpMethod.POST);
 			req.getHeaders().add("Authorization", "key="+environment.getProperty("gcm.key"));
 			req.getHeaders().add("Content-Type", "application/json");
 			OutputStream s = req.getBody();
-			IOUtils.write("{\"registration_ids\":[\""+reg+"\"],\"data\":{\"message\":\"Your Game, "+name+", has advanced to a new phase\"}}", s);
+			IOUtils.write("{\"registration_ids\":[\""+reg+"\"],\"data\":{\"message\":\"Your Game, "+name+", has advanced to a new phase\",\"id\":\""+id+"\"}}", s);
 			req.execute();
 		} catch (IOException | URISyntaxException e) {
 			e.printStackTrace();

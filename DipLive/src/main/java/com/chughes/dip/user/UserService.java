@@ -13,8 +13,12 @@ public class UserService {
 	}
 	
 	public void updateLevel(UserEntity ue){
-		if (ue.getLosses() + ue.getWins() > 10 && ue.getScore() > 75){
+		if (ue.getRoundgamesplayed() > 5 && ue.getScore() > 75){
 			ue.setLevel(ue.getLevel() + 1);
+		}else if (ue.getRoundgamesplayed() > 5 && ue.getScore() < 10){
+			ue.setLevel(ue.getLevel() - 1);
 		}
+		ue.setScore(50);
+		ue.setRoundgamesplayed(0);
 	}
 }

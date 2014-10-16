@@ -71,15 +71,24 @@ body {
 				<sec:authorize access="hasRole('PLAYER')">
 					<li><a href="<c:url value="/forum" />">Forum</a></li>
 				</sec:authorize>
-				<li><a href="<c:url value="/gamelist" />">All Games</a></li>
 				<sec:authorize access="hasRole('PLAYER')">
-					<li><a href="<c:url value="/newgame" />">New Game</a></li>
+					<li><a href="<c:url value="/tournament" />">Tournament</a></li>
 				</sec:authorize>
+				<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Casual Games <span class="caret"></span></a>
+				<ul class="dropdown-menu" role="menu">
+					<li><a href="<c:url value="/gamelist" />">All Casual Games</a></li>
+					<sec:authorize access="hasRole('PLAYER')">
+						<li><a href="<c:url value="/newgame" />">New Casual Game</a></li>
+					</sec:authorize>
+				</ul>
+				</li>
 				<sec:authorize access="hasRole('MODERATOR')">
 					<li><a href="<c:url value="/admin" />">Admin</a></li>
 				</sec:authorize>
 				<li><a href="<c:url value="/help" />">Help</a></li>
 			</ul>
+			
 			<div class="pull-right">
 				<sec:authorize access="isAuthenticated()">
 					<p class="navbar-text">

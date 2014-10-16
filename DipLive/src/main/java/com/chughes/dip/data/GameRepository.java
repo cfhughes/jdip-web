@@ -90,10 +90,10 @@ public class GameRepository {
 		String clause = "";
 		if (j != null){
 			if (j==1){
-				clause = " WHERE stage = '"+GameEntity.Stage.PREGAME+"'";
+				clause = " AND stage = '"+GameEntity.Stage.PREGAME+"'";
 			}
 		}
-		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity"+clause+" order by id desc").setFirstResult(p).setMaxResults(max);
+		Query query = sessionFactory.getCurrentSession().createQuery("from GameEntity WHERE tournament is false"+clause+" order by id desc").setFirstResult(p).setMaxResults(max);
 		return query.list();
 	}
 

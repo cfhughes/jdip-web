@@ -121,7 +121,7 @@ svg:FIRST-CHILD {
 }
 </style>
 
-<c:if test="${!member_of_game and !started and loggedin}">
+<c:if test="${!member_of_game and !started and loggedin and !tournament}">
 	<form action="<c:url value="/joingame/${gid}" />">
 		Join this game:
 		<c:if test="${gameprivate}">

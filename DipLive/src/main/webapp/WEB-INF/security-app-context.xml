@@ -2,7 +2,7 @@
 	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
-	xmlns:task="http://www.springframework.org/schema/task" 
+	xmlns:task="http://www.springframework.org/schema/task"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 					http://www.springframework.org/schema/beans
                     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -22,10 +22,10 @@
 		<beans:property name="prefix" value="/WEB-INF/views/" />
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
-	
+
 	<mvc:interceptors>
-	    <beans:bean class="com.chughes.dip.user.FBCanvasInterceptor" />
-	    
+		<beans:bean class="com.chughes.dip.user.FBCanvasInterceptor" />
+
 	</mvc:interceptors>
 
 	<context:property-placeholder location="application.properties" />
@@ -50,8 +50,8 @@
 		<beans:property name="javaMailProperties">
 			<beans:props>
 				<beans:prop key="mail.smtp.auth">true</beans:prop>
-<!-- 				<beans:prop key="mail.protocol.ssl.trust">adstutia.com</beans:prop> -->
-<!-- 				<beans:prop key="mail.smtp.starttls.enable">true</beans:prop> -->
+				<!-- <beans:prop key="mail.protocol.ssl.trust">adstutia.com</beans:prop> -->
+				<!-- <beans:prop key="mail.smtp.starttls.enable">true</beans:prop> -->
 				<beans:prop key="mail.smtp.quitwait">false</beans:prop>
 			</beans:props>
 		</beans:property>
@@ -88,8 +88,9 @@
 		</mvc:argument-resolvers>
 	</mvc:annotation-driven>
 
-	<context:component-scan base-package="com.chughes" scoped-proxy="targetClass" >
-<!-- 	    <context:exclude-filter type="regex" expression="com\.chughes\.security\.CanvasSignInFix"/> -->
+	<context:component-scan base-package="com.chughes"
+		scoped-proxy="targetClass">
+		<!-- <context:exclude-filter type="regex" expression="com\.chughes\.security\.CanvasSignInFix"/> -->
 	</context:component-scan>
 
 	<context:annotation-config />
@@ -126,7 +127,8 @@
 				<beans:prop key="hibernate.hbm2ddl.auto">update</beans:prop>
 				<beans:prop key="hibernate.c3p0.min_size">5</beans:prop>
 				<beans:prop key="current_session_context_class">thread</beans:prop>
-				<beans:prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</beans:prop>
+				<beans:prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory
+				</beans:prop>
 				<beans:prop key="hibernate.cache.use_second_level_cache">true</beans:prop>
 				<beans:prop key="hibernate.cache.use_query_cache">true</beans:prop>
 			</beans:props>
@@ -153,14 +155,31 @@
 	</http>
 
 	<beans:bean id="loginLogger" class="com.chughes.dip.user.SessionLogger" />
-	
-	<beans:bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
+
+	<beans:bean id="encoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
 
 	<authentication-manager>
 		<authentication-provider user-service-ref="customUserService">
-		    <password-encoder ref="encoder"/>
+			<password-encoder ref="encoder" />
 		</authentication-provider>
 	</authentication-manager>
+
+	<beans:bean id="exceptionTranslationFilter"
+		class="org.springframework.security.web.access.ExceptionTranslationFilter">
+		<beans:property name="authenticationEntryPoint" ref="authenticationEntryPoint" />
+		<beans:property name="accessDeniedHandler" ref="accessDeniedHandler" />
+	</beans:bean>
+
+	<beans:bean id="authenticationEntryPoint"
+		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<beans:property name="loginFormUrl" value="/login" />
+	</beans:bean>
+
+	<beans:bean id="accessDeniedHandler"
+		class="org.springframework.security.web.access.AccessDeniedHandlerImpl">
+		<beans:property name="errorPage" value="/login" />
+	</beans:bean>
 
 
 

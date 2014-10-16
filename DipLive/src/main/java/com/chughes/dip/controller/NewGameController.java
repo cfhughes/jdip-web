@@ -66,19 +66,9 @@ public class NewGameController {
 	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value = "/savegame")
 	public String saveGame(Model model,@Valid GameEntity game,@RequestParam(value="variant")String variant) throws Exception{
-
-		//TODO: Are all variants version 1.0?
-		Variant vs = VariantManager.getVariant(variant, 1.0f);
-		World w = null;
-		try {
-			w = WorldFactory.getInstance().createWorld(vs);
-		} catch (InvalidWorldException e) {
-			e.printStackTrace();
+		if (game.getName().contains("Tournament Game")){
+			throw new Exception("You're not allowed to use the phrase 'Tournament Game'");
 		}
-		VariantInfo vi1 =new VariantInfo();
-		vi1.setVariantName(variant);
-		vi1.setVariantVersion(1.0f);
-		w.setVariantInfo(vi1);
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		UserDetails user1 = (UserDetails)auth.getPrincipal();
@@ -86,14 +76,11 @@ public class NewGameController {
 		
 		UserEntity ue = us.getUserEntity(user.getId());
 		
-		game.setW(w);
-		game.setStage(Stage.PREGAME);
-		game.setMaxplayers(vs.getPowers().length);
+		int id = gameService.newGame(variant, game);
 		
-		gameService.saveGame(game);
 		gameService.addUserToGame(game, ue, game.getSecret());
 
-		model.addAttribute("id", game.getId());
+		model.addAttribute("id", id);
 		
 		return "savegame";
 

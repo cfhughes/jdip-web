@@ -35,6 +35,7 @@ public class UserEntity {
 	private int retreats;
 	private int level;
 	private int score;
+	private int roundgamesplayed = 0;
 	private Set<String> androidApps;
 	
 	
@@ -119,6 +120,12 @@ public class UserEntity {
 	}
 	public void setAndroidApps(Set<String> androidApps) {
 		this.androidApps = androidApps;
+	}
+	public int getRoundgamesplayed() {
+		return roundgamesplayed;
+	}
+	public void setRoundgamesplayed(int roundgamesplayed) {
+		this.roundgamesplayed = roundgamesplayed;
 	}
 
 }

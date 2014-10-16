@@ -41,6 +41,7 @@ import com.chughes.dip.game.GameInfo;
 import com.chughes.dip.game.GameMaster;
 import com.chughes.dip.game.GameService;
 import com.chughes.dip.game.GameInfo.GameInfoPlayer;
+import com.chughes.dip.game.TournamentService;
 import com.chughes.dip.game.UserGameEntity;
 import com.chughes.dip.user.UserDetailsImpl;
 import com.chughes.dip.user.UserEntity;
@@ -59,6 +60,9 @@ public class MobileAppController {
 	@Autowired private UserRepository us;
 	@Autowired private RememberMeServices rms;
 	@Autowired private GameRepository gameRepo;
+	@Autowired private TournamentService ts;
+	@Autowired private GameService gameService;
+	@Autowired private GameMaster gm;
 
 	@RequestMapping(value="/JSONauthtest")
 	public @ResponseBody String test(HttpSession ses,@RequestParam(value="reg",required=false)String reg){
@@ -160,9 +164,7 @@ public class MobileAppController {
 		return info;
 	}
 	
-	@Autowired private GameService gameService;
-	@Autowired private UserRepository userrepo;
-	@Autowired private GameMaster gm;
+
 	
 	@PreAuthorize("hasRole('PLAYER')")
 	@RequestMapping(value="/joingame_m/{gameID}")
@@ -170,7 +172,7 @@ public class MobileAppController {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth.getPrincipal() instanceof UserDetailsImpl){
 			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
-			UserEntity ue = userrepo.getUserEntity(user.getId());
+			UserEntity ue = us.getUserEntity(user.getId());
 			GameEntity ge = gameService.getGame(id);
 			if (replace != null){
 				gameService.replaceUserInGame(ge, replace, ue);
@@ -181,9 +183,7 @@ public class MobileAppController {
 					e.printStackTrace();
 					return e.getLocalizedMessage();
 				}
-				if (ge.getPlayers().size() == ge.getMaxplayers()){
-					gm.beginGame(ge);
-				}
+				
 			}
 		}
 		return "Success";
@@ -204,6 +204,16 @@ public class MobileAppController {
 			result.put(gameEntity.getId(), game);
 		}
 		return result;
+	}
+	
+	@PreAuthorize("hasRole('PLAYER')")
+	@RequestMapping(value="/jointournament")
+	public @ResponseBody int joinTournament() throws Exception{
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
+		
+		UserEntity ue = us.getUserEntity(user.getId());
+		return ts.joinTournament(ue);
 	}
 	
 	@RequestMapping(value="/saveuser_m")

@@ -45,11 +45,12 @@ public class GameEntity implements Serializable{
 	private int maxplayers;
 	private String secret;
 	private String phase;
-	@Min(0)
+	@Min(1)
 	@Max(336)
 	private int turnlength = 0;//hours
 	private Date turnend;
 	private int level;
+	private boolean tournament = false;
 	
 	public int getTurnlength() {
 		return turnlength;
@@ -150,6 +151,12 @@ public class GameEntity implements Serializable{
 	}
 	public void setLevel(int level) {
 		this.level = level;
+	}
+	public boolean isTournament() {
+		return tournament;
+	}
+	public void setTournament(boolean tournament) {
+		this.tournament = tournament;
 	}
 	
 }

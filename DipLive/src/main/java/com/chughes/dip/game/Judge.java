@@ -53,7 +53,7 @@ public class Judge {
 	private @Autowired UserService us;
 	private @Autowired PushNotifier pn;
 	private static final Logger logger = LoggerFactory.getLogger(Judge.class);
-	
+
 	@Transactional
 	@Async
 	public void advanceGame(GameEntity ge){
@@ -95,14 +95,17 @@ public class Judge {
 			int owned = info.get(ge.getW().getMap().getPower(player.getPower())).getSupplyCenterCount();
 			player.setVictory_share(((float)owned)/((float)total));
 			//Adds to score
-			player.getUser().setScore((int) (.75 * player.getUser().getScore() + 25 * owned/total));
-			us.updateLevel(player.getUser());
+			if (ge.isTournament()){
+				player.getUser().setRoundgamesplayed(player.getUser().getRoundgamesplayed()+1);
+				player.getUser().setScore((int) (.75 * player.getUser().getScore() + 25 * owned/total));
+				us.updateLevel(player.getUser());
+			}
 			if (owned > 0) {
 				player.getUser().setWins(player.getUser().getWins()+1);
 			}else {
 				player.getUser().setLosses(player.getUser().getLosses()+1);
 			}
-			
+
 			sessionFactory.getCurrentSession().update(player.getUser());
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(ge);
@@ -145,7 +148,7 @@ public class Judge {
 					}
 					//Android Notify
 					for (String reg:player.getUser().getAndroidApps()){
-						pn.push(reg, game.getName());
+						pn.push(reg, game.getName(), game.getId());
 					}
 				}catch (Exception e){
 					e.printStackTrace();
@@ -162,7 +165,7 @@ public class Judge {
 					player.setReady(true);
 				}
 			}
-			
+
 
 		}
 		sessionFactory.getCurrentSession().saveOrUpdate(game);
@@ -174,7 +177,7 @@ public class Judge {
 		Query q = sessionFactory.getCurrentSession().createQuery("from GameEntity where turnend < current_timestamp() and stage= 'PLAYING'");
 		List<GameEntity> list = q.list();
 		for (GameEntity ge : list){
-			
+
 			//TODO:This still leaves the possibility for game to be processed twice
 			//Determine next phase end
 			if (ge.getTurnlength() != 0){

@@ -43,13 +43,11 @@ public class GameListController {
 			UserDetailsImpl user = (UserDetailsImpl)auth.getPrincipal();
 			UserEntity ue = userrepo.getUserEntity(user.getId());
 			GameEntity ge = gameService.getGame(id);
+			if (ge.isTournament())throw new Exception("Can't Join a Tournament Game This Way");
 			if (replace != null){
 				gameService.replaceUserInGame(ge, replace, ue);
 			}else{
 				gameService.addUserToGame(ge, ue, secret);
-				if (ge.getPlayers().size() == ge.getMaxplayers()){
-					gm.beginGame(ge);
-				}
 			}
 		}
 		return "redirect:../game/"+id;

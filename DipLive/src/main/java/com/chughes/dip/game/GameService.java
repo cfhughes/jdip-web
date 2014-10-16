@@ -17,12 +17,20 @@ import com.chughes.dip.data.UserRepository;
 import com.chughes.dip.game.GameEntity.Stage;
 import com.chughes.dip.user.UserEntity;
 
+import dip.world.InvalidWorldException;
+import dip.world.World;
+import dip.world.WorldFactory;
+import dip.world.World.VariantInfo;
+import dip.world.variant.VariantManager;
+import dip.world.variant.data.Variant;
+
 @Service
 public class GameService {
 
 	@Autowired private GameRepository gameRepo;
 	@Autowired private UserRepository userRepo;
-	
+	@Autowired private GameMaster gm;
+
 	private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
 	public void addUserToGame(GameEntity game, UserEntity user, String secret) throws Exception{
@@ -47,12 +55,16 @@ public class GameService {
 		user.addGame(uge);
 
 		gameRepo.saveInGameUser(uge);
-		
+
 		gameRepo.updateGame(game);
 		userRepo.updateUser(user);
 		
+		if (game.getPlayers().size() == game.getMaxplayers()){
+			gm.beginGame(game);
+		}
+
 	}
-	
+
 	public void removeUserFromGame(GameEntity game, UserEntity user){
 		if (user.getUsername().equals("EMPTY"))return;//Can't remove null user
 		if (game.getStage() == Stage.ENDED){
@@ -73,12 +85,12 @@ public class GameService {
 
 		//Number of times user has left a game
 		user.setRetreats(user.getRetreats()+1);
-		
+
 		userRepo.updateUser(UserEntity.NULL_USER);
 		userRepo.updateUser(user);
 		gameRepo.saveInGameUser(uge);
 	}
-	
+
 	public void replaceUserInGame(GameEntity ge, Integer r, UserEntity newuser){
 		UserGameEntity uge = gameRepo.inGameUser(r);
 		UserEntity replace = uge.getUser();
@@ -91,10 +103,33 @@ public class GameService {
 		if (uge.isOrderable())uge.setReady(false);
 		replace.getGames().remove(uge);
 		newuser.getGames().add(uge);
-		
+
 		userRepo.updateUser(replace);
 		userRepo.updateUser(newuser);
 		gameRepo.saveInGameUser(uge);
+	}
+
+	public int newGame(String variant,GameEntity game){
+		//TODO: Are all variants version 1.0?
+		Variant vs = VariantManager.getVariant(variant, 1.0f);
+		World w = null;
+		try {
+			w = WorldFactory.getInstance().createWorld(vs);
+		} catch (InvalidWorldException e) {
+			e.printStackTrace();
+		}
+		VariantInfo vi1 =new VariantInfo();
+		vi1.setVariantName(variant);
+		vi1.setVariantVersion(1.0f);
+		w.setVariantInfo(vi1);
+		
+		game.setW(w);
+		game.setStage(Stage.PREGAME);
+		game.setMaxplayers(vs.getPowers().length);
+		
+		saveGame(game);
+		
+		return game.getId();
 	}
 
 	public void saveGame(GameEntity ge){
@@ -108,6 +143,6 @@ public class GameService {
 	public GameEntity getGame(int id){
 		return gameRepo.findById(id);
 	}
-	
+
 
 }
